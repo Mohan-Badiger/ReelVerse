@@ -1,0 +1,95 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
+@import "tailwindcss";
+
+/* ================= THEME ================= */
+@theme {
+    --color-primary-50: #eef2ff;
+    --color-primary-100: #e0e7ff;
+    --color-primary-400: #818cf8;
+    --color-primary-500: #6366f1;
+    --color-primary-600: #4f46e5;
+    --color-primary-900: #312e81;
+
+    --color-base-50: #f8fafc;
+    --color-base-100: #f1f5f9;
+    --color-base-400: #94a3b8;
+    --color-base-700: #334155;
+    --color-base-800: #1e293b;
+    --color-base-900: #0f172a;
+    --color-base-950: #020617;
+
+    --color-accent-500: #8b5cf6;
+
+    --font-sans: 'Inter', sans-serif;
+}
+
+/* ================= BASE ================= */
+@layer base {
+    body {
+        @apply bg-base-950 text-base-50 font-sans antialiased overflow-x-hidden selection:bg-primary-500/30 selection:text-primary-100;
+    }
+}
+
+/* ================= UTILITIES ================= */
+@layer utilities {
+
+    .box-panel {
+        @apply bg-base-900 border border-white/10 rounded-2xl shadow-lg;
+    }
+
+    .box-card {
+        @apply bg-base-900 border border-white/10 rounded-2xl p-6 transition-all duration-300 hover:border-white/20 shadow-lg hover:shadow-xl;
+    }
+
+    .box-input {
+        @apply w-full bg-base-950 border border-white/10 rounded-2xl px-4 py-3 text-base-50 placeholder-base-400 focus:outline-none focus:ring-2 focus:ring-primary-500/50 focus:border-primary-500 transition-colors;
+    }
+
+    .box-button-primary {
+        @apply bg-primary-600 hover:bg-primary-500 text-white font-medium py-3 px-6 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500/50 active:scale-[0.98] shadow-lg shadow-primary-900/20 disabled:opacity-50 disabled:active:scale-100;
+    }
+
+    .box-button-secondary {
+        @apply bg-base-800 hover:bg-base-700 text-base-50 border border-white/10 font-medium py-3 px-6 rounded-2xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-white/20 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100;
+    }
+
+    .text-gradient {
+        @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-400 to-accent-500;
+    }
+}
+
+/* ================= SCROLLBAR ================= */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #1e293b;
+    border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #334155;
+}
+
+/* ================= ANIMATIONS ================= */
+.fade-in {
+    animation: fadeIn 0.3s ease-in-out forwards;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
