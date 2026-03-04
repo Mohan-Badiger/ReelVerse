@@ -63,7 +63,7 @@ const AdminLayout = () => {
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
-                                className="mx-auto w-8 h-8 rounded bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center font-bold text-white shadow-lg"
+                                className="mx-auto w-8 h-8 rounded bg-gradient-to-br from-primary-500 to-accent-600 flex items-center justify-center font-bold text-white shadow-sm"
                             >
                                 R
                             </motion.div>
@@ -78,7 +78,7 @@ const AdminLayout = () => {
                             key={link.name}
                             to={link.path}
                             className={({ isActive }) => `
-                                flex items-center px-3 py-2.5 rounded-lg transition-all duration-200 group
+                                flex items-center px-3 py-2.5 rounded-sm transition-all duration-200 group
                                 ${isActive
                                     ? 'bg-base-900 text-primary-400 font-medium border border-base-800 shadow-sm'
                                     : 'text-base-400 hover:text-base-100 hover:bg-base-900 border border-transparent'
@@ -106,7 +106,7 @@ const AdminLayout = () => {
                 <div className="p-4 border-t border-base-800 shrink-0">
                     <button
                         onClick={handleLogout}
-                        className={`flex items-center w-full px-3 py-2.5 rounded-lg text-base-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors ${!isSidebarOpen && 'justify-center'
+                        className={`flex items-center w-full px-3 py-2.5 rounded-sm text-base-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors ${!isSidebarOpen && 'justify-center'
                             }`}
                     >
                         <LogOut className={`shrink-0 w-5 h-5 ${isSidebarOpen ? 'mr-3' : ''}`} />
@@ -122,26 +122,26 @@ const AdminLayout = () => {
                     <div className="flex items-center">
                         <button
                             onClick={() => setIsSidebarOpen(!isSidebarOpen)}
-                            className="mr-4 p-2 rounded-md hover:bg-base-800 text-base-400 transition-colors hidden md:block"
+                            className="mr-4 p-2 rounded-sm hover:bg-base-800 text-base-400 transition-colors hidden md:block"
                         >
                             <Menu className="w-5 h-5" />
                         </button>
 
                         {/* Mobile Menu Toggle Stub */}
-                        <button className="mr-4 md:hidden p-2 rounded-md border border-base-800 text-base-400">
+                        <button className="mr-4 md:hidden p-2 rounded-sm border border-base-800 text-base-400">
                             <Menu className="w-5 h-5" />
                         </button>
                     </div>
 
                     <div className="flex items-center space-x-4">
-                        <button className="p-2 rounded-full hover:bg-base-800 text-base-400 relative transition-colors">
+                        <button className="p-2 rounded-sm hover:bg-base-800 text-base-400 relative transition-colors">
                             <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-full ring-2 ring-base-950"></span>
+                            <span className="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-sm ring-2 ring-base-950"></span>
                         </button>
-                        <button className="p-2 rounded-full border border-base-800 hover:bg-base-800 text-base-400 transition-colors">
+                        <button className="p-2 rounded-sm border border-base-800 hover:bg-base-800 text-base-400 transition-colors">
                             <Settings className="w-5 h-5" />
                         </button>
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-600 to-accent-600 flex items-center justify-center shadow-lg cursor-pointer ring-2 ring-base-950">
+                        <div className="w-8 h-8 rounded-sm bg-gradient-to-r from-primary-600 to-accent-600 flex items-center justify-center shadow-sm cursor-pointer ring-2 ring-base-950">
                             <span className="text-white text-xs font-bold shadow-sm">SA</span>
                         </div>
                     </div>

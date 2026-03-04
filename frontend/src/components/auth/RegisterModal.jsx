@@ -44,11 +44,11 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                         className="box-panel p-8 w-full max-w-md relative overflow-hidden"
                     >
                         {/* Glow decorative effect */}
-                        <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-primary-900/20 blur-[80px] rounded-full pointer-events-none" />
+                        <div className="absolute top-[-30%] left-[-10%] w-[60%] h-[60%] bg-primary-900/20 blur-[80px] rounded-sm pointer-events-none" />
 
                         <button
                             onClick={onClose}
-                            className="absolute right-4 top-4 p-2 text-base-400 hover:text-base-100 hover:bg-base-800 rounded-lg transition-colors z-10"
+                            className="absolute right-4 top-4 p-2 text-base-400 hover:text-base-100 hover:bg-base-800 rounded-sm transition-colors z-10"
                         >
                             <X size={20} />
                         </button>
@@ -110,7 +110,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                     className="box-button-primary w-full h-12 mt-2 flex items-center justify-center"
                                 >
                                     {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        <div className="w-5 h-5 border-2 border-base-800 border-t-white rounded-sm animate-spin" />
                                     ) : (
                                         'Create Account'
                                     )}

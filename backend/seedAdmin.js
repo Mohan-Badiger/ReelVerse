@@ -12,8 +12,8 @@ const seedAdmin = async () => {
 
         const admin = await Admin.create({
             name: 'Super Admin',
-            email: 'admin@reelverse.com',
-            password: 'adminpassword123',
+            email: process.env.ADMIN_EMAIL || 'admin@mohan.com',
+            password: process.env.ADMIN_PASSWORD || 'admin@123',
         });
 
         console.log(`Admin account created with email: ${admin.email}`);

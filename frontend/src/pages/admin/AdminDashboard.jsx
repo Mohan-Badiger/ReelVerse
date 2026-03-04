@@ -7,11 +7,11 @@ import toast from 'react-hot-toast';
 const MetricCard = ({ title, value, icon: Icon, trend }) => (
     <div className="box-card hover:-translate-y-1 transition-transform duration-300">
         <div className="flex justify-between items-start mb-4">
-            <div className="p-3 bg-base-800 rounded-lg">
+            <div className="p-3 bg-base-800 rounded-sm">
                 <Icon className="w-6 h-6 text-primary-400" />
             </div>
             {trend && (
-                <span className={`text-xs font-semibold px-2 py-1 rounded-full ${trend > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
+                <span className={`text-xs font-semibold px-2 py-1 rounded-sm ${trend > 0 ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'}`}>
                     {trend > 0 ? '+' : ''}{trend}%
                 </span>
             )}
@@ -50,7 +50,7 @@ const AdminDashboard = () => {
     if (isLoading) {
         return (
             <div className="h-full flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-full animate-spin"></div>
+                <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
             </div>
         );
     }
@@ -86,7 +86,7 @@ const AdminDashboard = () => {
                     <div className="space-y-6">
                         {[1, 2, 3].map((i) => (
                             <div key={i} className="flex items-start space-x-4">
-                                <div className="w-2 h-2 mt-2 rounded-full bg-primary-500 shrink-0"></div>
+                                <div className="w-2 h-2 mt-2 rounded-sm bg-primary-500 shrink-0"></div>
                                 <div>
                                     <p className="text-sm text-base-100">User registered</p>
                                     <p className="text-xs text-base-500 mt-1">2 hours ago</p>

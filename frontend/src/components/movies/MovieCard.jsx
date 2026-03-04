@@ -8,7 +8,7 @@ const MovieCard = ({ movie, index }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.05, duration: 0.5, ease: "easeOut" }}
-            className="group relative rounded-2xl overflow-hidden cursor-pointer w-full aspect-[2/3] flex-shrink-0 bg-base-900 border border-white/10 shadow-lg hover:shadow-xl hover:border-white/20 transition-all duration-300"
+            className="group relative rounded-sm overflow-hidden cursor-pointer w-full aspect-[2/3] flex-shrink-0 bg-base-900 border border-base-800 shadow-sm hover:shadow-sm hover:border-base-800 transition-all duration-300"
         >
             <img
                 src={movie.posterUrl}
@@ -24,16 +24,16 @@ const MovieCard = ({ movie, index }) => {
 
                 <div className="flex items-center space-x-2 mb-6 text-xs font-medium text-slate-300 translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-75">
                     <span>{new Date(movie.releaseDate).getFullYear()}</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-600"></span>
+                    <span className="w-1 h-1 rounded-sm bg-slate-600"></span>
                     <span>{movie.duration}m</span>
-                    <span className="w-1 h-1 rounded-full bg-slate-600"></span>
-                    <span className="px-1.5 py-0.5 border border-white/20 rounded-md uppercase tracking-wider">{movie.language}</span>
+                    <span className="w-1 h-1 rounded-sm bg-slate-600"></span>
+                    <span className="px-1.5 py-0.5 border border-base-800 rounded-sm uppercase tracking-wider">{movie.language}</span>
                 </div>
 
                 <div className="translate-y-4 group-hover:translate-y-0 transition-transform duration-300 delay-100">
                     <Link
                         to={`/movie/${movie._id}`}
-                        className="w-full bg-white text-base-950 font-bold py-3 rounded-xl flex items-center justify-center hover:bg-slate-200 transition-colors shadow-lg shadow-white/10 active:scale-95 duration-200"
+                        className="w-full bg-white text-base-950 font-bold py-3 rounded-sm flex items-center justify-center hover:bg-slate-200 transition-colors shadow-sm shadow-white/10 active:scale-95 duration-200"
                     >
                         <Play size={16} className="mr-2" fill="currentColor" /> Book Tickets
                     </Link>

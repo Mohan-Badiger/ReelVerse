@@ -48,10 +48,10 @@ const Movies = () => {
                             placeholder="Search movies..."
                             value={searchTerm}
                             onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full bg-base-900 border border-white/10 rounded-full py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
+                            className="w-full bg-base-900 border border-base-800 rounded-sm py-3 pl-12 pr-4 text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-primary-500/50 transition-all font-medium"
                         />
                     </div>
-                    <button className="bg-base-900 border border-white/10 p-3 rounded-full hover:bg-white/5 transition-colors text-slate-300">
+                    <button className="bg-base-900 border border-base-800 p-3 rounded-sm hover:bg-white/5 transition-colors text-slate-300">
                         <Filter size={20} />
                     </button>
                 </div>
@@ -59,12 +59,12 @@ const Movies = () => {
 
             {isLoading ? (
                 <div className="flex items-center justify-center min-h-[40vh]">
-                    <div className="w-8 h-8 border-4 border-white/10 border-t-primary-500 rounded-full animate-spin"></div>
+                    <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
                 </div>
             ) : (
                 <>
                     {filteredMovies.length === 0 ? (
-                        <div className="box-panel w-full p-16 text-center text-slate-400 border border-dashed border-white/10 bg-transparent shadow-none">
+                        <div className="box-panel w-full p-16 text-center text-slate-400 border border-dashed border-base-800 bg-transparent shadow-none">
                             <p className="text-lg mb-2">No movies found matching "{searchTerm}"</p>
                             <button onClick={() => setSearchTerm('')} className="text-primary-400 hover:text-white transition-colors">Clear search</button>
                         </div>

@@ -19,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Router>
-      <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-white/10' }} />
+      <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-base-800' }} />
 
       <Routes>
 

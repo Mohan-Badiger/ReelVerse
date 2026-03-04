@@ -1,15 +1,20 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
-import { Lock, Mail, ShieldAlert } from 'lucide-react';
-import toast from 'react-hot-toast';
-import { useDispatch } from 'react-redux';
-import { setAdminCredentials } from '../store/slices/authSlice';
-import adminApi from '../services/adminApi';
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { Lock, Mail, ShieldAlert } from "lucide-react";
+import { motion } from "framer-motion";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
+import { setAdminCredentials } from "../store/slices/authSlice";
+import adminApi from "../services/adminApi";
 
 const AdminLogin = () => {
-    const [credentials, setCredentials] = useState({ email: '', password: '' });
+    const [credentials, setCredentials] = useState({
+        email: "",
+        password: ""
+    });
+
     const [isLoading, setIsLoading] = useState(false);
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -22,99 +27,117 @@ const AdminLogin = () => {
         setIsLoading(true);
 
         try {
-            const res = await adminApi.post('/login', credentials);
+            const res = await adminApi.post("/login", credentials);
 
-            // Assuming the backend sends back user info or a token payload in res.data
-            // The actual JWT is in an HTTP-only cookie, 
-            // but we might want to store user details in Redux.
             dispatch(setAdminCredentials(res.data));
 
-            toast.success('Admin authentication successful');
-            navigate('/dashboard');
+            toast.success("Admin login successful");
+            navigate("/dashboard");
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Authentication failed');
+            toast.error(error.response?.data?.message || "Authentication failed");
         } finally {
             setIsLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-950 p-6 relative overflow-hidden">
-            {/* Ambient Background Glows */}
-            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary-900/40 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent-600/20 blur-[120px] rounded-full pointer-events-none" />
+        <div className="min-h-screen flex items-center justify-center bg-base-950 px-6">
 
             <motion.div
-                initial={{ opacity: 0, y: 20 }}
+                initial={{ opacity: 0, y: 15 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.4, ease: "easeOut" }}
-                className="w-full max-w-md"
+                transition={{ duration: 0.35 }}
+                className="w-full max-w-sm"
             >
-                <div className="box-panel p-10 relative z-10 border border-base-800 shadow-2xl">
+                <div className="bg-base-900 border border-base-800 rounded-sm p-8 shadow-sm">
+
+                    {/* Header */}
                     <div className="flex flex-col items-center mb-8">
-                        <div className="h-16 w-16 bg-base-900 border border-base-700 rounded-2xl flex items-center justify-center shadow-lg mb-4">
-                            <ShieldAlert className="text-primary-400 w-8 h-8" />
+                        <div className="w-12 h-12 flex items-center justify-center border border-base-700 bg-base-950 rounded-sm mb-4">
+                            <ShieldAlert className="w-6 h-6 text-primary-400" />
                         </div>
-                        <h1 className="text-2xl font-bold tracking-tight text-base-50">Admin Portal</h1>
-                        <p className="text-sm text-base-400 mt-2">Sign in to access the ReelVerse dashboard</p>
+
+                        <h1 className="text-xl font-semibold text-base-50">
+                            Admin Portal
+                        </h1>
+
+                        <p className="text-sm text-base-400 mt-1">
+                            Sign in to access dashboard
+                        </p>
                     </div>
 
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-base-300 ml-1">Work Email</label>
+                    {/* Form */}
+                    <form onSubmit={handleSubmit} className="space-y-5">
+
+                        {/* Email */}
+                        <div>
+                            <label className="text-sm text-base-300 mb-1 block">
+                                Email
+                            </label>
+
                             <div className="relative">
-                                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-base-500" />
+                                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-500" />
+
                                 <input
                                     type="email"
                                     name="email"
                                     required
                                     value={credentials.email}
                                     onChange={handleChange}
-                                    className="box-input pl-12"
                                     placeholder="admin@reelverse.com"
+                                    className="w-full h-11 pl-10 pr-3 text-sm bg-base-950 border border-base-800 rounded-sm outline-none focus:border-primary-500 transition"
                                 />
                             </div>
                         </div>
 
-                        <div className="space-y-1">
-                            <label className="text-sm font-medium text-base-300 ml-1">Password</label>
+                        {/* Password */}
+                        <div>
+                            <label className="text-sm text-base-300 mb-1 block">
+                                Password
+                            </label>
+
                             <div className="relative">
-                                <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-base-500" />
+                                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-base-500" />
+
                                 <input
                                     type="password"
                                     name="password"
                                     required
                                     value={credentials.password}
                                     onChange={handleChange}
-                                    className="box-input pl-12"
                                     placeholder="••••••••"
+                                    className="w-full h-11 pl-10 pr-3 text-sm bg-base-950 border border-base-800 rounded-sm outline-none focus:border-primary-500 transition"
                                 />
                             </div>
                         </div>
 
+                        {/* Button */}
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="box-button-primary w-full flex items-center justify-center"
+                            className="w-full h-11 bg-primary-600 hover:bg-primary-700 text-white text-sm font-medium rounded-sm flex items-center justify-center transition"
                         >
                             {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-4 h-4 border-2 border-base-800 border-t-white rounded-sm animate-spin"></div>
                             ) : (
-                                'Authenticate'
+                                "Login"
                             )}
                         </button>
+
                     </form>
                 </div>
 
-                <div className="mt-8 text-center">
+                {/* Back button */}
+                <div className="text-center mt-6">
                     <button
-                        onClick={() => window.location.href = 'http://localhost:5173'}
-                        className="text-sm text-base-500 hover:text-base-300 transition-colors"
+                        onClick={() => window.location.href = "http://localhost:5173"}
+                        className="text-sm text-base-500 hover:text-base-300"
                     >
-                        &larr; Return to Application
+                        ← Back to Application
                     </button>
                 </div>
             </motion.div>
+
         </div>
     );
 };

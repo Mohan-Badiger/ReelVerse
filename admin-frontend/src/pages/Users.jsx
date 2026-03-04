@@ -53,7 +53,7 @@ const Users = () => {
             <div className="box-panel flex-1 overflow-hidden flex flex-col">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center p-12">
-                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
                     </div>
                 ) : users.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
@@ -83,7 +83,7 @@ const Users = () => {
                                     >
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
-                                                <div className="w-8 h-8 rounded-full bg-base-800 border border-base-700 flex items-center justify-center text-xs font-bold text-primary-400">
+                                                <div className="w-8 h-8 rounded-sm bg-base-800 border border-base-700 flex items-center justify-center text-xs font-bold text-primary-400">
                                                     {user.name.charAt(0).toUpperCase()}
                                                 </div>
                                                 <span className="font-medium text-base-100">{user.name}</span>
@@ -100,7 +100,7 @@ const Users = () => {
                                         <td className="py-4 px-6 text-right">
                                             <button
                                                 onClick={() => handleDelete(user._id)}
-                                                className="p-2 text-base-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
+                                                className="p-2 text-base-500 hover:text-rose-400 hover:bg-rose-500/10 rounded-sm transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100"
                                                 title="Delete User"
                                             >
                                                 <Trash2 size={16} />

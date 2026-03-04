@@ -49,7 +49,7 @@ const MovieDetails = () => {
         fetchMovieData();
     }, [id]);
 
-    if (isLoading) return <div className="flex justify-center items-center h-[80vh]"><div className="w-10 h-10 border-4 border-white/10 border-t-primary-500 rounded-full animate-spin"></div></div>;
+    if (isLoading) return <div className="flex justify-center items-center h-[80vh]"><div className="w-10 h-10 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div></div>;
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
     return (
@@ -68,13 +68,13 @@ const MovieDetails = () => {
                 <img
                     src={movie.posterUrl}
                     alt={movie.title}
-                    className="w-full md:w-80 h-auto rounded-2xl shadow-xl z-10 mx-auto md:mx-0 object-cover border border-white/10"
+                    className="w-full md:w-80 h-auto rounded-sm shadow-sm z-10 mx-auto md:mx-0 object-cover border border-base-800"
                 />
 
                 <div className="z-10 flex-1 flex flex-col justify-center">
                     <div className="flex flex-wrap gap-2 mb-4">
                         {movie.genre.map((g, i) => (
-                            <span key={i} className="px-3 py-1 bg-white/5 backdrop-blur-md rounded-lg text-xs font-semibold tracking-wider text-primary-400 border border-white/10 uppercase">
+                            <span key={i} className="px-3 py-1 bg-white/5 backdrop-blur-md rounded-sm text-xs font-semibold tracking-wider text-primary-400 border border-base-800 uppercase">
                                 {g}
                             </span>
                         ))}
@@ -83,7 +83,7 @@ const MovieDetails = () => {
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">{movie.title}</h1>
                     <p className="text-slate-300 text-base md:text-lg mb-8 max-w-2xl leading-relaxed">{movie.description}</p>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-sm md:text-base border-t border-white/10 pt-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-sm md:text-base border-t border-base-800 pt-8">
                         <div>
                             <p className="text-slate-500 uppercase tracking-widest text-xs mb-1">Director</p>
                             <p className="font-semibold text-white">{movie.director}</p>
@@ -116,16 +116,16 @@ const MovieDetails = () => {
                         No shows scheduled for this movie yet.
                     </div>
                 ) : (
-                    <div className="space-y-8 box-panel p-8 bg-base-900 border-white/10 shadow-lg">
+                    <div className="space-y-8 box-panel p-8 bg-base-900 border-base-800 shadow-sm">
                         {/* Date Selector */}
-                        <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide border-b border-white/10">
+                        <div className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide border-b border-base-800">
                             {Object.keys(groupedShows).map((date) => (
                                 <button
                                     key={date}
                                     onClick={() => setSelectedDate(date)}
-                                    className={`flex flex-col items-center min-w-[100px] px-6 py-4 rounded-xl transition-all border ${selectedDate === date
-                                        ? 'bg-primary-600 text-white border-primary-500 shadow-lg shadow-primary-500/20'
-                                        : 'bg-base-800 text-slate-400 hover:text-white border-white/5 hover:border-white/20'
+                                    className={`flex flex-col items-center min-w-[100px] px-6 py-4 rounded-sm transition-all border ${selectedDate === date
+                                        ? 'bg-primary-600 text-white border-primary-500 shadow-sm shadow-primary-500/20'
+                                        : 'bg-base-800 text-slate-400 hover:text-white border-base-800 hover:border-base-800'
                                         }`}
                                 >
                                     <span className="text-xs font-semibold uppercase tracking-wider">{date.split(' ')[0]}</span>
@@ -138,7 +138,7 @@ const MovieDetails = () => {
                         {/* Theatre & Showtime List */}
                         <div className="space-y-6 pt-4">
                             {groupedShows[selectedDate]?.map((show) => (
-                                <div key={show._id} className="bg-base-950 p-6 md:p-8 rounded-2xl border border-white/5 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-white/10 transition-all">
+                                <div key={show._id} className="bg-base-950 p-6 md:p-8 rounded-sm border border-base-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-base-800 transition-all">
                                     <div>
                                         <h3 className="text-xl font-bold text-white flex items-center">
                                             {show.theatre.name}
@@ -148,7 +148,7 @@ const MovieDetails = () => {
                                         </p>
                                         <div className="flex flex-wrap gap-2 mt-4">
                                             {show.theatre.facilities.map((f, i) => (
-                                                <span key={i} className="text-xs px-2.5 py-1 bg-white/5 rounded-md text-slate-300 border border-white/10">
+                                                <span key={i} className="text-xs px-2.5 py-1 bg-white/5 rounded-sm text-slate-300 border border-base-800">
                                                     {f}
                                                 </span>
                                             ))}
@@ -158,7 +158,7 @@ const MovieDetails = () => {
                                     <div className="flex flex-wrap items-center gap-4">
                                         <button
                                             onClick={() => navigate(`/checkout/${show._id}`)}
-                                            className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-base-950 border border-white/10 hover:border-white rounded-xl transition-all font-bold flex flex-col items-center min-w-[120px]"
+                                            className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-base-950 border border-base-800 hover:border-white rounded-sm transition-all font-bold flex flex-col items-center min-w-[120px]"
                                         >
                                             <span className="text-lg">{show.time}</span>
                                             <span className="text-xs font-medium opacity-70">${show.ticketPrice}</span>

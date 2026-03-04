@@ -18,8 +18,8 @@ const ProtectedRoute = ({ children }) => {
 
 function App() {
     return (
-        <Router>
-            <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-white/10' }} />
+        <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+            <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-base-800' }} />
 
             <Routes>
                 <Route path="/login" element={
@@ -30,7 +30,7 @@ function App() {
 
                 <Route path="/" element={
                     <ProtectedRoute>
-                        <Suspense fallback={<div className="h-screen bg-base-950 flex items-center justify-center"><div className="w-8 h-8 rounded-full border-4 border-t-primary-500 border-base-800 animate-spin" /></div>}>
+                        <Suspense fallback={<div className="h-screen bg-base-950 flex items-center justify-center"><div className="w-8 h-8 rounded-sm border-4 border-t-primary-500 border-base-800 animate-spin" /></div>}>
                             <AdminLayout />
                         </Suspense>
                     </ProtectedRoute>

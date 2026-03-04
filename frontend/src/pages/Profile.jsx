@@ -55,19 +55,19 @@ const Profile = () => {
             case 'completed':
             case 'paid':
                 return (
-                    <span className="flex items-center px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-lg border border-emerald-500/20">
+                    <span className="flex items-center px-3 py-1 bg-emerald-500/10 text-emerald-400 text-xs font-bold rounded-sm border border-emerald-500/20">
                         <CheckCircle2 size={14} className="mr-1.5" /> Confirmed
                     </span>
                 );
             case 'pending':
                 return (
-                    <span className="flex items-center px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-bold rounded-lg border border-amber-500/20">
+                    <span className="flex items-center px-3 py-1 bg-amber-500/10 text-amber-400 text-xs font-bold rounded-sm border border-amber-500/20">
                         <Clock size={14} className="mr-1.5" /> Pending
                     </span>
                 );
             default:
                 return (
-                    <span className="flex items-center px-3 py-1 bg-slate-500/10 text-slate-400 text-xs font-bold rounded-lg border border-slate-500/20">
+                    <span className="flex items-center px-3 py-1 bg-slate-500/10 text-slate-400 text-xs font-bold rounded-sm border border-slate-500/20">
                         {status}
                     </span>
                 );
@@ -80,7 +80,7 @@ const Profile = () => {
                 {/* Sidebar */}
                 <div className="w-full lg:w-1/4 flex flex-col gap-6">
                     <div className="box-panel p-6 flex flex-col items-center text-center">
-                        <div className="w-24 h-24 mb-4 rounded-full bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-3xl font-black text-primary-400 shadow-lg shadow-primary-500/10 relative overflow-hidden">
+                        <div className="w-24 h-24 mb-4 rounded-sm bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-3xl font-black text-primary-400 shadow-sm shadow-primary-500/10 relative overflow-hidden">
                             {userInfo?.name?.charAt(0).toUpperCase()}
                             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-primary-500/20 to-transparent"></div>
                         </div>
@@ -91,7 +91,7 @@ const Profile = () => {
                     <div className="box-panel overflow-hidden p-2 flex lg:flex-col gap-1 overflow-x-auto scrollbar-hide">
                         <button
                             onClick={() => setActiveTab('bookings')}
-                            className={`flex items-center px-4 py-4 rounded-xl transition-all whitespace-nowrap font-medium text-sm
+                            className={`flex items-center px-4 py-4 rounded-sm transition-all whitespace-nowrap font-medium text-sm
                                 ${activeTab === 'bookings'
                                     ? 'bg-primary-500/10 text-primary-400'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -101,7 +101,7 @@ const Profile = () => {
                         </button>
                         <button
                             onClick={() => setActiveTab('settings')}
-                            className={`flex items-center px-4 py-4 rounded-xl transition-all whitespace-nowrap font-medium text-sm
+                            className={`flex items-center px-4 py-4 rounded-sm transition-all whitespace-nowrap font-medium text-sm
                                 ${activeTab === 'settings'
                                     ? 'bg-primary-500/10 text-primary-400'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white'
@@ -129,16 +129,16 @@ const Profile = () => {
 
                                 {loadingBookings ? (
                                     <div className="flex justify-center py-20">
-                                        <div className="w-10 h-10 border-4 border-white/10 border-t-primary-500 rounded-full animate-spin"></div>
+                                        <div className="w-10 h-10 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
                                     </div>
                                 ) : bookings.length === 0 ? (
                                     <div className="box-panel p-16 flex flex-col items-center justify-center text-center">
-                                        <div className="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mb-6">
+                                        <div className="w-24 h-24 bg-white/5 rounded-sm flex items-center justify-center mb-6">
                                             <Ticket size={40} className="text-slate-500" />
                                         </div>
                                         <h3 className="text-2xl font-bold text-white mb-2">No bookings yet</h3>
                                         <p className="text-slate-400 max-w-sm mb-8">When you book tickets for your favorite movies, they will appear here.</p>
-                                        <button onClick={() => window.location.href = '/movies'} className="px-8 py-3 bg-white text-base-950 font-bold rounded-xl hover:bg-slate-200 transition-colors">
+                                        <button onClick={() => window.location.href = '/movies'} className="px-8 py-3 bg-white text-base-950 font-bold rounded-sm hover:bg-slate-200 transition-colors">
                                             Browse Movies
                                         </button>
                                     </div>
@@ -152,14 +152,14 @@ const Profile = () => {
                                                         <img
                                                             src={booking.show.movie.posterUrl}
                                                             alt={booking.show.movie.title}
-                                                            className="w-full h-48 sm:h-full object-cover rounded-xl"
+                                                            className="w-full h-48 sm:h-full object-cover rounded-sm"
                                                         />
                                                     </div>
 
                                                     {/* Details */}
                                                     <div className="p-6 sm:p-6 sm:pl-0 flex-1 flex flex-col justify-between">
                                                         <div>
-                                                            <div className="flex border-b border-white/5 pb-4 mb-4 justify-between items-start">
+                                                            <div className="flex border-b border-base-800 pb-4 mb-4 justify-between items-start">
                                                                 <div>
                                                                     <h3 className="text-xl sm:text-2xl font-black text-white mb-2">{booking.show.movie.title}</h3>
                                                                     <div className="flex items-center text-slate-400 text-sm">
@@ -191,8 +191,8 @@ const Profile = () => {
                                                         </div>
 
                                                         {/* Actions */}
-                                                        <div className="flex justify-end gap-3 pt-4 border-t border-white/5">
-                                                            <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-lg text-sm font-semibold transition-colors flex items-center group-hover:bg-white/10">
+                                                        <div className="flex justify-end gap-3 pt-4 border-t border-base-800">
+                                                            <button className="px-4 py-2 bg-white/5 hover:bg-white/10 text-white rounded-sm text-sm font-semibold transition-colors flex items-center group-hover:bg-white/10">
                                                                 <Download size={16} className="mr-2 text-slate-400" /> Download Ticket
                                                             </button>
                                                         </div>
@@ -237,12 +237,12 @@ const Profile = () => {
                                             type="email"
                                             value={userInfo?.email}
                                             disabled
-                                            className="box-input w-full h-14 opacity-50 cursor-not-allowed bg-base-950 border-white/5"
+                                            className="box-input w-full h-14 opacity-50 cursor-not-allowed bg-base-950 border-base-800"
                                         />
                                         <p className="text-xs text-slate-500 mt-2 font-medium">To change your email address, please contact support.</p>
                                     </div>
 
-                                    <div className="pt-4 border-t border-white/10">
+                                    <div className="pt-4 border-t border-base-800">
                                         <label className="block text-slate-400 text-sm font-bold mb-2">New Password <span className="font-normal text-slate-500">(Optional)</span></label>
                                         <input
                                             type="password"
@@ -258,7 +258,7 @@ const Profile = () => {
                                         <button
                                             type="submit"
                                             disabled={isLoading}
-                                            className="w-full sm:w-auto px-8 h-14 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-xl transition-all disabled:opacity-50 active:scale-95 shadow-lg shadow-primary-500/20"
+                                            className="w-full sm:w-auto px-8 h-14 bg-primary-600 hover:bg-primary-500 text-white font-bold rounded-sm transition-all disabled:opacity-50 active:scale-95 shadow-sm shadow-primary-500/20"
                                         >
                                             {isLoading ? 'Saving Changes...' : 'Save Changes'}
                                         </button>

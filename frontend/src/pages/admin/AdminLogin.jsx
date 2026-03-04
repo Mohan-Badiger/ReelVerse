@@ -35,8 +35,8 @@ const AdminLogin = () => {
     return (
         <div className="min-h-screen flex items-center justify-center bg-base-950 p-6 relative overflow-hidden">
             {/* Ambient Background Glows */}
-            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary-900/40 blur-[120px] rounded-full pointer-events-none" />
-            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent-600/20 blur-[120px] rounded-full pointer-events-none" />
+            <div className="absolute top-[-20%] left-[-10%] w-[50%] h-[50%] bg-primary-900/40 blur-[120px] rounded-sm pointer-events-none" />
+            <div className="absolute bottom-[-20%] right-[-10%] w-[50%] h-[50%] bg-accent-600/20 blur-[120px] rounded-sm pointer-events-none" />
 
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -44,9 +44,9 @@ const AdminLogin = () => {
                 transition={{ duration: 0.4, ease: "easeOut" }}
                 className="w-full max-w-md"
             >
-                <div className="box-panel p-10 relative z-10 border border-base-800 shadow-2xl">
+                <div className="box-panel p-10 relative z-10 border border-base-800 shadow-sm">
                     <div className="flex flex-col items-center mb-8">
-                        <div className="h-16 w-16 bg-base-900 border border-base-700 rounded-2xl flex items-center justify-center shadow-lg mb-4">
+                        <div className="h-16 w-16 bg-base-900 border border-base-700 rounded-sm flex items-center justify-center shadow-sm mb-4">
                             <ShieldAlert className="text-primary-400 w-8 h-8" />
                         </div>
                         <h1 className="text-2xl font-bold tracking-tight text-base-50">Admin Portal</h1>
@@ -92,7 +92,7 @@ const AdminLogin = () => {
                             className="box-button-primary w-full flex items-center justify-center"
                         >
                             {isLoading ? (
-                                <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                <div className="w-5 h-5 border-2 border-base-800 border-t-white rounded-sm animate-spin" />
                             ) : (
                                 'Authenticate'
                             )}

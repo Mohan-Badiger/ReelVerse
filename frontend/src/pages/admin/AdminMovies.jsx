@@ -55,7 +55,7 @@ const AdminMovies = () => {
             <div className="box-panel flex-1 overflow-hidden flex flex-col">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center p-12">
-                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
                     </div>
                 ) : movies.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
@@ -110,14 +110,14 @@ const AdminMovies = () => {
                                         <td className="py-4 px-6 text-right">
                                             <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 focus-within:opacity-100 transition-opacity">
                                                 <button
-                                                    className="p-2 text-primary-400 hover:bg-primary-500/10 rounded-lg transition-colors"
+                                                    className="p-2 text-primary-400 hover:bg-primary-500/10 rounded-sm transition-colors"
                                                     title="Edit Movie"
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
                                                 <button
                                                     onClick={() => handleDelete(movie._id)}
-                                                    className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-lg transition-colors"
+                                                    className="p-2 text-rose-400 hover:bg-rose-500/10 rounded-sm transition-colors"
                                                     title="Delete Movie"
                                                 >
                                                     <Trash2 size={16} />

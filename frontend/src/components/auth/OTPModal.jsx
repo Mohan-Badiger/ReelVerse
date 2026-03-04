@@ -47,17 +47,17 @@ const OTPModal = ({ isOpen, onClose, email }) => {
                         className="box-panel p-8 w-full max-w-md relative overflow-hidden text-center"
                     >
                         {/* Glow decorative effect */}
-                        <div className="absolute top-[-30%] left-[20%] w-[60%] h-[60%] bg-emerald-900/20 blur-[80px] rounded-full pointer-events-none" />
+                        <div className="absolute top-[-30%] left-[20%] w-[60%] h-[60%] bg-emerald-900/20 blur-[80px] rounded-sm pointer-events-none" />
 
                         <button
                             onClick={onClose}
-                            className="absolute right-4 top-4 p-2 text-base-400 hover:text-base-100 hover:bg-base-800 rounded-lg transition-colors z-10"
+                            className="absolute right-4 top-4 p-2 text-base-400 hover:text-base-100 hover:bg-base-800 rounded-sm transition-colors z-10"
                         >
                             <X size={20} />
                         </button>
 
                         <div className="relative z-10">
-                            <div className="mx-auto w-12 h-12 bg-base-900 border border-base-700 rounded-xl flex items-center justify-center mb-4 shadow-lg">
+                            <div className="mx-auto w-12 h-12 bg-base-900 border border-base-700 rounded-sm flex items-center justify-center mb-4 shadow-sm">
                                 <KeyRound className="w-6 h-6 text-primary-400" />
                             </div>
                             <h2 className="text-2xl font-bold tracking-tight text-base-50 mb-2">Verify email</h2>
@@ -86,7 +86,7 @@ const OTPModal = ({ isOpen, onClose, email }) => {
                                     className="box-button-primary w-full h-12 mt-4 flex items-center justify-center"
                                 >
                                     {isLoading ? (
-                                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                        <div className="w-5 h-5 border-2 border-base-800 border-t-white rounded-sm animate-spin" />
                                     ) : (
                                         'Verify & Continue'
                                     )}

@@ -35,7 +35,13 @@ const limiter = rateLimit({
 app.use('/api/', limiter);
 
 // Middleware
-app.use(cors({ origin: process.env.FRONTEND_URL || 'http://localhost:5173', credentials: true }));
+app.use(cors({
+    origin: [
+        process.env.FRONTEND_URL || 'http://localhost:5173',
+        process.env.ADMIN_FRONTEND_URL || 'http://localhost:5174'
+    ],
+    credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -73,5 +79,5 @@ app.use(errorHandler);
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
-    console.log(`Server running in ${process.env.NODE_ENV} mode on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

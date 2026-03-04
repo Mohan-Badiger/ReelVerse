@@ -69,15 +69,15 @@ const Navbar = () => {
                     <div className="hidden md:flex items-center space-x-6">
                         {userInfo ? (
                             <div className="flex items-center gap-4">
-                                <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-full hover:bg-base-800 transition-colors border border-transparent hover:border-base-700">
-                                    <div className="w-7 h-7 rounded-full bg-base-800 border border-base-700 flex items-center justify-center text-xs font-semibold text-primary-400">
+                                <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-sm hover:bg-base-800 transition-colors border border-transparent hover:border-base-700">
+                                    <div className="w-7 h-7 rounded-sm bg-base-800 border border-base-700 flex items-center justify-center text-xs font-semibold text-primary-400">
                                         {userInfo.name.charAt(0).toUpperCase()}
                                     </div>
                                     <span className="text-sm font-medium text-base-100">{userInfo.name.split(' ')[0]}</span>
                                 </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="p-2 rounded-lg text-base-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    className="p-2 rounded-sm text-base-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
                                     title="Sign Out"
                                 >
                                     <LogOut size={18} />
@@ -111,23 +111,23 @@ const Navbar = () => {
                         animate={{ opacity: 1, y: 0 }}
                         exit={{ opacity: 0, y: -10 }}
                         transition={{ duration: 0.2 }}
-                        className="fixed top-16 left-0 w-full bg-base-950/95 backdrop-blur-xl border-b border-base-800 z-30 md:hidden shadow-2xl"
+                        className="fixed top-16 left-0 w-full bg-base-950/95 backdrop-blur-xl border-b border-base-800 z-30 md:hidden shadow-sm"
                     >
                         <div className="flex flex-col p-6 space-y-2">
-                            <Link to="/" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-lg">Home</Link>
-                            <Link to="/movies" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-lg">Movies</Link>
-                            <Link to="/theatres" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-lg">Theatres</Link>
+                            <Link to="/" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Home</Link>
+                            <Link to="/movies" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Movies</Link>
+                            <Link to="/theatres" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Theatres</Link>
 
                             <div className="h-px w-full bg-base-800 my-2" />
 
                             {userInfo ? (
                                 <>
-                                    <Link to="/profile" className="px-4 py-3 flex items-center gap-3 text-base-100 font-medium hover:bg-base-900 rounded-lg">
+                                    <Link to="/profile" className="px-4 py-3 flex items-center gap-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">
                                         <User size={18} className="text-primary-400" /> My Tickets
                                     </Link>
                                     <button
                                         onClick={handleLogout}
-                                        className="px-4 py-3 w-full text-left flex items-center gap-3 text-rose-400 font-medium hover:bg-rose-500/10 rounded-lg"
+                                        className="px-4 py-3 w-full text-left flex items-center gap-3 text-rose-400 font-medium hover:bg-rose-500/10 rounded-sm"
                                     >
                                         <LogOut size={18} /> Sign Out
                                     </button>

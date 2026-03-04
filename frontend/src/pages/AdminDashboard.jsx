@@ -54,20 +54,20 @@ const AdminDashboard = () => {
         { id: 'bookings', label: 'Bookings', icon: <Ticket size={20} /> },
     ];
 
-    if (isLoading) return <div className="flex justify-center py-20"><div className="loader w-12 h-12 border-4 rounded-full"></div></div>;
+    if (isLoading) return <div className="flex justify-center py-20"><div className="loader w-12 h-12 border-4 rounded-sm"></div></div>;
 
     return (
         <div className="max-w-[1600px] mx-auto px-6 py-12 flex flex-col md:flex-row gap-8">
             {/* Sidebar */}
             <div className="w-full md:w-64 flex-shrink-0">
-                <div className="glass bg-dark-800 rounded-2xl p-6 border border-white/5 sticky top-24">
+                <div className="glass bg-base-800 rounded-sm p-6 border border-base-800 sticky top-24">
                     <h2 className="text-xl font-bold text-white mb-6 px-2">Admin Panel</h2>
                     <div className="space-y-2">
                         {tabs.map((tab) => (
                             <button
                                 key={tab.id}
                                 onClick={() => setActiveTab(tab.id)}
-                                className={`w-full flex items-center px-4 py-3 rounded-xl transition ${activeTab === tab.id ? 'bg-brand-600 text-white shadow-lg' : 'text-gray-400 hover:bg-white/5 hover:text-white'
+                                className={`w-full flex items-center px-4 py-3 rounded-sm transition ${activeTab === tab.id ? 'bg-brand-600 text-white shadow-sm' : 'text-gray-400 hover:bg-white/5 hover:text-white'
                                     }`}
                             >
                                 {tab.icon}
@@ -79,7 +79,7 @@ const AdminDashboard = () => {
             </div>
 
             {/* Main Content */}
-            <div className="flex-1 glass bg-dark-800 rounded-2xl p-6 md:p-10 border border-white/5 min-h-[70vh]">
+            <div className="flex-1 glass bg-base-800 rounded-sm p-6 md:p-10 border border-base-800 min-h-[70vh]">
 
                 {activeTab === 'dashboard' && (
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-8">
@@ -106,7 +106,7 @@ const AdminDashboard = () => {
                                     </thead>
                                     <tbody>
                                         {bookings.slice(0, 5).map(b => (
-                                            <tr key={b._id} className="border-b border-white/5 hover:bg-white/5 transition">
+                                            <tr key={b._id} className="border-b border-base-800 hover:bg-white/5 transition">
                                                 <td className="px-6 py-4 font-mono text-xs">{b._id.slice(-8)}</td>
                                                 <td className="px-6 py-4">{b.user.name}</td>
                                                 <td className="px-6 py-4">{b.show.movie.title}</td>
@@ -125,14 +125,14 @@ const AdminDashboard = () => {
                     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
                         <div className="flex justify-between items-center mb-6">
                             <h2 className="text-2xl font-bold text-white">Manage Movies</h2>
-                            <button className="bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-lg flex items-center font-semibold transition">
+                            <button className="bg-brand-600 hover:bg-brand-500 text-white px-4 py-2 rounded-sm flex items-center font-semibold transition">
                                 <Plus size={18} className="mr-2" /> Add Movie
                             </button>
                         </div>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {movies.map(movie => (
-                                <div key={movie._id} className="bg-dark-900 border border-white/10 rounded-xl overflow-hidden group">
+                                <div key={movie._id} className="bg-base-900 border border-base-800 rounded-sm overflow-hidden group">
                                     <img src={movie.posterUrl} alt={movie.title} className="w-full h-48 object-cover opacity-80 group-hover:opacity-100 transition" />
                                     <div className="p-4 relative">
                                         <h3 className="font-bold text-white truncate">{movie.title}</h3>
@@ -163,7 +163,7 @@ const AdminDashboard = () => {
 };
 
 const StatCard = ({ title, value, color }) => (
-    <div className="bg-dark-900 border border-white/5 rounded-2xl p-6 flex flex-col justify-center items-center">
+    <div className="bg-base-900 border border-base-800 rounded-sm p-6 flex flex-col justify-center items-center">
         <h3 className="text-gray-400 text-sm tracking-widest uppercase mb-2">{title}</h3>
         <p className={`text-4xl font-black ${color}`}>{value}</p>
     </div>

@@ -61,7 +61,7 @@ const SuccessPage = () => {
     if (isProcessing) {
         return (
             <div className="flex flex-col items-center justify-center h-[80vh] fade-in">
-                <div className="w-12 h-12 border-4 border-white/10 border-t-emerald-500 rounded-full animate-spin mb-6"></div>
+                <div className="w-12 h-12 border-4 border-base-800 border-t-emerald-500 rounded-sm animate-spin mb-6"></div>
                 <p className="text-white text-lg font-medium">Securing your tickets...</p>
             </div>
         );
@@ -74,7 +74,7 @@ const SuccessPage = () => {
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     transition={{ type: 'spring', damping: 15 }}
-                    className="w-24 h-24 bg-emerald-500/10 text-emerald-500 rounded-full flex items-center justify-center mb-8 shadow-lg shadow-emerald-500/20 border border-emerald-500/20"
+                    className="w-24 h-24 bg-emerald-500/10 text-emerald-500 rounded-sm flex items-center justify-center mb-8 shadow-sm shadow-emerald-500/20 border border-emerald-500/20"
                 >
                     <CheckCircle size={48} />
                 </motion.div>
@@ -106,13 +106,13 @@ const SuccessPage = () => {
                     transition={{ delay: 0.3 }}
                     className="box-panel p-1 mb-12 relative overflow-hidden group"
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-full blur-3xl -mr-10 -mt-10"></div>
+                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-sm blur-3xl -mr-10 -mt-10"></div>
 
-                    <div className="bg-base-950 rounded-xl p-8 flex flex-col sm:flex-row gap-8 relative z-10 border border-white/5">
+                    <div className="bg-base-950 rounded-sm p-8 flex flex-col sm:flex-row gap-8 relative z-10 border border-base-800">
                         <img
                             src={show.movie.posterUrl}
                             alt={show.movie.title}
-                            className="w-32 h-48 object-cover rounded-xl shadow-lg border border-white/10 hidden sm:block"
+                            className="w-32 h-48 object-cover rounded-sm shadow-sm border border-base-800 hidden sm:block"
                         />
 
                         <div className="flex-1 flex flex-col justify-center">
@@ -151,13 +151,13 @@ const SuccessPage = () => {
             >
                 <button
                     onClick={() => window.print()}
-                    className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-base-950 rounded-xl font-bold flex items-center justify-center text-lg transition-all shadow-lg active:scale-95 duration-200"
+                    className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-base-950 rounded-sm font-bold flex items-center justify-center text-lg transition-all shadow-sm active:scale-95 duration-200"
                 >
                     <Download size={20} className="mr-3" /> Download Ticket
                 </button>
                 <Link
                     to="/profile"
-                    className="w-full sm:w-auto px-8 py-4 bg-base-900 border border-white/10 hover:border-white/30 text-white rounded-xl font-bold flex items-center justify-center text-lg transition-all active:scale-95 duration-200"
+                    className="w-full sm:w-auto px-8 py-4 bg-base-900 border border-base-800 hover:border-base-800 text-white rounded-sm font-bold flex items-center justify-center text-lg transition-all active:scale-95 duration-200"
                 >
                     View Dashboard <ArrowRight size={20} className="ml-3 text-slate-400" />
                 </Link>

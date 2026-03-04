@@ -46,7 +46,7 @@ const Bookings = () => {
             <div className="box-panel flex-1 overflow-hidden flex flex-col">
                 {isLoading ? (
                     <div className="flex-1 flex items-center justify-center p-12">
-                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-full animate-spin"></div>
+                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
                     </div>
                 ) : bookings.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-12">
@@ -93,7 +93,7 @@ const Bookings = () => {
                                             </div>
                                             <div className="text-sm text-base-400 flex items-center gap-2 mt-1">
                                                 <span>{booking.seats?.length || 0} seats</span>
-                                                <span className="w-1 h-1 rounded-full bg-base-700"></span>
+                                                <span className="w-1 h-1 rounded-sm bg-base-700"></span>
                                                 <span>
                                                     {booking.show?.startTime ? new Date(booking.show.startTime).toLocaleDateString() : 'N/A'}
                                                 </span>
@@ -104,11 +104,11 @@ const Bookings = () => {
                                         </td>
                                         <td className="py-4 px-6 text-center">
                                             {booking.status === 'confirmed' ? (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                                     <CheckCircle2 size={12} /> Confirmed
                                                 </span>
                                             ) : (
-                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
                                                     Pending
                                                 </span>
                                             )}
