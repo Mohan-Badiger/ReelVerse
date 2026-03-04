@@ -58,8 +58,14 @@ const Movies = () => {
             </motion.div>
 
             {isLoading ? (
-                <div className="flex items-center justify-center min-h-[40vh]">
-                    <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                    {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
+                        <div key={i} className="animate-pulse">
+                            <div className="bg-base-900 rounded-sm aspect-[2/3] w-full mb-4"></div>
+                            <div className="h-6 bg-base-900 rounded-sm w-3/4 mb-2"></div>
+                            <div className="h-4 bg-base-900 rounded-sm w-1/2"></div>
+                        </div>
+                    ))}
                 </div>
             ) : (
                 <>

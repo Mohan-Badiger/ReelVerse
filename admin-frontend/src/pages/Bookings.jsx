@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertCircle, RefreshCw, CheckCircle2, Ticket } from 'lucide-react';
-import adminApi from '../services/adminApi';
+import coreApi from '../services/coreApi';
 import toast from 'react-hot-toast';
 
 const Bookings = () => {
     const [bookings, setBookings] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchBookings = async () => {
         setIsLoading(true);
         try {
-            const res = await adminApi.get('/bookings');
+            const res = await coreApi.get('/bookings');
             setBookings(res.data);
         } catch (error) {
             toast.error('Failed to load bookings');
@@ -38,9 +39,20 @@ const Bookings = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-base-50 mb-2">Bookings Ledger</h1>
                     <p className="text-base-400">Track and view all user ticket purchases.</p>
                 </div>
-                <button onClick={fetchBookings} className="box-button-secondary text-sm flex items-center gap-2">
-                    <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
-                </button>
+                <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search by ID, Customer, Movie..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full sm:w-64 bg-base-900 border border-base-800 rounded-sm py-2 px-3 text-sm text-base-50 placeholder-base-500 focus:outline-none focus:border-primary-500 transition-colors"
+                        />
+                    </div>
+                    <button onClick={fetchBookings} className="box-button-secondary text-sm flex items-center gap-2">
+                        <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
+                    </button>
+                </div>
             </div>
 
             <div className="box-panel flex-1 overflow-hidden flex flex-col">
@@ -67,7 +79,12 @@ const Bookings = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-base-800/60">
-                                {bookings.map((booking, index) => (
+                                {bookings.filter(b =>
+                                    (b._id && b._id.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                                    (b.user?.name && b.user.name.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                                    (b.user?.email && b.user.email.toLowerCase().includes(searchTerm.toLowerCase())) ||
+                                    (b.show?.movie?.title && b.show.movie.title.toLowerCase().includes(searchTerm.toLowerCase()))
+                                ).map((booking, index) => (
                                     <motion.tr
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}

@@ -36,7 +36,7 @@ export const getMovieById = async (req, res, next) => {
 // @access  Private/Admin
 export const createMovie = async (req, res, next) => {
     try {
-        const { title, description, duration, language, releaseDate, genre, director, cast } = req.body;
+        const { title, description, duration, language, releaseDate, genre, director, cast, rating } = req.body;
 
         let posterUrl = '';
 
@@ -54,6 +54,7 @@ export const createMovie = async (req, res, next) => {
             genre: genre ? JSON.parse(genre) : [],
             director,
             cast: cast ? JSON.parse(cast) : [],
+            rating: rating || 0,
             posterUrl: posterUrl || 'https://via.placeholder.com/300x450?text=No+Poster',
         });
 

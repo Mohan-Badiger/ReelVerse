@@ -60,8 +60,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                             <form onSubmit={handleRegister} className="space-y-4">
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Full Name</label>
-                                    <div className="relative">
-                                        <User className="absolute left-3 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5" />
+                                    <div className="relative flex items-center">
+                                        <User className="absolute left-3 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="text"
                                             placeholder="John Doe"
@@ -75,8 +75,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
 
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Email</label>
-                                    <div className="relative">
-                                        <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5" />
+                                    <div className="relative flex items-center">
+                                        <Mail className="absolute left-3 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="email"
                                             placeholder="name@example.com"
@@ -90,8 +90,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
 
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Password</label>
-                                    <div className="relative">
-                                        <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5" />
+                                    <div className="relative flex items-center">
+                                        <Lock className="absolute left-3 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="password"
                                             placeholder="Min. 8 characters"

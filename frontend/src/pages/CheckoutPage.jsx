@@ -174,8 +174,8 @@ const CheckoutPage = () => {
                 </div>
 
                 {/* Booking Summary Card */}
-                <div className="w-full lg:w-1/3">
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="box-card sticky top-28 bg-base-900 border-base-800">
+                <div className="w-full lg:w-1/3 relative">
+                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="box-card sticky top-24 bg-base-900 border-base-800">
                         <h3 className="text-2xl font-black text-white mb-8 pb-4 border-b border-base-800">Booking Summary</h3>
 
                         <div className="space-y-6 mb-10">

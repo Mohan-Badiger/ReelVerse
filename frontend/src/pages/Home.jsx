@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { Play, Ticket, ShieldCheck, Zap } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import api from '../utils/axios';
@@ -16,8 +16,7 @@ const Home = () => {
                 const res = await api.get('/movies');
                 setMovies(res.data);
                 if (res.data.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * res.data.length);
-                    setHeroMovie(res.data[randomIndex]);
+                    setHeroMovie(res.data[0]);
                 }
             } catch (error) {
                 console.error('Failed to fetch movies:', error);
@@ -28,6 +27,17 @@ const Home = () => {
 
         fetchMovies();
     }, []);
+    useEffect(() => {
+        if (!movies.length) return;
+        const interval = setInterval(() => {
+            setHeroMovie(current => {
+                const currentIndex = movies.findIndex(m => m._id === current?._id);
+                const nextIndex = (currentIndex + 1) % Math.min(movies.length, 5); // Cycle top 5
+                return movies[nextIndex];
+            });
+        }, 5000);
+        return () => clearInterval(interval);
+    }, [movies]);
 
     if (isLoading) {
         return (
@@ -41,49 +51,85 @@ const Home = () => {
         <div className="-mt-16 w-full fade-in">
             {/* Cinematic Hero Section */}
             {heroMovie && (
-                <div className="relative h-[85vh] w-full bg-base-950 border-b border-base-800">
-                    <div className="absolute inset-0">
-                        <img
-                            src={heroMovie.backdropUrl || heroMovie.posterUrl}
-                            alt={heroMovie.title}
-                            className="w-full h-full object-cover opacity-40 object-top"
-                        />
-                        <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/70 to-transparent"></div>
-                        <div className="absolute inset-0 bg-gradient-to-r from-base-950 via-base-950/80 to-transparent"></div>
-                    </div>
-
-                    <div className="relative h-full flex flex-col justify-center px-6 md:px-12 max-w-[1400px] mx-auto w-full">
+                <div className="relative h-[85vh] w-full bg-base-950 border-b border-base-800 overflow-hidden">
+                    <AnimatePresence mode="wait">
                         <motion.div
-                            initial={{ opacity: 0, y: 30 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.8, ease: "easeOut" }}
-                            className="max-w-3xl mt-12"
+                            key={heroMovie._id}
+                            initial={{ opacity: 0, scale: 1.05 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.8 }}
+                            className="absolute inset-0"
                         >
-                            <div className="flex items-center space-x-3 mb-6">
-                                <span className="bg-primary-500/10 text-primary-400 font-bold tracking-widest text-[10px] uppercase px-3 py-1 rounded-sm border border-primary-500/20">
-                                    Now Showing
-                                </span>
-                                <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-slate-300">
-                                    {heroMovie.language}
-                                </span>
-                            </div>
-                            <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.05]">
-                                {heroMovie.title}
-                            </h1>
-                            <p className="text-lg text-slate-300 mb-10 line-clamp-3 leading-relaxed max-w-xl">
-                                {heroMovie.description}
-                            </p>
-
-                            <div className="flex items-center space-x-4 flex-wrap">
-                                <Link
-                                    to={`/movie/${heroMovie._id}`}
-                                    className="bg-white hover:bg-slate-200 text-base-950 font-bold py-4 px-8 text-lg rounded-sm transition-all duration-300 flex items-center shadow-sm shadow-white/10 hover:scale-105 active:scale-95"
-                                >
-                                    <Play size={20} className="mr-3" fill="currentColor" />
-                                    Book Tickets Now
-                                </Link>
-                            </div>
+                            <img
+                                src={heroMovie.backdropUrl || heroMovie.posterUrl}
+                                alt={heroMovie.title}
+                                className="w-full h-full object-cover opacity-40 object-top"
+                            />
+                            <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/70 to-transparent"></div>
+                            <div className="absolute inset-0 bg-gradient-to-r from-base-950 via-base-950/80 to-transparent"></div>
                         </motion.div>
+                    </AnimatePresence>
+
+                    <div className="relative h-full flex flex-col justify-center px-6 md:px-12 max-w-[1400px] mx-auto w-full z-10">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={`content-${heroMovie._id}`}
+                                initial={{ opacity: 0, y: 30 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -20 }}
+                                transition={{ duration: 0.5, delay: 0.2 }}
+                                className="max-w-3xl mt-12"
+                            >
+                                <div className="flex items-center space-x-3 mb-6">
+                                    <span className="bg-primary-500/10 text-primary-400 font-bold tracking-widest text-[10px] uppercase px-3 py-1 rounded-sm border border-primary-500/20">
+                                        Now Showing
+                                    </span>
+                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-slate-300">
+                                        {heroMovie.language}
+                                    </span>
+                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-slate-300">
+                                        {heroMovie.duration} min
+                                    </span>
+                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-amber-400 flex items-center gap-1">
+                                        ★ {heroMovie.rating || "New"}
+                                    </span>
+                                </div>
+                                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.05]">
+                                    {heroMovie.title}
+                                </h1>
+                                <p className="text-lg text-slate-300 mb-10 line-clamp-3 leading-relaxed max-w-xl">
+                                    {heroMovie.description}
+                                </p>
+
+                                <div className="flex items-center space-x-4 flex-wrap">
+                                    <Link
+                                        to={`/movie/${heroMovie._id}`}
+                                        className="bg-white hover:bg-slate-200 text-base-950 font-bold py-4 px-8 text-lg rounded-sm transition-all duration-300 flex items-center shadow-sm shadow-white/10 hover:scale-105 active:scale-95"
+                                    >
+                                        <Play size={20} className="mr-3" fill="currentColor" />
+                                        Book Tickets
+                                    </Link>
+                                    <Link
+                                        to={`/movies`}
+                                        className="bg-base-900/50 hover:bg-base-800 text-white font-semibold py-4 px-8 text-lg rounded-sm transition-all duration-300 border border-base-700/50 hover:border-base-700 backdrop-blur-sm"
+                                    >
+                                        Browse Movies
+                                    </Link>
+                                </div>
+                            </motion.div>
+                        </AnimatePresence>
+
+                        {/* Carousel Indicators */}
+                        <div className="absolute bottom-8 left-6 md:left-12 flex items-center gap-2">
+                            {movies.slice(0, 5).map((m, idx) => (
+                                <button
+                                    key={m._id}
+                                    onClick={() => setHeroMovie(m)}
+                                    className={`h-1.5 rounded-full transition-all duration-500 ${heroMovie?._id === m._id ? 'w-8 bg-primary-500' : 'w-2 bg-base-700 hover:bg-base-600'}`}
+                                />
+                            ))}
+                        </div>
                     </div>
                 </div>
             )}
@@ -116,12 +162,14 @@ const Home = () => {
                         </h2>
                     </div>
 
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 opacity-70">
-                        {movies.slice(4, 8).map((movie, idx) => (
-                            <MovieCard key={movie._id} movie={movie} index={idx} />
+                    <div className="flex space-x-6 overflow-x-auto pb-8 snap-x scrollbar-hide opacity-70">
+                        {movies.slice(4, 10).map((movie, idx) => (
+                            <div key={movie._id} className="min-w-[280px] sm:min-w-[320px] snap-start">
+                                <MovieCard movie={movie} index={idx} />
+                            </div>
                         ))}
                         {movies.length <= 4 && (
-                            <div className="col-span-1 sm:col-span-2 lg:col-span-4 box-panel w-full p-12 text-center text-slate-400 border border-dashed border-base-800 bg-transparent shadow-none">
+                            <div className="w-full box-panel p-12 text-center text-slate-400 border border-dashed border-base-800 bg-transparent shadow-none">
                                 Exciting new movies coming soon.
                             </div>
                         )}

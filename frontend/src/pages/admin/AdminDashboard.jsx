@@ -49,8 +49,18 @@ const AdminDashboard = () => {
 
     if (isLoading) {
         return (
-            <div className="h-full flex items-center justify-center">
-                <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
+            <div className="space-y-8 fade-in animate-pulse">
+                <div className="w-1/3 h-10 bg-base-900 rounded-sm mb-2"></div>
+                <div className="w-1/4 h-4 bg-base-900 rounded-sm mb-6"></div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map(i => (
+                        <div key={i} className="box-card h-32"></div>
+                    ))}
+                </div>
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div className="lg:col-span-2 box-panel h-[400px]"></div>
+                    <div className="box-panel h-[400px]"></div>
+                </div>
             </div>
         );
     }

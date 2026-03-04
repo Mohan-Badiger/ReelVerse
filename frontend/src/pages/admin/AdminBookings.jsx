@@ -45,8 +45,11 @@ const AdminBookings = () => {
 
             <div className="box-panel flex-1 overflow-hidden flex flex-col">
                 {isLoading ? (
-                    <div className="flex-1 flex items-center justify-center p-12">
-                        <div className="w-8 h-8 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
+                    <div className="w-full p-6 animate-pulse">
+                        <div className="w-full h-10 bg-base-900 rounded-sm mb-4"></div>
+                        {[1, 2, 3, 4, 5].map(i => (
+                            <div key={i} className="w-full h-16 bg-base-900 rounded-sm mb-2 opacity-50"></div>
+                        ))}
                     </div>
                 ) : bookings.length === 0 ? (
                     <div className="flex-1 flex flex-col items-center justify-center text-center p-12">

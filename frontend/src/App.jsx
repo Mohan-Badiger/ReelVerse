@@ -3,12 +3,13 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import Navbar from './components/common/Navbar';
-import Profile from './pages/Profile';
-import Home from './pages/Home';
-import Movies from './pages/Movies';
-import MovieDetails from './pages/MovieDetails';
-import CheckoutPage from './pages/CheckoutPage';
-import SuccessPage from './pages/SuccessPage';
+
+const Profile = lazy(() => import('./pages/Profile'));
+const Home = lazy(() => import('./pages/Home'));
+const Movies = lazy(() => import('./pages/Movies'));
+const MovieDetails = lazy(() => import('./pages/MovieDetails'));
+const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
+const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 
 
 const ProtectedRoute = ({ children }) => {
@@ -28,21 +29,27 @@ function App() {
           <div className="min-h-screen flex flex-col pt-16">
             <Navbar />
             <main className="flex-grow">
-              <Routes>
-                <Route path="/" element={<Home />} />
-                <Route path="/movies" element={<Movies />} />
-                <Route path="/movie/:id" element={<MovieDetails />} />
-                <Route path="/checkout/:showId" element={<CheckoutPage />} />
-                <Route path="/booking/success" element={<SuccessPage />} />
-                <Route
-                  path="/profile"
-                  element={
-                    <ProtectedRoute>
-                      <Profile />
-                    </ProtectedRoute>
-                  }
-                />
-              </Routes>
+              <Suspense fallback={
+                <div className="h-[80vh] flex items-center justify-center">
+                  <div className="w-8 h-8 rounded-sm border-4 border-t-primary-500 border-base-800 animate-spin" />
+                </div>
+              }>
+                <Routes>
+                  <Route path="/" element={<Home />} />
+                  <Route path="/movies" element={<Movies />} />
+                  <Route path="/movie/:id" element={<MovieDetails />} />
+                  <Route path="/checkout/:showId" element={<CheckoutPage />} />
+                  <Route path="/booking/success" element={<SuccessPage />} />
+                  <Route
+                    path="/profile"
+                    element={
+                      <ProtectedRoute>
+                        <Profile />
+                      </ProtectedRoute>
+                    }
+                  />
+                </Routes>
+              </Suspense>
             </main>
           </div>
         } />

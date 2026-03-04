@@ -7,6 +7,7 @@ import toast from 'react-hot-toast';
 const Users = () => {
     const [users, setUsers] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
 
     const fetchUsers = async () => {
         setIsLoading(true);
@@ -42,11 +43,22 @@ const Users = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-base-50 mb-2">User Registry</h1>
                     <p className="text-base-400">Manage all registered accounts on ReelVerse.</p>
                 </div>
-                <div className="flex gap-3">
-                    <button onClick={fetchUsers} className="box-button-secondary text-sm flex items-center gap-2">
-                        <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
-                    </button>
-                    <button className="box-button-primary text-sm">Export CSV</button>
+                <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search by name or email..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full sm:w-64 bg-base-900 border border-base-800 rounded-sm py-2 px-3 text-sm text-base-50 placeholder-base-500 focus:outline-none focus:border-primary-500 transition-colors"
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <button onClick={fetchUsers} className="box-button-secondary text-sm flex items-center gap-2">
+                            <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
+                        </button>
+                        <button className="box-button-primary text-sm">Export CSV</button>
+                    </div>
                 </div>
             </div>
 
@@ -73,7 +85,10 @@ const Users = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-base-800/60">
-                                {users.map((user, index) => (
+                                {users.filter(u =>
+                                    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+                                ).map((user, index) => (
                                     <motion.tr
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}

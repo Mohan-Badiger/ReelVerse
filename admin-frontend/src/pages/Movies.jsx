@@ -2,16 +2,20 @@ import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Trash2, AlertCircle, RefreshCw, Edit2 } from 'lucide-react';
 import adminApi from '../services/adminApi';
+import coreApi from '../services/coreApi';
 import toast from 'react-hot-toast';
+import AddMovieModal from '../components/movies/AddMovieModal';
 
 const Movies = () => {
     const [movies, setMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
 
     const fetchMovies = async () => {
         setIsLoading(true);
         try {
-            const res = await adminApi.get('/movies');
+            const res = await coreApi.get('/movies');
             setMovies(res.data);
         } catch (error) {
             toast.error('Failed to load movies');
@@ -27,7 +31,7 @@ const Movies = () => {
     const handleDelete = async (id) => {
         if (!window.confirm('Are you sure you want to delete this movie? This action cannot be undone.')) return;
         try {
-            await adminApi.delete(`/movies/${id}`);
+            await coreApi.delete(`/movies/${id}`);
             toast.success('Movie deleted successfully');
             setMovies(movies.filter(m => m._id !== id));
         } catch (err) {
@@ -42,13 +46,24 @@ const Movies = () => {
                     <h1 className="text-3xl font-bold tracking-tight text-base-50 mb-2">Manage Movies</h1>
                     <p className="text-base-400">View and edit the active movie catalog.</p>
                 </div>
-                <div className="flex gap-3">
-                    <button onClick={fetchMovies} className="box-button-secondary text-sm flex items-center gap-2">
-                        <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
-                    </button>
-                    <button className="box-button-primary text-sm flex items-center gap-2">
-                        <span className="text-lg leading-none">+</span> Add Movie
-                    </button>
+                <div className="flex flex-col sm:flex-row gap-3 items-end sm:items-center">
+                    <div className="relative">
+                        <input
+                            type="text"
+                            placeholder="Search title..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full sm:w-64 bg-base-900 border border-base-800 rounded-sm py-2 px-3 text-sm text-base-50 placeholder-base-500 focus:outline-none focus:border-primary-500 transition-colors"
+                        />
+                    </div>
+                    <div className="flex gap-2">
+                        <button onClick={fetchMovies} className="box-button-secondary text-sm flex items-center gap-2">
+                            <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
+                        </button>
+                        <button onClick={() => setIsAddModalOpen(true)} className="box-button-primary text-sm flex items-center gap-2">
+                            <span className="text-lg leading-none">+</span> Add Movie
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -76,7 +91,7 @@ const Movies = () => {
                                 </tr>
                             </thead>
                             <tbody className="divide-y divide-base-800/60">
-                                {movies.map((movie, index) => (
+                                {movies.filter(m => m.title.toLowerCase().includes(searchTerm.toLowerCase())).map((movie, index) => (
                                     <motion.tr
                                         initial={{ opacity: 0, y: 10 }}
                                         animate={{ opacity: 1, y: 0 }}
@@ -131,6 +146,12 @@ const Movies = () => {
                     </div>
                 )}
             </div>
+
+            <AddMovieModal
+                isOpen={isAddModalOpen}
+                onClose={() => setIsAddModalOpen(false)}
+                onAdd={fetchMovies}
+            />
         </div>
     );
 };
