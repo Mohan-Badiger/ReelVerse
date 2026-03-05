@@ -64,7 +64,7 @@ app.use('/api/admin', adminRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/movies', movieRoutes);
 app.use('/api/theatres', theatreRoutes);
-app.use('/api/shows', showRoutes);
+app.use('/api/showtimes', showRoutes);
 app.use('/api/bookings', bookingRoutes);
 
 // Basic Route

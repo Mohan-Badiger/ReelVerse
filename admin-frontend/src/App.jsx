@@ -9,6 +9,8 @@ const AdminLayout = lazy(() => import('./layouts/AdminLayout'));
 const Dashboard = lazy(() => import('./pages/Dashboard'));
 const Movies = lazy(() => import('./pages/Movies'));
 const Bookings = lazy(() => import('./pages/Bookings'));
+const Theatres = lazy(() => import('./pages/Theatres'));
+const Showtimes = lazy(() => import('./pages/Showtimes'));
 const Users = lazy(() => import('./pages/Users'));
 
 const ProtectedRoute = ({ children }) => {
@@ -39,6 +41,8 @@ function App() {
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="movies" element={<Movies />} />
                     <Route path="bookings" element={<Bookings />} />
+                    <Route path="theatres" element={<Theatres />} />
+                    <Route path="showtimes" element={<Showtimes />} />
                     <Route path="users" element={<Users />} />
                 </Route>
             </Routes>

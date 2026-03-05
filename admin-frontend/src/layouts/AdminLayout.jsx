@@ -9,7 +9,9 @@ import {
     LogOut,
     Menu,
     Settings,
-    Bell
+    Bell,
+    MapPin,
+    Clock
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import adminApi from '../services/adminApi';
@@ -20,6 +22,8 @@ const sidebarLinks = [
     { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard },
     { name: 'Movies', path: '/movies', icon: Film },
     { name: 'Bookings', path: '/bookings', icon: Ticket },
+    { name: 'Theatres', path: '/theatres', icon: MapPin },
+    { name: 'Showtimes', path: '/showtimes', icon: Clock },
     { name: 'Users', path: '/users', icon: Users },
 ];
 

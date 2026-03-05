@@ -66,12 +66,12 @@ const Home = () => {
                                 alt={heroMovie.title}
                                 className="w-full h-full object-cover opacity-40 object-top"
                             />
-                            <div className="absolute inset-0 bg-gradient-to-t from-base-950 via-base-950/70 to-transparent"></div>
-                            <div className="absolute inset-0 bg-gradient-to-r from-base-950 via-base-950/80 to-transparent"></div>
+                            <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/70 to-transparent"></div>
+                            <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/80 to-transparent"></div>
                         </motion.div>
                     </AnimatePresence>
 
-                    <div className="relative h-full flex flex-col justify-center px-6 md:px-12 max-w-[1400px] mx-auto w-full z-10">
+                    <div className="relative h-full flex flex-col justify-center px-6 md:px-12 max-w-1400px mx-auto w-full z-10">
                         <AnimatePresence mode="wait">
                             <motion.div
                                 key={`content-${heroMovie._id}`}
@@ -134,7 +134,7 @@ const Home = () => {
                 </div>
             )}
 
-            <div className="max-w-[1400px] mx-auto px-6 py-24 relative z-10 space-y-32">
+            <div className="max-w-1400px mx-auto px-6 py-24 relative z-10 space-y-32">
 
                 {/* Now Showing */}
                 <section>
@@ -164,7 +164,7 @@ const Home = () => {
 
                     <div className="flex space-x-6 overflow-x-auto pb-8 snap-x scrollbar-hide opacity-70">
                         {movies.slice(4, 10).map((movie, idx) => (
-                            <div key={movie._id} className="min-w-[280px] sm:min-w-[320px] snap-start">
+                            <div key={movie._id} className="min-w-280px sm:min-w-[320px] snap-start">
                                 <MovieCard movie={movie} index={idx} />
                             </div>
                         ))}
@@ -210,7 +210,7 @@ const Home = () => {
 
             {/* Clean Footer */}
             <footer className="border-t border-base-800 bg-base-950 py-12 text-center mt-20">
-                <div className="max-w-[1400px] mx-auto px-6 flex flex-col items-center justify-center">
+                <div className="max-w-1400px mx-auto px-6 flex flex-col items-center justify-center">
                     <Link to="/" className="text-2xl font-black text-white tracking-tighter mb-4 flex items-center">
                         <span className="text-primary-500 mr-2">
                             <Play size={24} fill="currentColor" />

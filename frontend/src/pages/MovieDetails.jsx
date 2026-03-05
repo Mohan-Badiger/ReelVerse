@@ -12,7 +12,7 @@ const MovieDetails = () => {
     const [shows, setShows] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Group shows by date
+    // Group shows by date then theatre
     const [selectedDate, setSelectedDate] = useState('');
     const [groupedShows, setGroupedShows] = useState({});
 
@@ -21,18 +21,27 @@ const MovieDetails = () => {
             try {
                 const [movieRes, showsRes] = await Promise.all([
                     api.get(`/movies/${id}`),
-                    api.get(`/shows/movie/${id}`)
+                    api.get(`/showtimes/movie/${id}`)
                 ]);
 
                 setMovie(movieRes.data);
 
-                // Group logic
+                // Group logic: Date -> Theatre ID -> Showtimes
                 const rawShows = showsRes.data;
-                const groups = {};
+                const groups = {}; // { date: { theatreId: { theatreInfo, shows: [] } } }
+
                 rawShows.forEach(show => {
                     const dateStr = new Date(show.date).toDateString();
-                    if (!groups[dateStr]) groups[dateStr] = [];
-                    groups[dateStr].push(show);
+                    if (!groups[dateStr]) groups[dateStr] = {};
+
+                    const theatreId = show.theatre._id;
+                    if (!groups[dateStr][theatreId]) {
+                        groups[dateStr][theatreId] = {
+                            theatre: show.theatre,
+                            shows: []
+                        };
+                    }
+                    groups[dateStr][theatreId].shows.push(show);
                 });
 
                 setGroupedShows(groups);
@@ -137,17 +146,17 @@ const MovieDetails = () => {
 
                         {/* Theatre & Showtime List */}
                         <div className="space-y-6 pt-4">
-                            {groupedShows[selectedDate]?.map((show) => (
-                                <div key={show._id} className="bg-base-950 p-6 md:p-8 rounded-sm border border-base-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-base-800 transition-all">
+                            {groupedShows[selectedDate] && Object.values(groupedShows[selectedDate]).map(({ theatre, shows }) => (
+                                <div key={theatre._id} className="bg-base-950 p-6 md:p-8 rounded-sm border border-base-800 flex flex-col md:flex-row items-start md:items-center justify-between gap-6 hover:border-base-800 transition-all">
                                     <div>
                                         <h3 className="text-xl font-bold text-white flex items-center">
-                                            {show.theatre.name}
+                                            {theatre.name}
                                         </h3>
                                         <p className="text-slate-400 text-sm mt-1 flex items-center">
-                                            <MapPin size={14} className="mr-1" /> {show.theatre.address}, {show.theatre.city}
+                                            <MapPin size={14} className="mr-1" /> {theatre.location || 'Location not available'}
                                         </p>
                                         <div className="flex flex-wrap gap-2 mt-4">
-                                            {show.theatre.facilities.map((f, i) => (
+                                            {theatre.facilities?.map((f, i) => (
                                                 <span key={i} className="text-xs px-2.5 py-1 bg-white/5 rounded-sm text-slate-300 border border-base-800">
                                                     {f}
                                                 </span>
@@ -156,13 +165,16 @@ const MovieDetails = () => {
                                     </div>
 
                                     <div className="flex flex-wrap items-center gap-4">
-                                        <button
-                                            onClick={() => navigate(`/checkout/${show._id}`)}
-                                            className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-base-950 border border-base-800 hover:border-white rounded-sm transition-all font-bold flex flex-col items-center min-w-[120px]"
-                                        >
-                                            <span className="text-lg">{show.time}</span>
-                                            <span className="text-xs font-medium opacity-70">${show.ticketPrice}</span>
-                                        </button>
+                                        {shows.map((show) => (
+                                            <button
+                                                key={show._id}
+                                                onClick={() => navigate(`/checkout/${show._id}`)}
+                                                className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-base-950 border border-base-800 hover:border-white rounded-sm transition-all font-bold flex flex-col items-center min-w-[120px]"
+                                            >
+                                                <span className="text-lg">{show.time}</span>
+                                                <span className="text-xs font-medium opacity-70">₹{show.ticketPrice}</span>
+                                            </button>
+                                        ))}
                                     </div>
                                 </div>
                             ))}

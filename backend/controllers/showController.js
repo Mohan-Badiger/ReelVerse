@@ -2,22 +2,45 @@ import Show from '../models/Show.js';
 import Theatre from '../models/Theatre.js';
 
 // Helper to generate seats based on generic configuration
-const generateSeats = () => {
-    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J'];
-    const columns = 12;
+const generateSeats = (seatCount = 120) => {
+    const rows = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z'];
     let seats = [];
+    let currentRow = 0;
+    let currentNumber = 1;
+    const seatsPerRow = 12; // Static seats per row for simplicity, can be adjusted
 
-    for (let r = 0; r < rows.length; r++) {
-        for (let c = 1; c <= columns; c++) {
-            seats.push({
-                row: rows[r],
-                number: c,
-                seatId: `${rows[r]}${c}`,
-                isBooked: false,
-            });
+    for (let i = 0; i < seatCount; i++) {
+        seats.push({
+            row: rows[currentRow],
+            number: currentNumber,
+            seatId: `${rows[currentRow]}${currentNumber}`,
+            isBooked: false,
+        });
+
+        currentNumber++;
+        if (currentNumber > seatsPerRow) {
+            currentNumber = 1;
+            currentRow++;
+            if (currentRow >= rows.length) {
+                currentRow = 0; // Wrap around if extremely large
+            }
         }
     }
     return seats;
+};
+
+// @desc    Get all shows
+// @route   GET /api/shows
+// @access  Public
+export const getAllShows = async (req, res, next) => {
+    try {
+        const shows = await Show.find()
+            .populate('movie', 'title posterUrl duration language')
+            .populate('theatre', 'name city address location screens');
+        res.json(shows);
+    } catch (error) {
+        next(error);
+    }
 };
 
 // @desc    Get all shows for a movie
@@ -57,7 +80,7 @@ export const getShowById = async (req, res, next) => {
 // @access  Private/Admin
 export const createShow = async (req, res, next) => {
     try {
-        const { movie, theatre, date, time, ticketPrice } = req.body;
+        const { movie, theatre, date, time, ticketPrice, seatCount } = req.body;
 
         const theatreExists = await Theatre.findById(theatre);
         if (!theatreExists) {
@@ -65,7 +88,7 @@ export const createShow = async (req, res, next) => {
             return next(new Error('Theatre not found'));
         }
 
-        const seats = generateSeats();
+        const seats = generateSeats(seatCount ? Number(seatCount) : 120);
 
         const show = new Show({
             movie,
@@ -78,6 +101,37 @@ export const createShow = async (req, res, next) => {
 
         const createdShow = await show.save();
         res.status(201).json(createdShow);
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Update a show
+// @route   PUT /api/shows/:id
+// @access  Private/Admin
+export const updateShow = async (req, res, next) => {
+    try {
+        const { movie, theatre, date, time, ticketPrice, seatCount } = req.body;
+
+        const show = await Show.findById(req.params.id);
+
+        if (show) {
+            show.movie = movie || show.movie;
+            show.theatre = theatre || show.theatre;
+            show.date = date || show.date;
+            show.time = time || show.time;
+            show.ticketPrice = ticketPrice || show.ticketPrice;
+
+            if (seatCount) {
+                show.seats = generateSeats(Number(seatCount));
+            }
+
+            const updatedShow = await show.save();
+            res.json(updatedShow);
+        } else {
+            res.status(404);
+            return next(new Error('Show not found'));
+        }
     } catch (error) {
         next(error);
     }

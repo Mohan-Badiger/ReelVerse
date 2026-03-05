@@ -17,12 +17,12 @@ export const getTheatres = async (req, res, next) => {
 // @access  Private/Admin
 export const createTheatre = async (req, res, next) => {
     try {
-        const { name, city, address, facilities } = req.body;
+        const { name, location, screens, facilities } = req.body;
 
         const theatre = new Theatre({
             name,
-            city,
-            address,
+            location,
+            screens,
             facilities: facilities ? JSON.parse(facilities) : [],
         });
 
@@ -38,14 +38,14 @@ export const createTheatre = async (req, res, next) => {
 // @access  Private/Admin
 export const updateTheatre = async (req, res, next) => {
     try {
-        const { name, city, address, facilities, isActive } = req.body;
+        const { name, location, screens, facilities, isActive } = req.body;
 
         const theatre = await Theatre.findById(req.params.id);
 
         if (theatre) {
             theatre.name = name || theatre.name;
-            theatre.city = city || theatre.city;
-            theatre.address = address || theatre.address;
+            theatre.location = location || theatre.location;
+            theatre.screens = screens !== undefined ? screens : theatre.screens;
             theatre.facilities = facilities ? JSON.parse(facilities) : theatre.facilities;
             if (isActive !== undefined) {
                 theatre.isActive = isActive;

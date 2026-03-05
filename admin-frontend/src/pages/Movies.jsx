@@ -5,12 +5,15 @@ import adminApi from '../services/adminApi';
 import coreApi from '../services/coreApi';
 import toast from 'react-hot-toast';
 import AddMovieModal from '../components/movies/AddMovieModal';
+import EditMovieModal from '../components/movies/EditMovieModal';
 
 const Movies = () => {
     const [movies, setMovies] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [movieToEdit, setMovieToEdit] = useState(null);
 
     const fetchMovies = async () => {
         setIsLoading(true);
@@ -127,6 +130,10 @@ const Movies = () => {
                                                 <button
                                                     className="p-2 text-primary-400 hover:bg-primary-500/10 rounded-sm transition-colors"
                                                     title="Edit Movie"
+                                                    onClick={() => {
+                                                        setMovieToEdit(movie);
+                                                        setIsEditModalOpen(true);
+                                                    }}
                                                 >
                                                     <Edit2 size={16} />
                                                 </button>
@@ -151,6 +158,16 @@ const Movies = () => {
                 isOpen={isAddModalOpen}
                 onClose={() => setIsAddModalOpen(false)}
                 onAdd={fetchMovies}
+            />
+
+            <EditMovieModal
+                isOpen={isEditModalOpen}
+                onClose={() => {
+                    setIsEditModalOpen(false);
+                    setMovieToEdit(null);
+                }}
+                onEdit={fetchMovies}
+                movie={movieToEdit}
             />
         </div>
     );
