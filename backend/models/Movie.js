@@ -13,6 +13,8 @@ const movieSchema = new mongoose.Schema(
         director: { type: String },
         cast: { type: [String] },
         rating: { type: Number, default: 0 },
+        isUpcoming: { type: Boolean, default: false },
+        trailerUrl: { type: String },
     },
     { timestamps: true }
 );

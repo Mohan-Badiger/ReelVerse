@@ -6,6 +6,7 @@ import {
     createMovie,
     updateMovie,
     deleteMovie,
+    getUpcomingMovies,
 } from '../controllers/movieController.js';
 import { protectAdmin } from '../middleware/adminMiddleware.js';
 
@@ -16,6 +17,8 @@ router
     .route('/')
     .get(getMovies)
     .post(protectAdmin, upload.single('poster'), createMovie);
+
+router.get('/upcoming', getUpcomingMovies);
 
 router
     .route('/:id')

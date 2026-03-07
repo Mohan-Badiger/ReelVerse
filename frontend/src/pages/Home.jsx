@@ -7,16 +7,25 @@ import MovieCard from '../components/movies/MovieCard';
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
+    const [upcomingMovies, setUpcomingMovies] = useState([]);
     const [heroMovie, setHeroMovie] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
         const fetchMovies = async () => {
             try {
-                const res = await api.get('/movies');
-                setMovies(res.data);
-                if (res.data.length > 0) {
-                    setHeroMovie(res.data[0]);
+                const [moviesRes, upcomingRes] = await Promise.all([
+                    api.get('/movies'),
+                    api.get('/movies/upcoming')
+                ]);
+                const showingMovies = moviesRes.data.filter(m => !m.isUpcoming);
+                setMovies(showingMovies);
+                setUpcomingMovies(upcomingRes.data);
+
+                if (showingMovies.length > 0) {
+                    setHeroMovie(showingMovies[0]);
+                } else if (upcomingRes.data.length > 0) {
+                    setHeroMovie(upcomingRes.data[0]);
                 }
             } catch (error) {
                 console.error('Failed to fetch movies:', error);
@@ -160,17 +169,20 @@ const Home = () => {
                         <h2 className="text-4xl font-bold tracking-tight text-white m-0">
                             Upcoming Releases
                         </h2>
+                        <Link to="/upcoming-movies" className="text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors py-2 px-4 rounded-sm hover:bg-primary-500/10">
+                            View All Upcoming Movies &rarr;
+                        </Link>
                     </div>
 
-                    <div className="flex space-x-6 overflow-x-auto pb-8 snap-x scrollbar-hide opacity-70">
-                        {movies.slice(4, 10).map((movie, idx) => (
-                            <div key={movie._id} className="min-w-280px sm:min-w-[320px] snap-start">
+                    <div className="flex space-x-6 overflow-x-auto pb-8 snap-x scrollbar-hide">
+                        {upcomingMovies.map((movie, idx) => (
+                            <div key={movie._id} className="min-w-280px sm:min-w-[320px] snap-start shrink-0">
                                 <MovieCard movie={movie} index={idx} />
                             </div>
                         ))}
-                        {movies.length <= 4 && (
+                        {upcomingMovies.length === 0 && (
                             <div className="w-full box-panel p-12 text-center text-slate-400 border border-dashed border-base-800 bg-transparent shadow-none">
-                                Exciting new movies coming soon.
+                                Exciting new upcoming movies will be listed here soon.
                             </div>
                         )}
                     </div>

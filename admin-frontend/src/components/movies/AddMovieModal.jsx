@@ -17,6 +17,8 @@ const AddMovieModal = ({ isOpen, onClose, onAdd }) => {
         director: '',
         cast: '',
         rating: '',
+        isUpcoming: false,
+        trailerUrl: '',
         poster: null
     });
 
@@ -73,7 +75,7 @@ const AddMovieModal = ({ isOpen, onClose, onAdd }) => {
     const handleClose = () => {
         setFormData({
             title: '', description: '', genre: '', duration: '', language: '',
-            releaseDate: '', director: '', cast: '', rating: '', poster: null
+            releaseDate: '', director: '', cast: '', rating: '', isUpcoming: false, trailerUrl: '', poster: null
         });
         setPreviewUrl(null);
         onClose();
@@ -248,6 +250,32 @@ const AddMovieModal = ({ isOpen, onClose, onAdd }) => {
                                                 className="box-input w-full"
                                                 placeholder="Leo DiCaprio, Tom Hardy"
                                             />
+                                        </div>
+
+                                        <div>
+                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Trailer URL</label>
+                                            <input
+                                                type="text"
+                                                name="trailerUrl"
+                                                value={formData.trailerUrl}
+                                                onChange={handleChange}
+                                                className="box-input w-full"
+                                                placeholder="https://youtube.com/watch?v=..."
+                                            />
+                                        </div>
+
+                                        <div className="flex items-center gap-3 bg-base-900 border border-base-800 rounded-sm p-3">
+                                            <input
+                                                type="checkbox"
+                                                id="isUpcomingAdd"
+                                                name="isUpcoming"
+                                                checked={formData.isUpcoming}
+                                                onChange={(e) => setFormData({ ...formData, isUpcoming: e.target.checked })}
+                                                className="w-4 h-4 rounded-sm border-base-700 bg-base-900 text-primary-500 focus:ring-primary-500/50 cursor-pointer"
+                                            />
+                                            <label htmlFor="isUpcomingAdd" className="text-sm font-medium text-base-50 cursor-pointer user-select-none">
+                                                Mark as Upcoming Movie
+                                            </label>
                                         </div>
                                     </div>
                                 </div>

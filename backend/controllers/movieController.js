@@ -13,6 +13,18 @@ export const getMovies = async (req, res, next) => {
     }
 };
 
+// @desc    Get upcoming movies
+// @route   GET /api/movies/upcoming
+// @access  Public
+export const getUpcomingMovies = async (req, res, next) => {
+    try {
+        const movies = await Movie.find({ isUpcoming: true });
+        res.json(movies);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get movie by ID
 // @route   GET /api/movies/:id
 // @access  Public
@@ -36,7 +48,7 @@ export const getMovieById = async (req, res, next) => {
 // @access  Private/Admin
 export const createMovie = async (req, res, next) => {
     try {
-        const { title, description, duration, language, releaseDate, genre, director, cast, rating } = req.body;
+        const { title, description, duration, language, releaseDate, genre, director, cast, rating, isUpcoming, trailerUrl } = req.body;
 
         let posterUrl = '';
 
@@ -55,6 +67,8 @@ export const createMovie = async (req, res, next) => {
             director,
             cast: cast ? JSON.parse(cast) : [],
             rating: rating || 0,
+            isUpcoming: isUpcoming === 'true' || isUpcoming === true,
+            trailerUrl: trailerUrl || '',
             posterUrl: posterUrl || 'https://via.placeholder.com/300x450?text=No+Poster',
         });
 
@@ -70,7 +84,7 @@ export const createMovie = async (req, res, next) => {
 // @access  Private/Admin
 export const updateMovie = async (req, res, next) => {
     try {
-        const { title, description, duration, language, releaseDate, genre, director, cast } = req.body;
+        const { title, description, duration, language, releaseDate, genre, director, cast, isUpcoming, trailerUrl } = req.body;
 
         const movie = await Movie.findById(req.params.id);
 
@@ -83,6 +97,12 @@ export const updateMovie = async (req, res, next) => {
             movie.genre = genre ? JSON.parse(genre) : movie.genre;
             movie.director = director || movie.director;
             movie.cast = cast ? JSON.parse(cast) : movie.cast;
+            if (isUpcoming !== undefined) {
+                movie.isUpcoming = isUpcoming === 'true' || isUpcoming === true;
+            }
+            if (trailerUrl !== undefined) {
+                movie.trailerUrl = trailerUrl;
+            }
 
             if (req.file) {
                 const result = await uploadFromBuffer(req);

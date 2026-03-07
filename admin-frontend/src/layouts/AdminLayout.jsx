@@ -11,7 +11,8 @@ import {
     Settings,
     Bell,
     MapPin,
-    Clock
+    Clock,
+    Calendar
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import adminApi from '../services/adminApi';
@@ -24,6 +25,7 @@ const sidebarLinks = [
     { name: 'Bookings', path: '/bookings', icon: Ticket },
     { name: 'Theatres', path: '/theatres', icon: MapPin },
     { name: 'Showtimes', path: '/showtimes', icon: Clock },
+    { name: 'Upcoming Movies', path: '/upcoming-movies', icon: Calendar },
     { name: 'Users', path: '/users', icon: Users },
 ];
 

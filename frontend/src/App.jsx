@@ -11,6 +11,7 @@ const MovieDetails = lazy(() => import('./pages/MovieDetails'));
 const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const Theatres = lazy(() => import('./pages/Theatres'));
+const UpcomingMovies = lazy(() => import('./pages/UpcomingMovies'));
 
 
 const ProtectedRoute = ({ children }) => {
@@ -42,6 +43,7 @@ function App() {
                                     <Route path="/checkout/:showId" element={<CheckoutPage />} />
                                     <Route path="/booking/success" element={<SuccessPage />} />
                                     <Route path="/theatres" element={<Theatres />} />
+                                    <Route path="/upcoming-movies" element={<UpcomingMovies />} />
                                     <Route
                                         path="/profile"
                                         element={

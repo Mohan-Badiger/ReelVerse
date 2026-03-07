@@ -11,6 +11,7 @@ const Movies = lazy(() => import('./pages/Movies'));
 const Bookings = lazy(() => import('./pages/Bookings'));
 const Theatres = lazy(() => import('./pages/Theatres'));
 const Showtimes = lazy(() => import('./pages/Showtimes'));
+const UpcomingMovies = lazy(() => import('./pages/UpcomingMovies'));
 const Users = lazy(() => import('./pages/Users'));
 
 const ProtectedRoute = ({ children }) => {
@@ -43,6 +44,7 @@ function App() {
                     <Route path="bookings" element={<Bookings />} />
                     <Route path="theatres" element={<Theatres />} />
                     <Route path="showtimes" element={<Showtimes />} />
+                    <Route path="upcoming-movies" element={<UpcomingMovies />} />
                     <Route path="users" element={<Users />} />
                 </Route>
             </Routes>

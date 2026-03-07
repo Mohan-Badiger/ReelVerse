@@ -64,13 +64,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Email</label>
                                     <div className="relative flex items-center">
-                                        <Mail className="absolute left-3 text-base-500 w-5 h-5 pointer-events-none" />
+                                        <Mail className="absolute left-4 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="email"
                                             placeholder="name@example.com"
                                             value={email}
                                             onChange={(e) => setEmail(e.target.value)}
-                                            className="box-input pl-10 h-12"
+                                            className="box-input pl-11 h-12"
                                             required
                                         />
                                     </div>
@@ -79,13 +79,13 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Password</label>
                                     <div className="relative flex items-center">
-                                        <Lock className="absolute left-3 text-base-500 w-5 h-5 pointer-events-none" />
+                                        <Lock className="absolute left-4 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="password"
                                             placeholder="••••••••"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
-                                            className="box-input pl-10 h-12"
+                                            className="box-input pl-11 h-12"
                                             required
                                         />
                                     </div>

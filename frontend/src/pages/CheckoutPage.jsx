@@ -58,14 +58,16 @@ const CheckoutPage = () => {
         setIsCheckingOut(true);
         try {
             const totalPrice = selectedSeats.length * show.ticketPrice;
-            const res = await api.post('/bookings/checkout', {
-                showId,
-                seats: selectedSeats,
+            await api.post('/bookings', {
+                movieId: show.movie._id,
+                theatreId: show.theatre._id,
+                showtimeId: showId,
+                selectedSeats: selectedSeats,
                 totalPrice,
             });
 
-            // Redirect to Stripe checkout
-            window.location.href = res.data.url;
+            toast.success('Booking confirmed successfully!');
+            navigate('/booking/success?showId=' + showId + '&seats=' + selectedSeats.join(',') + '&totalPrice=' + totalPrice + '&session_id=manual');
         } catch (error) {
             toast.error(error.response?.data?.message || 'Checkout failed');
             setIsCheckingOut(false);
@@ -190,14 +192,27 @@ const CheckoutPage = () => {
                                 </span>
                             </div>
                             <div className="flex justify-between text-slate-300">
-                                <span className="text-slate-500">Seats</span>
-                                <span className="font-bold text-primary-400 text-right max-w-[50%] leading-relaxed">
-                                    {selectedSeats.length > 0 ? selectedSeats.join(', ') : 'None'}
+                                <span className="text-slate-500">Selected Seats</span>
+                                <span className="font-semibold text-white text-right max-w-[60%] leading-relaxed flex flex-wrap justify-end gap-1">
+                                    {selectedSeats.length > 0
+                                        ? selectedSeats.map(id => {
+                                            const seat = show.seats.find(s => s.seatId === id);
+                                            return seat ? `${seat.row}${seat.number}` : id;
+                                        }).join(', ')
+                                        : 'None'}
                                 </span>
                             </div>
+                            <div className="flex justify-between text-slate-300">
+                                <span className="text-slate-500">Tickets</span>
+                                <span className="font-semibold text-white">{selectedSeats.length}</span>
+                            </div>
+                            <div className="flex justify-between text-slate-300">
+                                <span className="text-slate-500">Price per Ticket</span>
+                                <span className="font-semibold text-white">₹{show.ticketPrice}</span>
+                            </div>
                             <div className="flex justify-between text-white text-2xl font-black pt-6 border-t border-base-800">
-                                <span>Total Price</span>
-                                <span>${totalPrice.toFixed(2)}</span>
+                                <span>Total</span>
+                                <span>₹{totalPrice.toFixed(2)}</span>
                             </div>
                         </div>
 
@@ -206,7 +221,7 @@ const CheckoutPage = () => {
                             disabled={selectedSeats.length === 0 || isCheckingOut}
                             className="w-full bg-white hover:bg-slate-200 text-base-950 font-black py-4 rounded-sm text-lg transition-all shadow-sm shadow-white/10 active:scale-[0.98] disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:bg-white/50"
                         >
-                            {isCheckingOut ? 'Processing...' : `Pay $${totalPrice.toFixed(2)}`}
+                            {isCheckingOut ? 'Processing...' : `Confirm Booking`}
                         </button>
 
                         {!userInfo && (
