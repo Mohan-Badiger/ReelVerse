@@ -1,4 +1,4 @@
-# ReelVerse - Modern MERN Stack Movie Booking Application
+# ReelVerse - Modern MERN Stack Movie Booking Application.
 
 A production-ready Movie Booking Website inspired by Netflix and BookMyShow, featuring a premium dark theme, glassmorphism UI, advanced Framer Motion animations, comprehensive authentication (OTP, JWT), and a multi-entity relational booking logic with Stripe.
 
@@ -33,3 +33,5 @@ Refer to `backend/.env.example` for all required keys. You must create a `.env` 
 2. Set Root Directory to `frontend/`.
 3. Add `VITE_API_URL` if not using local proxy configurations.
 4. Vercel will automatically use `vercel.json` to handle React Router client-side routing.
+
+### Designed By Mohan
