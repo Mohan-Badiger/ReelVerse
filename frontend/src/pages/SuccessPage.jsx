@@ -35,7 +35,7 @@ const SuccessPage = () => {
                 });
 
                 // Fetch show details for the card
-                const showRes = await api.get(`/shows/${showId}`);
+                const showRes = await api.get(`/showtimes/${showId}`);
                 setShow(showRes.data);
 
                 toast.success('Payment successful & seats locked!');
@@ -45,7 +45,7 @@ const SuccessPage = () => {
                 }
                 // Try fetching show details anyway to show the card
                 try {
-                    const showRes = await api.get(`/shows/${showId}`);
+                    const showRes = await api.get(`/showtimes/${showId}`);
                     setShow(showRes.data);
                 } catch (e) {
                     console.error(e);

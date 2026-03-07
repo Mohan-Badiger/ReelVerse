@@ -19,7 +19,7 @@ const CheckoutPage = () => {
     useEffect(() => {
         const fetchShow = async () => {
             try {
-                const res = await api.get(`/shows/${showId}`);
+                const res = await api.get(`/showtimes/${showId}`);
                 setShow(res.data);
             } catch (error) {
                 toast.error('Failed to load seat map');
@@ -58,16 +58,14 @@ const CheckoutPage = () => {
         setIsCheckingOut(true);
         try {
             const totalPrice = selectedSeats.length * show.ticketPrice;
-            await api.post('/bookings', {
-                movieId: show.movie._id,
-                theatreId: show.theatre._id,
-                showtimeId: showId,
-                selectedSeats: selectedSeats,
+            const res = await api.post('/bookings/checkout', {
+                showId,
+                seats: selectedSeats,
                 totalPrice,
             });
 
-            toast.success('Booking confirmed successfully!');
-            navigate('/booking/success?showId=' + showId + '&seats=' + selectedSeats.join(',') + '&totalPrice=' + totalPrice + '&session_id=manual');
+            // Redirect to Stripe checkout
+            window.location.href = res.data.url;
         } catch (error) {
             toast.error(error.response?.data?.message || 'Checkout failed');
             setIsCheckingOut(false);
@@ -221,7 +219,7 @@ const CheckoutPage = () => {
                             disabled={selectedSeats.length === 0 || isCheckingOut}
                             className="w-full bg-white hover:bg-slate-200 text-base-950 font-black py-4 rounded-sm text-lg transition-all shadow-sm shadow-white/10 active:scale-[0.98] disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:bg-white/50"
                         >
-                            {isCheckingOut ? 'Processing...' : `Confirm Booking`}
+                            {isCheckingOut ? 'Redirecting to checkout...' : `Pay ₹${totalPrice.toFixed(2)}`}
                         </button>
 
                         {!userInfo && (
