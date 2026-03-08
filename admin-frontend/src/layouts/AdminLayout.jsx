@@ -32,6 +32,12 @@ const sidebarLinks = [
 const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+    const [openDropdown, setOpenDropdown] = useState(null);
+
+    const toggleDropdown = (name) => {
+        setOpenDropdown(prev => prev === name ? null : name);
+    };
+
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -197,16 +203,65 @@ const AdminLayout = () => {
                         </button>
                     </div>
 
-                    <div className="flex items-center space-x-4">
-                        <button className="p-2 rounded-sm hover:bg-base-800 text-base-400 relative transition-colors">
-                            <Bell className="w-5 h-5" />
-                            <span className="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-sm ring-2 ring-base-950"></span>
-                        </button>
-                        <button className="p-2 rounded-sm border border-base-800 hover:bg-base-800 text-base-400 transition-colors">
-                            <Settings className="w-5 h-5" />
-                        </button>
-                        <div className="w-8 h-8 rounded-sm bg-primary-600 flex items-center justify-center shadow-sm cursor-pointer ring-2 ring-base-950">
-                            <span className="text-white text-xs font-bold shadow-sm">SA</span>
+                    <div className="flex items-center space-x-4 relative">
+                        {openDropdown && (
+                            <div className="fixed inset-0 z-40" onClick={() => setOpenDropdown(null)} />
+                        )}
+                        
+                        <div className="relative z-50">
+                            <button onClick={() => toggleDropdown('notifications')} className={`p-2 rounded-sm hover:bg-base-800 text-base-400 relative transition-colors ${openDropdown === 'notifications' ? 'bg-base-800 text-primary-400' : ''}`}>
+                                <Bell className="w-5 h-5" />
+                                <span className="absolute top-1 right-1 w-2 h-2 bg-primary-500 rounded-sm ring-2 ring-base-950"></span>
+                            </button>
+                            <AnimatePresence>
+                                {openDropdown === 'notifications' && (
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute right-0 mt-2 w-72 bg-base-900 border border-base-800 rounded-sm shadow-xl py-2">
+                                        <div className="px-4 py-2 border-b border-base-800">
+                                            <h3 className="text-base-100 font-medium">Notifications</h3>
+                                        </div>
+                                        <div className="p-4 text-center text-base-400 text-sm">
+                                            No new notifications
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        <div className="relative z-50">
+                            <button onClick={() => toggleDropdown('settings')} className={`p-2 rounded-sm border border-base-800 hover:bg-base-800 text-base-400 transition-colors ${openDropdown === 'settings' ? 'bg-base-800 text-primary-400' : ''}`}>
+                                <Settings className="w-5 h-5" />
+                            </button>
+                            <AnimatePresence>
+                                {openDropdown === 'settings' && (
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute right-0 mt-2 w-48 bg-base-900 border border-base-800 rounded-sm shadow-xl py-2">
+                                        <div className="px-4 py-2 border-b border-base-800">
+                                            <h3 className="text-base-100 font-medium">Settings</h3>
+                                        </div>
+                                        <button className="w-full text-left px-4 py-2 text-sm text-base-300 hover:bg-base-800 hover:text-base-100 transition-colors" onClick={() => {toast('Preferences coming soon', {icon: '⚙️'}); setOpenDropdown(null);}}>Preferences</button>
+                                        <button className="w-full text-left px-4 py-2 text-sm text-base-300 hover:bg-base-800 hover:text-base-100 transition-colors" onClick={() => {toast('Security settings coming soon', {icon: '🔒'}); setOpenDropdown(null);}}>Security</button>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
+                        </div>
+
+                        <div className="relative z-50">
+                            <div onClick={() => toggleDropdown('profile')} className={`w-8 h-8 rounded-sm bg-primary-600 flex items-center justify-center shadow-sm cursor-pointer ring-2 hover:ring-primary-500 transition-all ${openDropdown === 'profile' ? 'ring-primary-500' : 'ring-base-950'}`}>
+                                <span className="text-white text-xs font-bold shadow-sm">SA</span>
+                            </div>
+                            <AnimatePresence>
+                                {openDropdown === 'profile' && (
+                                    <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: 10 }} className="absolute right-0 mt-2 w-48 bg-base-900 border border-base-800 rounded-sm shadow-xl py-2">
+                                        <div className="px-4 py-2 border-b border-base-800">
+                                            <p className="text-base-100 font-medium">Super Admin</p>
+                                            <p className="text-xs text-base-400">admin@reelverse.com</p>
+                                        </div>
+                                        <button className="w-full text-left px-4 py-2 text-sm text-base-300 hover:bg-base-800 hover:text-base-100 transition-colors" onClick={() => {toast('Profile settings coming soon', {icon: '👤'}); setOpenDropdown(null);}}>My Profile</button>
+                                        <div className="border-t border-base-800 mt-1 pt-1">
+                                            <button onClick={() => {setOpenDropdown(null); handleLogout();}} className="w-full text-left px-4 py-2 text-sm text-rose-400 hover:bg-rose-500/10 transition-colors">Logout</button>
+                                        </div>
+                                    </motion.div>
+                                )}
+                            </AnimatePresence>
                         </div>
                     </div>
                 </header>
