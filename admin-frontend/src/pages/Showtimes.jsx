@@ -3,9 +3,11 @@ import { motion } from 'framer-motion';
 import { Trash2, AlertCircle, RefreshCw, Edit2 } from 'lucide-react';
 import coreApi from '../services/coreApi';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 import ShowtimeModal from '../components/showtimes/ShowtimeModal';
 
 const Showtimes = () => {
+    const navigate = useNavigate();
     const [showtimes, setShowtimes] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [searchTerm, setSearchTerm] = useState('');
@@ -78,8 +80,11 @@ const Showtimes = () => {
                         <button onClick={fetchShowtimes} className="box-button-secondary text-sm flex items-center gap-2">
                             <RefreshCw size={14} className={isLoading ? "animate-spin" : ""} /> Refresh
                         </button>
+                        <button onClick={() => navigate('/add-shows')} className="box-button-primary text-sm flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 border-indigo-500">
+                            <span className="text-lg leading-none">+</span> Bulk Add Shows
+                        </button>
                         <button onClick={handleOpenAddModal} className="box-button-primary text-sm flex items-center gap-2">
-                            <span className="text-lg leading-none">+</span> Add Showtime
+                            <span className="text-lg leading-none">+</span> Add Single
                         </button>
                     </div>
                 </div>

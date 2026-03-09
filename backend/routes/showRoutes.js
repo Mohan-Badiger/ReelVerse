@@ -6,12 +6,14 @@ import {
     createShow,
     updateShow,
     deleteShow,
+    createBulkShows,
 } from '../controllers/showController.js';
 import { protectAdmin } from '../middleware/adminMiddleware.js';
 
 const router = express.Router();
 
 router.route('/').get(getAllShows).post(protectAdmin, createShow);
+router.route('/bulk-create').post(protectAdmin, createBulkShows);
 router.route('/:id').get(getShowById).put(protectAdmin, updateShow).delete(protectAdmin, deleteShow);
 router.route('/movie/:movieId').get(getShowsByMovie);
 

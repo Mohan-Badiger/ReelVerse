@@ -106,6 +106,60 @@ export const createShow = async (req, res, next) => {
     }
 };
 
+// @desc    Bulk create shows
+// @route   POST /api/shows/bulk-create
+// @access  Private/Admin
+export const createBulkShows = async (req, res, next) => {
+    try {
+        const { movieId, shows } = req.body;
+
+        if (!movieId || !shows || !Array.isArray(shows) || shows.length === 0) {
+            res.status(400);
+            return next(new Error('Invalid data provided'));
+        }
+
+        const createdShows = [];
+
+        // Loop through the "shows" blocks
+        for (const showBlock of shows) {
+            const { theaterId, screen, date, showtimes, price, totalSeats } = showBlock;
+
+            const theatreExists = await Theatre.findById(theaterId);
+            if (!theatreExists) {
+                // Return an error if a theatre in the block is not found
+                res.status(404);
+                return next(new Error(`Theatre not found: ${theaterId}`));
+            }
+
+            // Iterate over the multiple showtimes in a block
+            for (const time of showtimes) {
+                const generatedSeats = generateSeats(totalSeats ? Number(totalSeats) : 120);
+
+                const newShow = new Show({
+                    movie: movieId,
+                    theatre: theaterId,
+                    screen: screen || 1,
+                    date,
+                    time,
+                    ticketPrice: price,
+                    seats: generatedSeats,
+                });
+
+                const savedShow = await newShow.save();
+                createdShows.push(savedShow);
+            }
+        }
+
+        res.status(201).json({
+            message: 'Shows created successfully',
+            count: createdShows.length,
+            shows: createdShows
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Update a show
 // @route   PUT /api/shows/:id
 // @access  Private/Admin

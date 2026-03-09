@@ -12,6 +12,7 @@ const showSchema = new mongoose.Schema(
     {
         movie: { type: mongoose.Schema.Types.ObjectId, ref: 'Movie', required: true },
         theatre: { type: mongoose.Schema.Types.ObjectId, ref: 'Theatre', required: true },
+        screen: { type: Number, required: true, default: 1 },
         date: { type: Date, required: true },
         time: { type: String, required: true }, // like '10:00 AM'
         ticketPrice: { type: Number, required: true },
