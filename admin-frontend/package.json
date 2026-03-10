@@ -13,6 +13,7 @@
     "@reduxjs/toolkit": "^1.9.5",
     "@tailwindcss/vite": "^4.0.0",
     "axios": "^1.4.0",
+    "date-fns": "^4.1.0",
     "framer-motion": "^10.12.16",
     "lucide-react": "^0.244.0",
     "react": "^18.2.0",
@@ -20,6 +21,7 @@
     "react-hot-toast": "^2.4.1",
     "react-redux": "^8.0.5",
     "react-router-dom": "^6.11.2",
+    "recharts": "^3.8.0",
     "tailwindcss": "^4.0.0"
   },
   "devDependencies": {

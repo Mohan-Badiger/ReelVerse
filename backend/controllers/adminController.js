@@ -69,8 +69,78 @@ export const getAdminDashboard = async (req, res, next) => {
         const bookingsCount = await Booking.countDocuments();
 
         // Calculate total revenue from successful bookings
-        const bookings = await Booking.find({ status: 'confirmed' });
-        const totalRevenue = bookings.reduce((acc, curr) => acc + curr.totalPrice, 0);
+        const allBookings = await Booking.find({ status: 'confirmed' });
+        const totalRevenue = allBookings.reduce((acc, curr) => acc + curr.totalPrice, 0);
+
+        // --- 7-Day Chart Data ---
+        // Create an array of the last 7 days (including today)
+        const chartDataMap = {};
+        for (let i = 6; i >= 0; i--) {
+            const d = new Date();
+            d.setDate(d.getDate() - i);
+            const dateStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
+            chartDataMap[dateStr] = { name: d.toLocaleDateString('en-US', { weekday: 'short' }), bookings: 0, revenue: 0, dateFull: dateStr };
+        }
+
+        // Only consider bookings from the last 7 days
+        const sevenDaysAgo = new Date();
+        sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 6);
+        sevenDaysAgo.setHours(0, 0, 0, 0);
+
+        const recentChartBookings = await Booking.find({
+            status: 'confirmed',
+            createdAt: { $gte: sevenDaysAgo }
+        });
+
+        recentChartBookings.forEach(b => {
+            const bDateStr = new Date(b.createdAt).toISOString().split('T')[0];
+            if (chartDataMap[bDateStr]) {
+                chartDataMap[bDateStr].revenue += b.totalPrice;
+                chartDataMap[bDateStr].bookings += 1;
+            }
+        });
+
+        const chartData = Object.values(chartDataMap);
+
+        // --- Recent Activity Feed ---
+        // Top 5 most recent bookings
+        const recentBookings = await Booking.find()
+            .populate('user', 'name')
+            .populate('show', 'movie') // Assuming show refs movie, but movie might not be directly here unless deep populated
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .lean();
+
+        // Let's also fetch top 5 recent users
+        const recentUsers = await User.find()
+            .sort({ createdAt: -1 })
+            .limit(5)
+            .lean();
+
+        // Combine them into a single timeline feed
+        const activityFeed = [];
+
+        recentBookings.forEach(b => {
+            activityFeed.push({
+                _id: 'b_' + b._id,
+                type: 'booking',
+                message: `${b.user?.name || 'A user'} booked tickets for ₹${b.totalPrice}.`,
+                timestamp: b.createdAt
+            });
+        });
+
+        recentUsers.forEach(u => {
+            activityFeed.push({
+                _id: 'u_' + u._id,
+                type: 'user',
+                message: `New user registered: ${u.name}.`,
+                timestamp: u.createdAt
+            });
+        });
+
+        // Sort combined feed descending and take top 5
+        activityFeed.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        const finalActivityFeed = activityFeed.slice(0, 5);
 
         res.status(200).json({
             metrics: {
@@ -79,6 +149,8 @@ export const getAdminDashboard = async (req, res, next) => {
                 bookings: bookingsCount,
                 revenue: totalRevenue
             },
+            chartData,
+            recentActivity: finalActivityFeed,
             message: 'Dashboard data fetched'
         });
     } catch (error) {
