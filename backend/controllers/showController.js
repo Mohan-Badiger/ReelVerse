@@ -111,18 +111,19 @@ export const createShow = async (req, res, next) => {
 // @access  Private/Admin
 export const createBulkShows = async (req, res, next) => {
     try {
-        const { movieId, shows } = req.body;
+        const inputShows = req.body.theaters || req.body.shows;
 
-        if (!movieId || !shows || !Array.isArray(shows) || shows.length === 0) {
+        if (!movieId || !inputShows || !Array.isArray(inputShows) || inputShows.length === 0) {
             res.status(400);
             return next(new Error('Invalid data provided'));
         }
 
         const createdShows = [];
 
-        // Loop through the "shows" blocks
-        for (const showBlock of shows) {
-            const { theaterId, screen, date, showtimes, price, totalSeats } = showBlock;
+        // Loop through the blocks
+        for (const showBlock of inputShows) {
+            const { theaterId, screen, days, date, showtimes, price, totalSeats } = showBlock;
+            const targetDays = Array.isArray(days) && days.length > 0 ? days : [date].filter(Boolean);
 
             const theatreExists = await Theatre.findById(theaterId);
             if (!theatreExists) {
@@ -131,22 +132,24 @@ export const createBulkShows = async (req, res, next) => {
                 return next(new Error(`Theatre not found: ${theaterId}`));
             }
 
-            // Iterate over the multiple showtimes in a block
-            for (const time of showtimes) {
-                const generatedSeats = generateSeats(totalSeats ? Number(totalSeats) : 120);
+            // Iterate over each day and each showtime
+            for (const day of targetDays) {
+                for (const time of showtimes) {
+                    const generatedSeats = generateSeats(totalSeats ? Number(totalSeats) : 120);
 
-                const newShow = new Show({
-                    movie: movieId,
-                    theatre: theaterId,
-                    screen: screen || 1,
-                    date,
-                    time,
-                    ticketPrice: price,
-                    seats: generatedSeats,
-                });
+                    const newShow = new Show({
+                        movie: movieId,
+                        theatre: theaterId,
+                        screen: screen || 1,
+                        date: day,
+                        time,
+                        ticketPrice: price,
+                        seats: generatedSeats,
+                    });
 
-                const savedShow = await newShow.save();
-                createdShows.push(savedShow);
+                    const savedShow = await newShow.save();
+                    createdShows.push(savedShow);
+                }
             }
         }
 

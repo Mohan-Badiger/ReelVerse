@@ -1,9 +1,30 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trash2, Plus, ArrowLeft } from 'lucide-react';
+import { Trash2, Plus, ArrowLeft, Check } from 'lucide-react';
 import coreApi from '../services/coreApi';
 import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
+
+const PRESET_TIMINGS = [
+    '10:00 AM', '11:30 AM', '12:00 PM', '02:00 PM',
+    '03:00 PM', '04:30 PM', '06:00 PM', '07:30 PM',
+    '09:00 PM', '10:30 PM'
+];
+
+const getFormattedDate = (daysToAdd) => {
+    const d = new Date();
+    d.setDate(d.getDate() + daysToAdd);
+    // Use local coordinates to avoid timezone shift in ISO string
+    const offset = d.getTimezoneOffset()
+    d.setMinutes(d.getMinutes() - offset)
+    return d.toISOString().split('T')[0];
+};
+
+const DAYS_OPTIONS = [
+    { label: 'Today', value: getFormattedDate(0) },
+    { label: 'Tomorrow', value: getFormattedDate(1) },
+    { label: 'Day After Tomorrow', value: getFormattedDate(2) }
+];
 
 const AddShows = () => {
     const navigate = useNavigate();
@@ -17,8 +38,8 @@ const AddShows = () => {
             id: Date.now(),
             theaterId: '',
             screen: 1,
-            date: '',
-            showtimes: [''],
+            days: [DAYS_OPTIONS[0].value],
+            showtimes: [],
             price: 250,
             totalSeats: 120
         }
@@ -47,8 +68,8 @@ const AddShows = () => {
                 id: Date.now(),
                 theaterId: '',
                 screen: 1,
-                date: '',
-                showtimes: [''],
+                days: [DAYS_OPTIONS[0].value],
+                showtimes: [],
                 price: 250,
                 totalSeats: 120
             }
@@ -67,32 +88,28 @@ const AddShows = () => {
         setShows(shows.map(s => (s.id === id ? { ...s, [field]: value } : s)));
     };
 
-    const handleShowtimeChange = (blockId, index, value) => {
+    const toggleShowtime = (blockId, time) => {
         setShows(shows.map(block => {
             if (block.id !== blockId) return block;
-            const newShowtimes = [...block.showtimes];
-            newShowtimes[index] = value;
+            const isSelected = block.showtimes.includes(time);
+            const newShowtimes = isSelected
+                ? block.showtimes.filter(t => t !== time)
+                : [...block.showtimes, time];
+
+            // Sort new timings based on PRESET_TIMINGS index
+            newShowtimes.sort((a, b) => PRESET_TIMINGS.indexOf(a) - PRESET_TIMINGS.indexOf(b));
             return { ...block, showtimes: newShowtimes };
         }));
     };
 
-    const handleAddShowtimeInput = (blockId) => {
+    const toggleDay = (blockId, dateValue) => {
         setShows(shows.map(block => {
             if (block.id !== blockId) return block;
-            return { ...block, showtimes: [...block.showtimes, ''] };
-        }));
-    };
-
-    const handleRemoveShowtimeInput = (blockId, index) => {
-        setShows(shows.map(block => {
-            if (block.id !== blockId) return block;
-            if (block.showtimes.length === 1) {
-                toast.error('At least one showtime is required per theater.');
-                return block;
-            }
-            const newShowtimes = [...block.showtimes];
-            newShowtimes.splice(index, 1);
-            return { ...block, showtimes: newShowtimes };
+            const isSelected = block.days.includes(dateValue);
+            const newDays = isSelected
+                ? block.days.filter(d => d !== dateValue)
+                : [...block.days, dateValue];
+            return { ...block, days: newDays };
         }));
     };
 
@@ -112,22 +129,20 @@ const AddShows = () => {
                 toast.error('Please select a theater for all blocks.');
                 return;
             }
-            if (!block.date) {
-                toast.error('Please select a date for all blocks.');
+            if (block.days.length === 0) {
+                toast.error('Please select at least one scheduled day for all blocks.');
                 return;
             }
-
-            const validShowtimes = block.showtimes.filter(t => t.trim() !== '');
-            if (validShowtimes.length === 0) {
-                toast.error('Please provide at least one valid showtime for all blocks.');
+            if (block.showtimes.length === 0) {
+                toast.error('Please select at least one showtime for all blocks.');
                 return;
             }
 
             formattedShows.push({
                 theaterId: block.theaterId,
                 screen: Number(block.screen) || 1,
-                date: block.date,
-                showtimes: validShowtimes,
+                days: block.days,
+                showtimes: block.showtimes,
                 price: Number(block.price) || 250,
                 totalSeats: Number(block.totalSeats) || 120
             });
@@ -139,10 +154,10 @@ const AddShows = () => {
                 movieId,
                 shows: formattedShows
             });
-            toast.success('All shows created successfully!');
+            toast.success('All matching shows scheduled successfully!');
             navigate('/showtimes');
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to create shows.');
+            toast.error(error.response?.data?.message || 'Failed to schedule shows.');
         } finally {
             setIsLoading(false);
         }
@@ -158,15 +173,15 @@ const AddShows = () => {
                     <ArrowLeft size={20} />
                 </button>
                 <div>
-                    <h1 className="text-3xl font-bold tracking-tight text-base-50 mb-2">Bulk Add Shows</h1>
-                    <p className="text-base-400">Add multiple theaters and showtimes for a movie in one go.</p>
+                    <h1 className="text-3xl font-bold tracking-tight text-base-50 mb-2">Advanced Scheduling</h1>
+                    <p className="text-base-400">Schedule multiple theaters across multiple days in split seconds.</p>
                 </div>
             </div>
 
             <div className="box-panel p-6 flex-1 overflow-auto bg-base-900/50">
-                <form id="bulk-shows-form" onSubmit={handleSubmit} className="max-w-4xl mx-auto space-y-8">
+                <form id="bulk-shows-form" onSubmit={handleSubmit} className="max-w-5xl mx-auto space-y-8">
 
-                    {/* Movie Selection Profile */}
+                    {/* Movie Selection */}
                     <div className="bg-base-950 p-6 rounded-sm border border-base-800 shadow-md">
                         <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-2">
                             1. Select Movie *
@@ -186,7 +201,7 @@ const AddShows = () => {
 
                     <div className="space-y-6">
                         <div className="flex items-center justify-between">
-                            <h2 className="text-xl font-semibold text-white">2. Theater & Showtime Blocks</h2>
+                            <h2 className="text-xl font-semibold text-white">2. Theater Mapping</h2>
                             <button
                                 type="button"
                                 onClick={handleAddBlock}
@@ -200,12 +215,12 @@ const AddShows = () => {
                             {shows.map((block, index) => (
                                 <motion.div
                                     key={block.id}
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, height: 0 }}
-                                    className="bg-base-950 p-6 rounded-sm border border-base-800 shadow-md relative group"
+                                    initial={{ opacity: 0, scale: 0.98 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.98, height: 0 }}
+                                    className="bg-base-950 rounded-sm border border-base-800 shadow-md overflow-hidden relative group"
                                 >
-                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                    <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
                                         <button
                                             type="button"
                                             onClick={() => handleRemoveBlock(block.id)}
@@ -216,27 +231,28 @@ const AddShows = () => {
                                         </button>
                                     </div>
 
-                                    <h3 className="text-sm font-semibold text-primary-400 uppercase tracking-wider mb-5">
-                                        Theater Block {index + 1}
-                                    </h3>
+                                    {/* Block Header Area */}
+                                    <div className="p-6 border-b border-base-800 bg-base-900/30">
+                                        <h3 className="text-sm font-semibold text-primary-400 uppercase tracking-wider mb-5 flex items-center gap-2">
+                                            <span className="w-5 h-5 rounded bg-primary-500/20 flex items-center justify-center text-xs">{index + 1}</span>
+                                            Theater Allocation
+                                        </h3>
 
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-                                        <div>
-                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Select Theater *</label>
-                                            <select
-                                                required
-                                                value={block.theaterId}
-                                                onChange={(e) => handleBlockChange(block.id, 'theaterId', e.target.value)}
-                                                className="box-input w-full"
-                                            >
-                                                <option value="" disabled>Select theater...</option>
-                                                {theatres.map(t => (
-                                                    <option key={t._id} value={t._id}>{t.name} - {t.location}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-
-                                        <div className="grid grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                            <div className="lg:col-span-2">
+                                                <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Select Theater *</label>
+                                                <select
+                                                    required
+                                                    value={block.theaterId}
+                                                    onChange={(e) => handleBlockChange(block.id, 'theaterId', e.target.value)}
+                                                    className="box-input w-full"
+                                                >
+                                                    <option value="" disabled>Select theater...</option>
+                                                    {theatres.map(t => (
+                                                        <option key={t._id} value={t._id}>{t.name} - {t.location}</option>
+                                                    ))}
+                                                </select>
+                                            </div>
                                             <div>
                                                 <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Screen No. *</label>
                                                 <input
@@ -250,99 +266,110 @@ const AddShows = () => {
                                                 />
                                             </div>
                                             <div>
-                                                <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Date *</label>
+                                                <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Ticket Price (₹) *</label>
                                                 <input
-                                                    type="date"
+                                                    type="number"
                                                     required
-                                                    value={block.date}
-                                                    onChange={(e) => handleBlockChange(block.id, 'date', e.target.value)}
+                                                    min="0"
+                                                    value={block.price}
+                                                    onChange={(e) => handleBlockChange(block.id, 'price', e.target.value)}
                                                     className="box-input w-full"
-                                                    style={{ colorScheme: 'dark' }}
+                                                    placeholder="250"
                                                 />
                                             </div>
                                         </div>
                                     </div>
 
-                                    <div className="mb-6">
-                                        <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-2">Showtimes for this Date *</label>
-                                        <div className="flex flex-wrap gap-3 items-center">
-                                            {block.showtimes.map((st, i) => (
-                                                <div key={i} className="flex items-center gap-1 bg-base-900 border border-base-800 rounded-sm pr-1">
-                                                    <input
-                                                        type="text"
-                                                        required
-                                                        placeholder="10:00 AM"
-                                                        value={st}
-                                                        onChange={(e) => handleShowtimeChange(block.id, i, e.target.value)}
-                                                        className="bg-transparent border-none text-sm text-base-50 py-1.5 px-3 w-28 focus:outline-none focus:ring-0 placeholder-base-600"
-                                                    />
-                                                    <button
-                                                        type="button"
-                                                        onClick={() => handleRemoveShowtimeInput(block.id, i)}
-                                                        className="p-1 text-base-500 hover:text-rose-400 transition-colors"
-                                                    >
-                                                        <X size={14} />
-                                                    </button>
-                                                </div>
-                                            ))}
-                                            <button
-                                                type="button"
-                                                onClick={() => handleAddShowtimeInput(block.id)}
-                                                className="py-1.5 px-3 text-sm text-primary-400 bg-primary-500/10 hover:bg-primary-500/20 rounded-sm border border-primary-500/20 transition-colors flex items-center gap-1"
-                                            >
-                                                <Plus size={14} /> Add Time
-                                            </button>
+                                    {/* Scheduling Area */}
+                                    <div className="p-6 grid grid-cols-1 lg:grid-cols-12 gap-8">
+                                        <div className="lg:col-span-8">
+                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-3">Select Show Timings *</label>
+                                            <div className="flex flex-wrap gap-2">
+                                                {PRESET_TIMINGS.map((time) => {
+                                                    const isSelected = block.showtimes.includes(time);
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            key={time}
+                                                            onClick={() => toggleShowtime(block.id, time)}
+                                                            className={`
+                                                                px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 border
+                                                                ${isSelected
+                                                                    ? 'bg-primary-600 text-white border-primary-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] ring-1 ring-primary-500'
+                                                                    : 'bg-base-900 text-base-300 border-base-700 hover:border-base-600 hover:bg-base-800'
+                                                                }
+                                                            `}
+                                                        >
+                                                            {isSelected && <Check size={14} className="shrink-0" />} {time}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            {block.showtimes.length === 0 && (
+                                                <p className="text-xs text-rose-500 mt-2 font-medium">Select at least one timing.</p>
+                                            )}
+                                        </div>
+
+                                        <div className="lg:col-span-4 border-t lg:border-t-0 lg:border-l border-base-800 pt-6 lg:pt-0 lg:pl-8">
+                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-3">Schedule Days *</label>
+                                            <div className="flex flex-col gap-2">
+                                                {DAYS_OPTIONS.map((dayOption) => {
+                                                    const isSelected = block.days.includes(dayOption.value);
+                                                    return (
+                                                        <button
+                                                            type="button"
+                                                            key={dayOption.value}
+                                                            onClick={() => toggleDay(block.id, dayOption.value)}
+                                                            className={`
+                                                                w-full flex items-center justify-between px-4 py-3 rounded-sm border transition-all text-left
+                                                                ${isSelected
+                                                                    ? 'bg-primary-500/10 border-primary-500/50 text-primary-300'
+                                                                    : 'bg-base-900 border-base-800 text-base-300 hover:bg-base-800'
+                                                                }
+                                                            `}
+                                                        >
+                                                            <div className="flex flex-col">
+                                                                <span className="font-semibold text-sm">{dayOption.label}</span>
+                                                                <span className="text-xs opacity-70 mt-0.5">{dayOption.value}</span>
+                                                            </div>
+                                                            {isSelected && (
+                                                                <div className="w-5 h-5 rounded-full bg-primary-600 flex items-center justify-center">
+                                                                    <Check size={12} className="text-white" />
+                                                                </div>
+                                                            )}
+                                                        </button>
+                                                    );
+                                                })}
+                                            </div>
+                                            {block.days.length === 0 && (
+                                                <p className="text-xs text-rose-500 mt-2 font-medium">Select at least one day.</p>
+                                            )}
                                         </div>
                                     </div>
-
-                                    <div className="grid grid-cols-2 gap-6 bg-base-900/50 p-4 rounded-sm border border-base-800/50">
-                                        <div>
-                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Ticket Price (₹) *</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="0"
-                                                value={block.price}
-                                                onChange={(e) => handleBlockChange(block.id, 'price', e.target.value)}
-                                                className="box-input w-full"
-                                                placeholder="250"
-                                            />
-                                        </div>
-                                        <div>
-                                            <label className="block text-xs font-semibold text-base-400 uppercase tracking-wider mb-1.5">Total Seats *</label>
-                                            <input
-                                                type="number"
-                                                required
-                                                min="1"
-                                                value={block.totalSeats}
-                                                onChange={(e) => handleBlockChange(block.id, 'totalSeats', e.target.value)}
-                                                className="box-input w-full"
-                                                placeholder="120"
-                                            />
-                                        </div>
-                                    </div>
-
                                 </motion.div>
                             ))}
                         </AnimatePresence>
                     </div>
 
-                    <div className="flex bg-base-950 p-6 rounded-sm border border-base-800 shadow-md justify-between items-center sticky bottom-0 z-10">
-                        <p className="text-sm text-base-400 hidden sm:block">
-                            Review all theaters and showtimes before submitting.
-                        </p>
+                    <div className="flex bg-base-950 p-6 rounded-sm border border-base-800 shadow-xl justify-between items-center sticky bottom-4 z-10 backdrop-blur-md">
+                        <div className="hidden sm:block">
+                            <h3 className="text-white font-medium">Ready to deploy?</h3>
+                            <p className="text-sm text-base-400">
+                                This will create overlapping scheduled documents instantly.
+                            </p>
+                        </div>
                         <button
                             type="submit"
                             disabled={isLoading}
-                            className="box-button-primary min-w-[200px] flex items-center justify-center gap-2 ml-auto"
+                            className="bg-indigo-600 hover:bg-indigo-700 text-white shadow-xl px-8 py-3 rounded-sm font-semibold tracking-wide flex items-center justify-center gap-2 ml-auto disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                         >
                             {isLoading ? (
                                 <>
                                     <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin"></div>
-                                    Creating Shows...
+                                    Processing...
                                 </>
                             ) : (
-                                'Create All Shows'
+                                'Create Shows Schedule'
                             )}
                         </button>
                     </div>
@@ -353,9 +380,5 @@ const AddShows = () => {
     );
 };
 
-// Simple inline X icon since I forgot to import it at the top
-const X = ({ size }) => (
-    <svg xmlns="http://www.w3.org/2000/svg" width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-);
-
 export default AddShows;
+
