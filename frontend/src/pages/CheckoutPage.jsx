@@ -44,6 +44,16 @@ const CheckoutPage = () => {
         }
     };
 
+    const loadRazorpayScript = () => {
+        return new Promise((resolve) => {
+            const script = document.createElement('script');
+            script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+            script.onload = () => resolve(true);
+            script.onerror = () => resolve(false);
+            document.body.appendChild(script);
+        });
+    };
+
     const handleCheckout = async () => {
         if (!userInfo) {
             toast.error('Please login to continue');
@@ -58,16 +68,70 @@ const CheckoutPage = () => {
         setIsCheckingOut(true);
         try {
             const totalPrice = selectedSeats.length * show.ticketPrice;
-            const res = await api.post('/bookings/checkout', {
-                showId,
-                seats: selectedSeats,
-                totalPrice,
+
+            // 1. Load Razorpay script
+            const resScript = await loadRazorpayScript();
+            if (!resScript) {
+                toast.error('Razorpay SDK failed to load. Are you online?');
+                setIsCheckingOut(false);
+                return;
+            }
+
+            // 2. Create order on backend
+            const orderRes = await api.post('/payment/create-order', {
+                amount: totalPrice,
             });
 
-            // Redirect to Stripe checkout
-            window.location.href = res.data.url;
+            const { orderId, amount, currency } = orderRes.data;
+
+            // 3. Open Razorpay checkout popup
+            const options = {
+                key: import.meta.env.VITE_RAZORPAY_KEY_ID || 'rzp_test_YourKeyIdHere',
+                amount: amount.toString(),
+                currency: currency,
+                name: 'ReelVerse',
+                description: `Booking for ${show.movie.title}`,
+                order_id: orderId,
+                handler: async function (response) {
+                    try {
+                        toast.success('Payment Received. Confirming booking...');
+
+                        // 4. On success call verification API
+                        const verifyRes = await api.post('/payment/verify', {
+                            razorpay_order_id: response.razorpay_order_id,
+                            razorpay_payment_id: response.razorpay_payment_id,
+                            razorpay_signature: response.razorpay_signature,
+                            showId,
+                            seats: selectedSeats,
+                            totalPrice,
+                        });
+
+                        if (verifyRes.data.success) {
+                            toast.success('Booking confirmed successfully!');
+                            navigate(`/booking/success?showId=${showId}&seats=${selectedSeats.join(',')}&totalPrice=${totalPrice}&paymentId=${response.razorpay_payment_id}`);
+                        }
+                    } catch (err) {
+                        toast.error(err.response?.data?.message || 'Payment verification failed');
+                    }
+                },
+                prefill: {
+                    name: userInfo.name,
+                    email: userInfo.email,
+                },
+                theme: {
+                    color: '#f59e0b', // Primary theme color
+                },
+            };
+
+            const paymentObject = new window.Razorpay(options);
+            paymentObject.on('payment.failed', function (response) {
+                toast.error(response.error.description || 'Payment failed');
+            });
+            paymentObject.open();
+
         } catch (error) {
             toast.error(error.response?.data?.message || 'Checkout failed');
+        } finally {
             setIsCheckingOut(false);
         }
     };
@@ -230,7 +294,7 @@ const CheckoutPage = () => {
 
                         <div className="mt-8 flex items-start text-xs text-slate-500 leading-relaxed bg-base-950 p-4 rounded-sm border border-base-800">
                             <ShieldAlert size={18} className="mr-3 shrink-0 text-slate-400" />
-                            <p>Tickets once booked cannot be cancelled. Transactions are processed securely via Stripe Test Mode.</p>
+                            <p>Tickets once booked cannot be cancelled. Transactions are processed securely via Razorpay Test Mode.</p>
                         </div>
                     </motion.div>
                 </div>

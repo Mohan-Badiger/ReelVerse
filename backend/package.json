@@ -27,6 +27,6 @@
     "multer": "^2.1.0",
     "nodemailer": "^8.0.1",
     "streamifier": "^0.1.1",
-    "stripe": "^20.4.0"
+    "razorpay": "^2.9.4"
   }
 }
