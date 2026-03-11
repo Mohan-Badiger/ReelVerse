@@ -7,8 +7,8 @@ const bookingSchema = new mongoose.Schema(
         seatsBooked: [{ type: String }], // ['A1', 'A2']
         totalPrice: { type: Number, required: true },
         paymentStatus: { type: String, enum: ['Pending', 'Completed', 'Failed'], default: 'Pending' },
-        stripeSessionId: { type: String },
-        paymentId: { type: String }, // Stripe Charge Id
+        orderId: { type: String }, // Razorpay Order Id
+        paymentId: { type: String }, // Razorpay Payment Id
     },
     { timestamps: true }
 );

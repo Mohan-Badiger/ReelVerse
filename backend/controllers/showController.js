@@ -111,6 +111,7 @@ export const createShow = async (req, res, next) => {
 // @access  Private/Admin
 export const createBulkShows = async (req, res, next) => {
     try {
+        const { movieId } = req.body;
         const inputShows = req.body.theaters || req.body.shows;
 
         if (!movieId || !inputShows || !Array.isArray(inputShows) || inputShows.length === 0) {
