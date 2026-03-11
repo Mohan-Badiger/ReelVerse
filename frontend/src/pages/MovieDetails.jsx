@@ -1,7 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
+import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Ticket } from 'lucide-react';
+import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare } from 'lucide-react';
+import toast from 'react-hot-toast';
 import api from '../utils/axios';
 
 const MovieDetails = () => {
@@ -10,7 +12,14 @@ const MovieDetails = () => {
 
     const [movie, setMovie] = useState(null);
     const [shows, setShows] = useState([]);
+    const [reviews, setReviews] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
+
+    // Auth & Review form state
+    const { userInfo } = useSelector((state) => state.auth);
+    const [rating, setRating] = useState(5);
+    const [comment, setComment] = useState('');
+    const [isSubmittingReview, setIsSubmittingReview] = useState(false);
 
     // Group shows by date then theatre
     const [selectedDate, setSelectedDate] = useState('');
@@ -19,12 +28,14 @@ const MovieDetails = () => {
     useEffect(() => {
         const fetchMovieData = async () => {
             try {
-                const [movieRes, showsRes] = await Promise.all([
+                const [movieRes, showsRes, reviewsRes] = await Promise.all([
                     api.get(`/movies/${id}`),
-                    api.get(`/showtimes/movie/${id}`)
+                    api.get(`/showtimes/movie/${id}`),
+                    api.get(`/reviews/${id}`)
                 ]);
 
                 setMovie(movieRes.data);
+                setReviews(reviewsRes.data);
 
                 // Group logic: Date -> Theatre ID -> Showtimes
                 const rawShows = showsRes.data;
@@ -58,6 +69,33 @@ const MovieDetails = () => {
         fetchMovieData();
     }, [id]);
 
+    const submitReview = async (e) => {
+        e.preventDefault();
+        if (!rating || !comment.trim()) {
+            return toast.error('Please provide a rating and a comment');
+        }
+        setIsSubmittingReview(true);
+        try {
+            await api.post(`/reviews/${id}`, { rating, comment }, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            toast.success('Review added successfully!');
+            setComment('');
+            setRating(5);
+            // Refresh reviews
+            const revRes = await api.get(`/reviews/${id}`);
+            setReviews(revRes.data);
+
+            // Optionally refresh movie for updated average rating
+            const movRes = await api.get(`/movies/${id}`);
+            setMovie(movRes.data);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to submit review');
+        } finally {
+            setIsSubmittingReview(false);
+        }
+    };
+
     if (isLoading) return <div className="flex justify-center items-center h-[80vh]"><div className="w-10 h-10 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div></div>;
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
@@ -90,9 +128,17 @@ const MovieDetails = () => {
                     </div>
 
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">{movie.title}</h1>
+                    <div className="flex items-center gap-4 mb-8">
+                        <div className="flex items-center text-yellow-500">
+                            <Star fill="currentColor" size={24} />
+                            <span className="ml-2 text-2xl font-black text-white">{movie.rating > 0 ? movie.rating.toFixed(1) : 'NR'}</span>
+                        </div>
+                        <span className="text-slate-500 text-sm">/ 5</span>
+                    </div>
+
                     <p className="text-slate-300 text-base md:text-lg mb-8 max-w-2xl leading-relaxed">{movie.description}</p>
 
-                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-8 text-sm md:text-base border-t border-base-800 pt-8">
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-4 text-sm md:text-base border-t border-base-800 pt-8">
                         <div>
                             <p className="text-slate-500 uppercase tracking-widest text-xs mb-1">Director</p>
                             <p className="font-semibold text-white">{movie.director}</p>
@@ -181,6 +227,96 @@ const MovieDetails = () => {
                         </div>
                     </div>
                 )}
+            </motion.div>
+
+            {/* Reviews Section */}
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-16 box-panel p-8 bg-base-950/30">
+                <h2 className="text-2xl font-bold text-white mb-8 flex items-center border-b border-base-800 pb-4">
+                    <MessageSquare className="text-primary-500 mr-3" size={28} />
+                    Movie Reviews
+                </h2>
+
+                <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+                    {/* Review List */}
+                    <div className="lg:col-span-2 space-y-6">
+                        {reviews.length === 0 ? (
+                            <p className="text-slate-400">No reviews yet. Be the first to review this movie!</p>
+                        ) : (
+                            reviews.map(review => (
+                                <div key={review._id} className="bg-base-900 border border-base-800 p-6 rounded-sm">
+                                    <div className="flex justify-between items-start mb-4">
+                                        <div>
+                                            <h4 className="font-bold text-white text-lg">{review.user?.name || 'Anonymous'}</h4>
+                                            <p className="text-xs text-slate-500 mt-1">{new Date(review.createdAt).toLocaleDateString()}</p>
+                                        </div>
+                                        <div className="flex text-yellow-500">
+                                            {[...Array(5)].map((_, i) => (
+                                                <Star key={i} size={16} fill={i < review.rating ? 'currentColor' : 'none'} className={i < review.rating ? '' : 'text-base-800'} />
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <p className="text-slate-300 leading-relaxed text-sm">{review.comment}</p>
+                                </div>
+                            ))
+                        )}
+                    </div>
+
+                    {/* Write Review Form */}
+                    <div className="lg:col-span-1">
+                        <div className="bg-base-900 border border-base-800 p-6 rounded-sm sticky top-24">
+                            <h3 className="text-xl font-bold text-white mb-6">Write a Review</h3>
+
+                            {!userInfo ? (
+                                <div className="text-center py-6 bg-base-950 rounded border border-base-800">
+                                    <p className="text-slate-400 text-sm mb-4">Please log in to write a review.</p>
+                                </div>
+                            ) : (
+                                <form onSubmit={submitReview} className="space-y-6">
+                                    <div>
+                                        <label className="block text-sm text-slate-400 mb-2">Rating</label>
+                                        <div className="flex gap-2">
+                                            {[1, 2, 3, 4, 5].map((num) => (
+                                                <button
+                                                    key={num}
+                                                    type="button"
+                                                    onClick={() => setRating(num)}
+                                                    className="focus:outline-none"
+                                                >
+                                                    <Star
+                                                        size={28}
+                                                        fill={num <= rating ? '#eab308' : 'none'}
+                                                        color={num <= rating ? '#eab308' : '#334155'}
+                                                        className="transition-colors"
+                                                    />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    <div>
+                                        <label className="block text-sm text-slate-400 mb-2">Your Review</label>
+                                        <textarea
+                                            className="w-full bg-base-950 border border-base-800 text-white p-3 rounded-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors placeholder:text-slate-600 resize-none h-32 text-sm"
+                                            placeholder="What did you think of the movie?"
+                                            value={comment}
+                                            onChange={(e) => setComment(e.target.value)}
+                                            required
+                                        ></textarea>
+                                    </div>
+
+                                    <button
+                                        type="submit"
+                                        disabled={isSubmittingReview}
+                                        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 rounded-sm transition-colors disabled:opacity-50"
+                                    >
+                                        {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
+                                    </button>
+                                    <p className="text-xs text-slate-500 mt-4 text-center">Note: You can only review movies you have successfully booked.</p>
+                                </form>
+                            )}
+                        </div>
+                    </div>
+                </div>
             </motion.div>
         </div>
     );

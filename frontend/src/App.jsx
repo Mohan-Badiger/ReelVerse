@@ -12,6 +12,7 @@ const CheckoutPage = lazy(() => import('./pages/CheckoutPage'));
 const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const Theatres = lazy(() => import('./pages/Theatres'));
 const UpcomingMovies = lazy(() => import('./pages/UpcomingMovies'));
+const MyBookingsPage = lazy(() => import('./pages/MyBookingsPage'));
 
 
 const ProtectedRoute = ({ children }) => {
@@ -49,6 +50,14 @@ function App() {
                                         element={
                                             <ProtectedRoute>
                                                 <Profile />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/dashboard/bookings"
+                                        element={
+                                            <ProtectedRoute>
+                                                <MyBookingsPage />
                                             </ProtectedRoute>
                                         }
                                     />

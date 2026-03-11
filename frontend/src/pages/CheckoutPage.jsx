@@ -16,6 +16,11 @@ const CheckoutPage = () => {
     const [isLoading, setIsLoading] = useState(true);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
 
+    // Coupon state
+    const [couponInput, setCouponInput] = useState('');
+    const [appliedCoupon, setAppliedCoupon] = useState(null);
+    const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+
     useEffect(() => {
         const fetchShow = async () => {
             try {
@@ -54,6 +59,31 @@ const CheckoutPage = () => {
         });
     };
 
+    const handleApplyCoupon = async () => {
+        if (!couponInput.trim()) return;
+        setIsApplyingCoupon(true);
+        try {
+            const res = await api.post('/coupons/validate', { code: couponInput }, {
+                headers: {
+                    Authorization: `Bearer ${userInfo.token}`,
+                }
+            });
+            setAppliedCoupon(res.data);
+            toast.success(`Coupon applied! ${res.data.discountPercentage}% off!`);
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Invalid coupon');
+            setAppliedCoupon(null);
+        } finally {
+            setIsApplyingCoupon(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setAppliedCoupon(null);
+        setCouponInput('');
+        toast.success('Coupon removed');
+    };
+
     const handleCheckout = async () => {
         if (!userInfo) {
             toast.error('Please login to continue');
@@ -69,7 +99,16 @@ const CheckoutPage = () => {
         try {
             const totalPrice = selectedSeats.length * show.ticketPrice;
 
-            // 1. Load Razorpay script
+            // 1. Lock Seats
+            try {
+                await api.post(`/showtimes/${showId}/lock-seats`, { seats: selectedSeats });
+            } catch (err) {
+                toast.error(err.response?.data?.message || 'Failed to lock seats. They might be taken.');
+                setIsCheckingOut(false);
+                return;
+            }
+
+            // 2. Load Razorpay script
             const resScript = await loadRazorpayScript();
             if (!resScript) {
                 toast.error('Razorpay SDK failed to load. Are you online?');
@@ -77,9 +116,11 @@ const CheckoutPage = () => {
                 return;
             }
 
-            // 2. Create order on backend
+            // 2. Create order on backend (New secure flow)
             const orderRes = await api.post('/payment/create-order', {
-                amount: totalPrice,
+                showId,
+                seats: selectedSeats,
+                couponCode: appliedCoupon ? appliedCoupon.code : null,
             });
 
             const { orderId, amount, currency } = orderRes.data;
@@ -103,12 +144,13 @@ const CheckoutPage = () => {
                             razorpay_signature: response.razorpay_signature,
                             showId,
                             seats: selectedSeats,
-                            totalPrice,
+                            totalPrice: amount / 100, // Pass actual billed amount
+                            couponCode: appliedCoupon ? appliedCoupon.code : null,
                         });
 
                         if (verifyRes.data.success) {
                             toast.success('Booking confirmed successfully!');
-                            navigate(`/booking/success?showId=${showId}&seats=${selectedSeats.join(',')}&totalPrice=${totalPrice}&paymentId=${response.razorpay_payment_id}`);
+                            navigate(`/booking/success?showId=${showId}`);
                         }
                     } catch (err) {
                         toast.error(err.response?.data?.message || 'Payment verification failed');
@@ -146,7 +188,9 @@ const CheckoutPage = () => {
         rowMapping[seat.row].push(seat);
     });
 
-    const totalPrice = selectedSeats.length * show.ticketPrice;
+    const basePrice = selectedSeats.length * show.ticketPrice;
+    const discountAmount = appliedCoupon ? (basePrice * (appliedCoupon.discountPercentage / 100)) : 0;
+    const finalPrice = basePrice - discountAmount;
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
@@ -242,7 +286,7 @@ const CheckoutPage = () => {
                     <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="box-card sticky top-24 bg-base-900 border-base-800">
                         <h3 className="text-2xl font-black text-white mb-8 pb-4 border-b border-base-800">Booking Summary</h3>
 
-                        <div className="space-y-6 mb-10">
+                        <div className="space-y-6 mb-8">
                             <div className="flex justify-between text-slate-300">
                                 <span className="text-slate-500">Theatre</span>
                                 <span className="font-semibold text-white">{show.theatre.name}</span>
@@ -272,9 +316,57 @@ const CheckoutPage = () => {
                                 <span className="text-slate-500">Price per Ticket</span>
                                 <span className="font-semibold text-white">₹{show.ticketPrice}</span>
                             </div>
-                            <div className="flex justify-between text-white text-2xl font-black pt-6 border-t border-base-800">
+
+                            {/* Coupon Section */}
+                            <div className="pt-4 border-t border-base-800">
+                                <span className="text-slate-500 text-sm block mb-2">Have a coupon?</span>
+                                {!appliedCoupon ? (
+                                    <div className="flex gap-2">
+                                        <input
+                                            type="text"
+                                            placeholder="Enter Code"
+                                            value={couponInput}
+                                            onChange={(e) => setCouponInput(e.target.value)}
+                                            className="w-full bg-base-950 border border-base-800 rounded px-3 py-2 text-white outline-none focus:border-primary-500 uppercase text-sm"
+                                        />
+                                        <button
+                                            onClick={handleApplyCoupon}
+                                            disabled={isApplyingCoupon || !couponInput.trim()}
+                                            className="bg-primary-500 text-white px-4 py-2 rounded text-sm font-bold hover:bg-primary-600 disabled:opacity-50 transition-colors shrink-0"
+                                        >
+                                            {isApplyingCoupon ? '...' : 'Apply'}
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="flex justify-between items-center bg-green-500/10 border border-green-500/20 p-3 rounded">
+                                        <div>
+                                            <span className="text-green-500 font-bold block">{appliedCoupon.code} APPLIED</span>
+                                            <span className="text-xs text-green-400">{appliedCoupon.discountPercentage}% discount</span>
+                                        </div>
+                                        <button onClick={removeCoupon} className="text-slate-400 hover:text-white p-1">
+                                            <X size={16} />
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* Final Totaling */}
+                            <div className="pt-4 border-t border-base-800 space-y-2">
+                                <div className="flex justify-between text-slate-400">
+                                    <span>Subtotal</span>
+                                    <span>₹{basePrice.toFixed(2)}</span>
+                                </div>
+                                {appliedCoupon && (
+                                    <div className="flex justify-between text-green-500 font-medium">
+                                        <span>Discount ({appliedCoupon.discountPercentage}%)</span>
+                                        <span>-₹{discountAmount.toFixed(2)}</span>
+                                    </div>
+                                )}
+                            </div>
+
+                            <div className="flex justify-between text-white text-2xl font-black pt-2">
                                 <span>Total</span>
-                                <span>₹{totalPrice.toFixed(2)}</span>
+                                <span>₹{Math.round(finalPrice)}</span>
                             </div>
                         </div>
 
@@ -283,7 +375,7 @@ const CheckoutPage = () => {
                             disabled={selectedSeats.length === 0 || isCheckingOut}
                             className="w-full bg-white hover:bg-slate-200 text-base-950 font-black py-4 rounded-sm text-lg transition-all shadow-sm shadow-white/10 active:scale-[0.98] disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:bg-white/50"
                         >
-                            {isCheckingOut ? 'Redirecting to checkout...' : `Pay ₹${totalPrice.toFixed(2)}`}
+                            {isCheckingOut ? 'Redirecting to checkout...' : `Pay ₹${Math.round(finalPrice)}`}
                         </button>
 
                         {!userInfo && (
@@ -294,7 +386,7 @@ const CheckoutPage = () => {
 
                         <div className="mt-8 flex items-start text-xs text-slate-500 leading-relaxed bg-base-950 p-4 rounded-sm border border-base-800">
                             <ShieldAlert size={18} className="mr-3 shrink-0 text-slate-400" />
-                            <p>Tickets once booked cannot be cancelled. Transactions are processed securely via Razorpay Test Mode.</p>
+                            <p>Tickets can be cancelled up to 2 hours before the showtime. Transactions are processed securely via Razorpay.</p>
                         </div>
                     </motion.div>
                 </div>

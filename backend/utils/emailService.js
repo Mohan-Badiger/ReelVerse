@@ -15,8 +15,12 @@ const sendEmail = async (options) => {
         from: `${process.env.FROM_NAME || 'ReelVerse'} <${process.env.FROM_EMAIL || process.env.SMTP_USER}>`,
         to: options.email,
         subject: options.subject,
-        html: options.message, // Accepts HTML instead of just text
+        html: options.message,
     };
+
+    if (options.attachments) {
+        message.attachments = options.attachments;
+    }
 
     const info = await transporter.sendMail(message);
 

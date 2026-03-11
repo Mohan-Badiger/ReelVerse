@@ -6,6 +6,8 @@ const seatSchema = new mongoose.Schema({
     seatId: String, // 'A1'
     isBooked: { type: Boolean, default: false },
     bookedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
+    lockedUntil: { type: Date, default: null },
+    lockedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User', default: null },
 });
 
 const showSchema = new mongoose.Schema(

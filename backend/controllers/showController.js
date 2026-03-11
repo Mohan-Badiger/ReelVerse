@@ -213,3 +213,56 @@ export const deleteShow = async (req, res, next) => {
         next(error);
     }
 };
+
+// @desc    Lock seats temporarily for checkout
+// @route   POST /api/shows/:id/lock-seats
+// @access  Private
+export const lockSeats = async (req, res, next) => {
+    try {
+        const { seats } = req.body;
+        const show = await Show.findById(req.params.id);
+
+        if (!show) {
+            res.status(404);
+            return next(new Error('Show not found'));
+        }
+
+        const now = new Date();
+        const lockExpiryTime = new Date(now.getTime() + 5 * 60000); // 5 minutes from now
+
+        // Check if any of the requested seats are already booked or locked by someone else
+        const unavailableSeats = show.seats.filter(seat => {
+            if (!seats.includes(seat.seatId)) return false;
+
+            // It's booked
+            if (seat.isBooked) return true;
+
+            // It's locked by someone else and lock is still valid
+            if (seat.lockedUntil && seat.lockedUntil > now && seat.lockedBy.toString() !== req.user._id.toString()) {
+                return true;
+            }
+
+            return false;
+        });
+
+        if (unavailableSeats.length > 0) {
+            res.status(400);
+            return next(new Error('Some of the selected seats are already booked or currently locked by another user. Please re-select your seats.'));
+        }
+
+        // Lock the seats for the current user
+        show.seats.forEach(seat => {
+            if (seats.includes(seat.seatId)) {
+                seat.lockedUntil = lockExpiryTime;
+                seat.lockedBy = req.user._id;
+            }
+        });
+
+        await show.save();
+
+        res.json({ message: 'Seats locked successfully for 5 minutes', lockedUntil: lockExpiryTime });
+
+    } catch (error) {
+        next(error);
+    }
+};

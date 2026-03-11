@@ -15,6 +15,8 @@ import theatreRoutes from './routes/theatreRoutes.js';
 import showRoutes from './routes/showRoutes.js';
 import bookingRoutes from './routes/bookingRoutes.js';
 import paymentRoutes from './routes/paymentRoutes.js';
+import couponRoutes from './routes/couponRoutes.js';
+import reviewRoutes from './routes/reviewRoutes.js';
 
 import adminRoutes from './routes/adminRoutes.js';
 
@@ -68,6 +70,8 @@ app.use('/api/theatres', theatreRoutes);
 app.use('/api/showtimes', showRoutes);
 app.use('/api/bookings', bookingRoutes);
 app.use('/api/payment', paymentRoutes);
+app.use('/api/coupons', couponRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Basic Route
 app.get('/', (req, res) => {

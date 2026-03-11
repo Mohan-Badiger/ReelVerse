@@ -9,6 +9,7 @@ const bookingSchema = new mongoose.Schema(
         paymentStatus: { type: String, enum: ['Pending', 'Completed', 'Failed'], default: 'Pending' },
         orderId: { type: String }, // Razorpay Order Id
         paymentId: { type: String }, // Razorpay Payment Id
+        qrCode: { type: String }, // Base64 QR code image
     },
     { timestamps: true }
 );
