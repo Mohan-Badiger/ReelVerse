@@ -150,6 +150,7 @@ const Navbar = () => {
                 isOpen={modalState.type === 'login'}
                 onClose={closeModals}
                 onSwitchToRegister={() => setModalState({ type: 'register', email: '' })}
+                onShowOTP={(email) => setModalState({ type: 'otp', email })}
             />
             <RegisterModal
                 isOpen={modalState.type === 'register'}

@@ -1,62 +1,73 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { CheckCircle, ArrowRight, Download, Calendar, MapPin, Grid } from 'lucide-react';
+import Confetti from 'react-confetti';
+import html2canvas from 'html2canvas';
+import jsPDF from 'jspdf';
 import api from '../utils/axios';
 import toast from 'react-hot-toast';
 
 const SuccessPage = () => {
     const [searchParams] = useSearchParams();
     const [isProcessing, setIsProcessing] = useState(true);
-    const [show, setShow] = useState(null);
-    const [bookingDetails, setBookingDetails] = useState({ seats: [], totalPrice: 0 });
+    const [booking, setBooking] = useState(null);
+    const ticketRef = useRef(null);
+    const [isDownloading, setIsDownloading] = useState(false);
+    const [windowDimensions, setWindowDimensions] = useState({ width: window.innerWidth, height: window.innerHeight });
 
     useEffect(() => {
-        const confirmPayment = async () => {
-            const showId = searchParams.get('showId');
-            const seats = searchParams.get('seats')?.split(',');
-            const totalPrice = searchParams.get('totalPrice');
-            const sessionId = searchParams.get('session_id');
+        const handleResize = () => setWindowDimensions({ width: window.innerWidth, height: window.innerHeight });
+        window.addEventListener('resize', handleResize);
+        return () => window.removeEventListener('resize', handleResize);
+    }, []);
 
-            if (!showId || !seats || !sessionId) {
+    useEffect(() => {
+        const fetchBooking = async () => {
+            const bookingId = searchParams.get('bookingId');
+
+            if (!bookingId) {
                 setIsProcessing(false);
                 return;
             }
 
-            setBookingDetails({ seats, totalPrice });
-
             try {
-                // Confirm booking
-                await api.post('/bookings/confirm', {
-                    showId,
-                    seats,
-                    totalPrice,
-                    sessionId,
-                });
-
-                // Fetch show details for the card
-                const showRes = await api.get(`/showtimes/${showId}`);
-                setShow(showRes.data);
-
-                toast.success('Payment successful & seats locked!');
+                const res = await api.get(`/bookings/${bookingId}`);
+                setBooking(res.data);
             } catch (error) {
-                if (error.response?.data?.message !== 'Seats booked by someone else during checkout. Please try again.') {
-                    console.error(error);
-                }
-                // Try fetching show details anyway to show the card
-                try {
-                    const showRes = await api.get(`/showtimes/${showId}`);
-                    setShow(showRes.data);
-                } catch (e) {
-                    console.error(e);
-                }
+                console.error('Failed to fetch booking details', error);
             } finally {
                 setIsProcessing(false);
             }
         };
 
-        confirmPayment();
+        fetchBooking();
     }, [searchParams]);
+
+    const handleDownloadPDF = async () => {
+        if (!ticketRef.current || isDownloading) return;
+        setIsDownloading(true);
+
+        try {
+            const canvas = await html2canvas(ticketRef.current, { scale: 2, useCORS: true });
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`ReelVerse-Ticket-${booking._id.substring(0, 6)}.pdf`);
+        } catch (error) {
+            console.error('Failed to generate PDF', error);
+        } finally {
+            setIsDownloading(false);
+        }
+    };
 
     if (isProcessing) {
         return (
@@ -67,9 +78,26 @@ const SuccessPage = () => {
         );
     }
 
+    if (!booking) {
+        return (
+            <div className="flex flex-col items-center justify-center h-[80vh] fade-in">
+                <p className="text-slate-400 text-lg font-medium">Booking not found or you are not authorized.</p>
+                <Link to="/" className="mt-4 text-primary-500 hover:text-primary-400">Go Home</Link>
+            </div>
+        );
+    }
+
     return (
-        <div className="max-w-3xl mx-auto px-6 py-20 fade-in">
-            <div className="flex flex-col items-center text-center mb-12">
+        <div className="max-w-4xl mx-auto px-6 py-20 fade-in relative">
+            <Confetti
+                width={windowDimensions.width}
+                height={windowDimensions.height}
+                recycle={false}
+                numberOfPieces={500}
+                gravity={0.15}
+            />
+
+            <div className="flex flex-col items-center text-center mb-12 relative z-10">
                 <motion.div
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
@@ -98,62 +126,104 @@ const SuccessPage = () => {
                 </motion.p>
             </div>
 
-            {/* Booking Details Card */}
-            {show && (
-                <motion.div
-                    initial={{ y: 30, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.3 }}
-                    className="box-panel p-1 mb-12 relative overflow-hidden group"
+            {/* Ticket PDF Wrapper */}
+            <motion.div
+                initial={{ y: 30, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                transition={{ delay: 0.3 }}
+                className="mb-12 flex justify-center w-full"
+            >
+                <div
+                    ref={ticketRef}
+                    className="bg-white text-black w-full max-w-2xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row relative"
+                    style={{ minHeight: '300px' }}
                 >
-                    <div className="absolute top-0 right-0 w-32 h-32 bg-primary-500/10 rounded-sm blur-3xl -mr-10 -mt-10"></div>
-
-                    <div className="bg-base-950 rounded-sm p-8 flex flex-col sm:flex-row gap-8 relative z-10 border border-base-800">
+                    {/* Left Section: Poster */}
+                    <div className="w-full md:w-1/3 bg-base-900 relative">
                         <img
-                            src={show.movie.posterUrl}
-                            alt={show.movie.title}
-                            className="w-32 h-48 object-cover rounded-sm shadow-sm border border-base-800 hidden sm:block"
+                            src={booking.show.movie.posterUrl}
+                            alt={booking.show.movie.title}
+                            className="w-full h-full object-cover"
+                            crossOrigin="anonymous"
                         />
-
-                        <div className="flex-1 flex flex-col justify-center">
-                            <h2 className="text-2xl font-black text-white mb-4">{show.movie.title}</h2>
-
-                            <div className="space-y-3">
-                                <div className="flex items-start text-slate-300">
-                                    <MapPin size={18} className="mr-3 text-slate-500 mt-0.5" />
-                                    <div>
-                                        <p className="font-semibold text-white">{show.theatre.name}</p>
-                                        <p className="text-sm text-slate-500">{show.theatre.address}</p>
-                                    </div>
-                                </div>
-                                <div className="flex items-center text-slate-300">
-                                    <Calendar size={18} className="mr-3 text-slate-500" />
-                                    <span className="font-medium text-white">{new Date(show.date).toLocaleDateString()}</span>
-                                    <span className="mx-2 text-slate-600">&bull;</span>
-                                    <span className="font-medium text-white">{show.time}</span>
-                                </div>
-                                <div className="flex items-center text-slate-300">
-                                    <Grid size={18} className="mr-3 text-slate-500" />
-                                    <span className="text-sm text-slate-500 mr-2">Seats:</span>
-                                    <span className="font-bold text-primary-400">{bookingDetails.seats.join(', ')}</span>
-                                </div>
-                            </div>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                            <span className="text-white font-bold tracking-widest uppercase text-xs">ReelVerse Ticket</span>
                         </div>
                     </div>
-                </motion.div>
-            )}
+
+                    {/* Right Section: Details & QR */}
+                    <div className="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between border-l-2 border-dashed border-gray-300 relative">
+                        {/* Cutouts for classic ticket look */}
+                        <div className="absolute -left-3 -top-3 w-6 h-6 bg-base-950 rounded-full md:block hidden"></div>
+                        <div className="absolute -left-3 -bottom-3 w-6 h-6 bg-base-950 rounded-full md:block hidden"></div>
+
+                        <div>
+                            <h2 className="text-2xl font-black mb-1 leading-none uppercase">{booking.show.movie.title}</h2>
+                            <p className="text-gray-500 text-sm font-semibold tracking-wider mb-6 pb-4 border-b border-gray-200">
+                                {booking.show.movie.language} • {booking.show.movie.duration} mins
+                            </p>
+
+                            <div className="flex gap-4 mb-4">
+                                <div className="flex-1">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Date</p>
+                                    <p className="font-bold">{new Date(booking.show.date).toLocaleDateString()}</p>
+                                </div>
+                                <div className="flex-1">
+                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Time</p>
+                                    <p className="font-bold">{booking.show.time}</p>
+                                </div>
+                            </div>
+
+                            <div className="mb-4">
+                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Cinema</p>
+                                <p className="font-bold">{booking.show.theatre.name}</p>
+                                <p className="text-sm text-gray-600">{booking.show.theatre.city}</p>
+                            </div>
+
+                            <div>
+                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Seats</p>
+                                <p className="font-black text-lg text-primary-600">{booking.seatsBooked.join(', ')}</p>
+                            </div>
+                        </div>
+
+                        <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-200">
+                            <div>
+                                <p className="text-xs text-gray-400 uppercase tracking-wider">Total Paid</p>
+                                <p className="font-black text-xl">₹{booking.totalPrice}</p>
+                            </div>
+                            {booking.qrCode && (
+                                <div className="text-center">
+                                    <img
+                                        src={booking.qrCode}
+                                        alt="Ticket QR Code"
+                                        className="w-20 h-20 bg-white p-1 border border-gray-200"
+                                        crossOrigin="anonymous"
+                                    />
+                                    <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">ID: {booking._id.substring(0, 8)}</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </motion.div>
 
             <motion.div
                 initial={{ y: 20, opacity: 0 }}
                 animate={{ y: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="flex flex-col sm:flex-row items-center justify-center gap-4"
+                className="flex flex-col sm:flex-row items-center justify-center gap-4 relative z-10"
             >
                 <button
-                    onClick={() => window.print()}
-                    className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-base-950 rounded-sm font-bold flex items-center justify-center text-lg transition-all shadow-sm active:scale-95 duration-200"
+                    onClick={handleDownloadPDF}
+                    disabled={isDownloading}
+                    className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-200 text-base-950 rounded-sm font-bold flex items-center justify-center text-lg transition-all shadow-sm active:scale-95 duration-200 disabled:opacity-50"
                 >
-                    <Download size={20} className="mr-3" /> Download Ticket
+                    {isDownloading ? (
+                        <div className="w-5 h-5 border-2 border-base-800 border-t-base-950 rounded-sm animate-spin mr-3"></div>
+                    ) : (
+                        <Download size={20} className="mr-3" />
+                    )}
+                    {isDownloading ? 'Generating...' : 'Download Ticket PDF'}
                 </button>
                 <Link
                     to="/profile"

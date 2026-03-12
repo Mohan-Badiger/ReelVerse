@@ -20,6 +20,37 @@ export const getUserBookings = async (req, res, next) => {
     }
 };
 
+// @desc    Get booking by ID
+// @route   GET /api/bookings/:id
+// @access  Private
+export const getBookingById = async (req, res, next) => {
+    try {
+        const booking = await Booking.findById(req.params.id)
+            .populate({
+                path: 'show',
+                populate: [
+                    { path: 'movie', select: 'title posterUrl language duration' },
+                    { path: 'theatre', select: 'name city address' }
+                ]
+            });
+
+        if (!booking) {
+            res.status(404);
+            return next(new Error('Booking not found'));
+        }
+
+        // Must be the user's booking or admin
+        if (booking.user.toString() !== req.user._id.toString() && !req.user.isAdmin) {
+            res.status(401);
+            return next(new Error('Not authorized to view this booking'));
+        }
+
+        res.json(booking);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get all bookings
 // @route   GET /api/bookings
 // @access  Private/Admin

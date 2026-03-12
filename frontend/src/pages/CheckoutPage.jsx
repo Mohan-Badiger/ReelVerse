@@ -15,6 +15,8 @@ const CheckoutPage = () => {
     const [selectedSeats, setSelectedSeats] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
     const [isCheckingOut, setIsCheckingOut] = useState(false);
+    const [isPaymentPopupOpen, setIsPaymentPopupOpen] = useState(false);
+    const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
     // Coupon state
     const [couponInput, setCouponInput] = useState('');
@@ -134,6 +136,8 @@ const CheckoutPage = () => {
                 description: `Booking for ${show.movie.title}`,
                 order_id: orderId,
                 handler: async function (response) {
+                    setIsPaymentPopupOpen(false);
+                    setIsProcessingPayment(true);
                     try {
                         toast.success('Payment Received. Confirming booking...');
 
@@ -150,10 +154,17 @@ const CheckoutPage = () => {
 
                         if (verifyRes.data.success) {
                             toast.success('Booking confirmed successfully!');
-                            navigate(`/booking/success?showId=${showId}`);
+                            navigate(`/booking/success?bookingId=${verifyRes.data.booking._id}`);
                         }
                     } catch (err) {
                         toast.error(err.response?.data?.message || 'Payment verification failed');
+                        setIsProcessingPayment(false);
+                    }
+                },
+                modal: {
+                    ondismiss: function () {
+                        setIsPaymentPopupOpen(false);
+                        setIsCheckingOut(false);
                     }
                 },
                 prefill: {
@@ -168,7 +179,10 @@ const CheckoutPage = () => {
             const paymentObject = new window.Razorpay(options);
             paymentObject.on('payment.failed', function (response) {
                 toast.error(response.error.description || 'Payment failed');
+                setIsPaymentPopupOpen(false);
+                setIsCheckingOut(false);
             });
+            setIsPaymentPopupOpen(true);
             paymentObject.open();
 
         } catch (error) {
@@ -194,6 +208,20 @@ const CheckoutPage = () => {
 
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
+            {/* Payment Processing Overlay */}
+            {isProcessingPayment && (
+                <div className="fixed inset-0 z-[100] bg-base-950/90 backdrop-blur-md flex flex-col items-center justify-center fade-in">
+                    <div className="w-16 h-16 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin mb-6"></div>
+                    <h2 className="text-2xl font-bold text-white mb-2">Processing your booking...</h2>
+                    <p className="text-slate-400">Please wait while we confirm your ticket.</p>
+                </div>
+            )}
+
+            {/* Razorpay Popup Blur Overlay */}
+            {isPaymentPopupOpen && (
+                <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md fade-in pointer-events-none"></div>
+            )}
+
             {/* Step Indicator */}
             <div className="w-full flex justify-center mb-16">
                 <div className="flex items-center space-x-4 md:space-x-8">
@@ -244,10 +272,10 @@ const CheckoutPage = () => {
                                                     onClick={() => toggleSeat(seat)}
                                                     className={`w-8 h-8 md:w-10 md:h-10 rounded-sm text-xs font-bold transition-all flex items-center justify-center relative
                                                         ${seat.isBooked
-                                                            ? 'bg-base-900 text-slate-700 cursor-not-allowed border border-base-800'
+                                                            ? 'bg-red-500/20 text-red-500 cursor-not-allowed border border-red-500/30'
                                                             : isSelected
-                                                                ? 'bg-primary-500 text-white shadow-sm shadow-primary-500/40 border-primary-400'
-                                                                : 'bg-base-800 text-slate-400 hover:bg-base-700 hover:text-white border border-base-800 hover:border-base-800'
+                                                                ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/40 border-blue-400'
+                                                                : 'bg-green-500/10 text-green-500 hover:bg-green-500/30 border border-green-500/30'
                                                         }`}
                                                     disabled={seat.isBooked}
                                                 >
@@ -265,16 +293,16 @@ const CheckoutPage = () => {
                     {/* Legends */}
                     <div className="flex justify-center flex-wrap mt-16 gap-6 md:gap-12">
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-base-800 border border-base-800"></div>
+                            <div className="w-8 h-8 rounded-sm bg-green-500/10 border border-green-500/30"></div>
                             <span className="text-sm font-medium text-slate-300">Available</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-primary-500 shadow-sm shadow-primary-500/40"></div>
+                            <div className="w-8 h-8 rounded-sm bg-blue-500 shadow-sm shadow-blue-500/40"></div>
                             <span className="text-sm font-medium text-slate-300">Selected</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-base-900 border border-base-800 flex items-center justify-center">
-                                <X size={16} className="text-slate-600" />
+                            <div className="w-8 h-8 rounded-sm bg-red-500/20 border border-red-500/30 flex items-center justify-center">
+                                <X size={16} className="text-red-500/70" />
                             </div>
                             <span className="text-sm font-medium text-slate-300">Booked</span>
                         </div>

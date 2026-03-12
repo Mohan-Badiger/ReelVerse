@@ -6,7 +6,7 @@ import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../store/slices/authSlice';
 import api from '../../utils/axios';
 
-const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
+const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
@@ -21,7 +21,19 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister }) => {
             toast.success('Logged in successfully!');
             onClose();
         } catch (err) {
-            toast.error(err.response?.data?.message || 'Login failed');
+            const errorMsg = err.response?.data?.message || 'Login failed';
+
+            if (errorMsg === 'Please verify your email first') {
+                try {
+                    await api.post('/auth/send-verification', { email });
+                    toast.success('Verification required. A new OTP has been sent to your email.');
+                    onShowOTP(email);
+                } catch (sendErr) {
+                    toast.error(sendErr.response?.data?.message || 'Failed to send verification email');
+                }
+            } else {
+                toast.error(errorMsg);
+            }
         } finally {
             setIsLoading(false);
         }

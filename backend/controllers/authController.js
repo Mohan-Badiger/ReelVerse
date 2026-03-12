@@ -72,9 +72,65 @@ export const registerUser = async (req, res, next) => {
 };
 
 /* ======================================================
-   VERIFY OTP
+   RESEND OTP / SEND VERIFICATION
 ====================================================== */
-export const verifyOTP = async (req, res, next) => {
+export const sendVerification = async (req, res, next) => {
+    try {
+        let { email } = req.body;
+
+        if (!email) {
+            res.status(400);
+            return next(new Error('Please provide email'));
+        }
+
+        email = email.toLowerCase().trim();
+        const user = await User.findOne({ email });
+
+        if (!user) {
+            res.status(404);
+            return next(new Error('User not found'));
+        }
+
+        if (user.isVerified) {
+            res.status(400);
+            return next(new Error('User is already verified'));
+        }
+
+        const otp = Math.floor(100000 + Math.random() * 900000).toString();
+        const otpHash = crypto.createHash('sha256').update(otp).digest('hex');
+        const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+
+        user.otp = otpHash;
+        user.otpExpire = otpExpire;
+        await user.save({ validateBeforeSave: false });
+
+        const message = `
+            <h1>ReelVerse Registration OTP</h1>
+            <p>Your OTP for account verification is:</p>
+            <h2>${otp}</h2>
+            <p>This OTP is valid for 10 minutes.</p>
+        `;
+
+        await sendEmail({
+            email: user.email,
+            subject: 'ReelVerse OTP Verification',
+            message,
+        });
+
+        res.status(200).json({
+            message: 'Verification OTP sent successfully.',
+        });
+
+    } catch (error) {
+        console.error('Send Verification Error:', error);
+        next(error);
+    }
+};
+
+/* ======================================================
+   VERIFY EMAIL OTP
+====================================================== */
+export const verifyEmail = async (req, res, next) => {
     try {
         let { email, otp } = req.body;
 

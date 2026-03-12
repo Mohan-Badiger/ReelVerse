@@ -3,7 +3,8 @@ import {
     registerUser,
     loginUser,
     logoutUser,
-    verifyOTP,
+    verifyEmail,
+    sendVerification
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -11,6 +12,7 @@ const router = express.Router();
 router.post('/register', registerUser);
 router.post('/login', loginUser);
 router.post('/logout', logoutUser);
-router.post('/verify-otp', verifyOTP);
+router.post('/verify-email', verifyEmail);
+router.post('/send-verification', sendVerification);
 
 export default router;

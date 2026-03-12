@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Filter } from 'lucide-react';
 import api from '../utils/axios';
 import MovieCard from '../components/movies/MovieCard';
+import SkeletonCard from '../components/common/SkeletonCard';
 
 const Movies = () => {
     const [movies, setMovies] = useState([]);
@@ -60,11 +61,7 @@ const Movies = () => {
             {isLoading ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
                     {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-                        <div key={i} className="animate-pulse">
-                            <div className="bg-base-900 rounded-sm aspect-[2/3] w-full mb-4"></div>
-                            <div className="h-6 bg-base-900 rounded-sm w-3/4 mb-2"></div>
-                            <div className="h-4 bg-base-900 rounded-sm w-1/2"></div>
-                        </div>
+                        <SkeletonCard key={i} />
                     ))}
                 </div>
             ) : (

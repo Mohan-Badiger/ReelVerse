@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { Play, Ticket, ShieldCheck, Zap } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import api from '../utils/axios';
-import MovieCard from '../components/movies/MovieCard';
+import { useState, useEffect } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Play } from "lucide-react";
+import { Link } from "react-router-dom";
+import api from "../utils/axios";
+import MovieCard from "../components/movies/MovieCard";
+import SkeletonCard from "../components/common/SkeletonCard";
 
 const Home = () => {
     const [movies, setMovies] = useState([]);
@@ -15,20 +16,17 @@ const Home = () => {
         const fetchMovies = async () => {
             try {
                 const [moviesRes, upcomingRes] = await Promise.all([
-                    api.get('/movies'),
-                    api.get('/movies/upcoming')
+                    api.get("/movies"),
+                    api.get("/movies/upcoming"),
                 ]);
-                const showingMovies = moviesRes.data.filter(m => !m.isUpcoming);
-                setMovies(showingMovies);
-                setUpcomingMovies(upcomingRes.data);
 
-                if (showingMovies.length > 0) {
-                    setHeroMovie(showingMovies[0]);
-                } else if (upcomingRes.data.length > 0) {
-                    setHeroMovie(upcomingRes.data[0]);
-                }
+                const showing = moviesRes.data.filter((m) => !m.isUpcoming);
+
+                setMovies(showing);
+                setUpcomingMovies(upcomingRes.data);
+                setHeroMovie(showing[0] || upcomingRes.data[0]);
             } catch (error) {
-                console.error('Failed to fetch movies:', error);
+                console.error(error);
             } finally {
                 setIsLoading(false);
             }
@@ -36,203 +34,182 @@ const Home = () => {
 
         fetchMovies();
     }, []);
+
     useEffect(() => {
         if (!movies.length) return;
+
         const interval = setInterval(() => {
-            setHeroMovie(current => {
-                const currentIndex = movies.findIndex(m => m._id === current?._id);
-                const nextIndex = (currentIndex + 1) % Math.min(movies.length, 5); // Cycle top 5
-                return movies[nextIndex];
+            setHeroMovie((current) => {
+                const index = movies.findIndex((m) => m._id === current?._id);
+                const next = (index + 1) % Math.min(5, movies.length);
+                return movies[next];
             });
-        }, 5000);
+        }, 6000);
+
         return () => clearInterval(interval);
     }, [movies]);
 
     if (isLoading) {
         return (
-            <div className="flex items-center justify-center min-h-[80vh]">
-                <div className="w-10 h-10 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div>
+            <div className="pt-20 max-w-1400px mx-auto px-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {[1, 2, 3, 4].map((n) => (
+                        <SkeletonCard key={n} />
+                    ))}
+                </div>
             </div>
         );
     }
 
     return (
-        <div className="-mt-16 w-full fade-in">
-            {/* Cinematic Hero Section */}
+        <div className="-mt-16">
+
+            {/* HERO SECTION */}
             {heroMovie && (
-                <div className="relative h-[85vh] w-full bg-base-950 border-b border-base-800 overflow-hidden">
+                <section className="relative h-[90vh] overflow-hidden">
+
                     <AnimatePresence mode="wait">
                         <motion.div
                             key={heroMovie._id}
                             initial={{ opacity: 0, scale: 1.05 }}
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.8 }}
+                            transition={{ duration: 0.9 }}
                             className="absolute inset-0"
                         >
                             <img
                                 src={heroMovie.backdropUrl || heroMovie.posterUrl}
-                                alt={heroMovie.title}
-                                className="w-full h-full object-cover opacity-40 object-top"
+                                className="w-full h-full object-cover opacity-40"
                             />
-                            <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/70 to-transparent"></div>
-                            <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/80 to-transparent"></div>
+
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
                         </motion.div>
                     </AnimatePresence>
 
-                    <div className="relative h-full flex flex-col justify-center px-6 md:px-12 max-w-1400px mx-auto w-full z-10">
-                        <AnimatePresence mode="wait">
-                            <motion.div
-                                key={`content-${heroMovie._id}`}
-                                initial={{ opacity: 0, y: 30 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                exit={{ opacity: 0, y: -20 }}
-                                transition={{ duration: 0.5, delay: 0.2 }}
-                                className="max-w-3xl mt-12"
-                            >
-                                <div className="flex items-center space-x-3 mb-6">
-                                    <span className="bg-primary-500/10 text-primary-400 font-bold tracking-widest text-[10px] uppercase px-3 py-1 rounded-sm border border-primary-500/20">
-                                        Now Showing
-                                    </span>
-                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-slate-300">
-                                        {heroMovie.language}
-                                    </span>
-                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-slate-300">
-                                        {heroMovie.duration} min
-                                    </span>
-                                    <span className="px-2 py-0.5 bg-base-900 border border-base-800 rounded font-medium text-xs text-amber-400 flex items-center gap-1">
-                                        ★ {heroMovie.rating || "New"}
-                                    </span>
-                                </div>
-                                <h1 className="text-5xl md:text-7xl lg:text-8xl font-black text-white mb-6 tracking-tighter leading-[1.05]">
-                                    {heroMovie.title}
-                                </h1>
-                                <p className="text-lg text-slate-300 mb-10 line-clamp-3 leading-relaxed max-w-xl">
-                                    {heroMovie.description}
-                                </p>
-
-                                <div className="flex items-center space-x-4 flex-wrap">
-                                    <Link
-                                        to={`/movie/${heroMovie._id}`}
-                                        className="bg-white hover:bg-slate-200 text-base-950 font-bold py-4 px-8 text-lg rounded-sm transition-all duration-300 flex items-center shadow-sm shadow-white/10 hover:scale-105 active:scale-95"
-                                    >
-                                        <Play size={20} className="mr-3" fill="currentColor" />
-                                        Book Tickets
-                                    </Link>
-                                    <Link
-                                        to={`/movies`}
-                                        className="bg-base-900/50 hover:bg-base-800 text-white font-semibold py-4 px-8 text-lg rounded-sm transition-all duration-300 border border-base-700/50 hover:border-base-700 backdrop-blur-sm"
-                                    >
-                                        Browse Movies
-                                    </Link>
-                                </div>
-                            </motion.div>
-                        </AnimatePresence>
-
-                        {/* Carousel Indicators */}
-                        <div className="absolute bottom-8 left-6 md:left-12 flex items-center gap-2">
-                            {movies.slice(0, 5).map((m, idx) => (
-                                <button
-                                    key={m._id}
-                                    onClick={() => setHeroMovie(m)}
-                                    className={`h-1.5 rounded-full transition-all duration-500 ${heroMovie?._id === m._id ? 'w-8 bg-primary-500' : 'w-2 bg-base-700 hover:bg-base-600'}`}
-                                />
-                            ))}
-                        </div>
+                    {/* Animated glow */}
+                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none">
+                        <div className="absolute w-[600px] h-[600px] bg-primary-500/20 blur-[200px] top-[-200px] left-[-200px]" />
+                        <div className="absolute w-[500px] h-[500px] bg-purple-500/20 blur-[200px] bottom-[-200px] right-[-200px]" />
                     </div>
-                </div>
+
+                    {/* Hero Content */}
+                    <div className="relative z-10 h-full flex items-center max-w-1400px mx-auto px-6">
+
+                        <motion.div
+                            key={`content-${heroMovie._id}`}
+                            initial={{ opacity: 0, y: 40 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6 }}
+                            className="max-w-2xl"
+                        >
+                            <p className="text-primary-400 uppercase tracking-widest text-sm mb-4">
+                                Now Showing
+                            </p>
+
+                            <h1 className="text-6xl md:text-7xl font-black text-white mb-6 leading-tight">
+                                {heroMovie.title}
+                            </h1>
+
+                            <p className="text-gray-300 text-lg mb-10 line-clamp-3">
+                                {heroMovie.description}
+                            </p>
+
+                            <div className="flex gap-4">
+                                <Link
+                                    to={`/movie/${heroMovie._id}`}
+                                    className="flex items-center gap-2 bg-white text-black font-semibold px-7 py-4 rounded-lg hover:scale-105 transition"
+                                >
+                                    <Play size={18} /> Book Tickets
+                                </Link>
+
+                                <Link
+                                    to="/movies"
+                                    className="border border-white/20 px-7 py-4 rounded-lg hover:bg-white/10 transition"
+                                >
+                                    Browse Movies
+                                </Link>
+                            </div>
+                        </motion.div>
+                    </div>
+
+                    {/* Progress Indicators */}
+                    <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex gap-3">
+                        {movies.slice(0, 5).map((m) => (
+                            <button
+                                key={m._id}
+                                onClick={() => setHeroMovie(m)}
+                                className={`h-1 rounded-full transition-all duration-500 ${heroMovie._id === m._id
+                                        ? "w-10 bg-primary-500"
+                                        : "w-3 bg-white/30"
+                                    }`}
+                            />
+                        ))}
+                    </div>
+                </section>
             )}
 
-            <div className="max-w-1400px mx-auto px-6 py-24 relative z-10 space-y-32">
+            {/* NOW SHOWING */}
+            <section className="max-w-1400px mx-auto px-6 py-28">
+                <div className="flex justify-between items-center mb-10">
+                    <h2 className="text-4xl font-bold text-white">Now Showing</h2>
 
-                {/* Now Showing */}
-                <section>
-                    <div className="flex items-center justify-between mb-10">
-                        <h2 className="text-4xl font-bold tracking-tight text-white m-0">
-                            Now Showing
-                        </h2>
-                        <Link to="/movies" className="text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors py-2 px-4 rounded-sm hover:bg-primary-500/10">
-                            View all &rarr;
-                        </Link>
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                        {movies.slice(0, 4).map((movie, idx) => (
-                            <MovieCard key={movie._id} movie={movie} index={idx} />
-                        ))}
-                    </div>
-                </section>
-
-                {/* Upcoming */}
-                <section>
-                    <div className="flex items-center justify-between mb-10">
-                        <h2 className="text-4xl font-bold tracking-tight text-white m-0">
-                            Upcoming Releases
-                        </h2>
-                        <Link to="/upcoming-movies" className="text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors py-2 px-4 rounded-sm hover:bg-primary-500/10">
-                            View All Upcoming Movies &rarr;
-                        </Link>
-                    </div>
-
-                    <div className="flex space-x-6 overflow-x-auto pb-8 snap-x scrollbar-hide">
-                        {upcomingMovies.map((movie, idx) => (
-                            <div key={movie._id} className="min-w-280px sm:min-w-[320px] snap-start shrink-0">
-                                <MovieCard movie={movie} index={idx} />
-                            </div>
-                        ))}
-                        {upcomingMovies.length === 0 && (
-                            <div className="w-full box-panel p-12 text-center text-slate-400 border border-dashed border-base-800 bg-transparent shadow-none">
-                                Exciting new upcoming movies will be listed here soon.
-                            </div>
-                        )}
-                    </div>
-                </section>
-
-                {/* Why Choose Us */}
-                <section className="py-16">
-                    <div className="text-center mb-16">
-                        <h2 className="text-4xl font-bold tracking-tight text-white mb-4">Why Book With ReelVerse</h2>
-                        <p className="text-slate-400 max-w-2xl mx-auto">Experience the most premium, seamless, and lightning-fast movie ticket booking platform.</p>
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="box-card text-center flex flex-col items-center group">
-                            <div className="w-16 h-16 bg-primary-500/10 rounded-sm flex items-center justify-center mb-6 text-primary-400 group-hover:scale-110 group-hover:bg-primary-500/20 transition-all duration-300">
-                                <Ticket size={32} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Seamless Booking</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">Book your favorite seats in just three clicks. No clutter, no distractions.</p>
-                        </div>
-                        <div className="box-card text-center flex flex-col items-center group">
-                            <div className="w-16 h-16 bg-emerald-500/10 rounded-sm flex items-center justify-center mb-6 text-emerald-400 group-hover:scale-110 group-hover:bg-emerald-500/20 transition-all duration-300">
-                                <Zap size={32} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Lightning Fast</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">Built on modern architecture ensuring zero lag and instant confirmations.</p>
-                        </div>
-                        <div className="box-card text-center flex flex-col items-center group">
-                            <div className="w-16 h-16 border border-base-800 bg-base-800 rounded-sm flex items-center justify-center mb-6 text-white group-hover:scale-110 group-hover:bg-white/10 transition-all duration-300">
-                                <ShieldCheck size={32} />
-                            </div>
-                            <h3 className="text-xl font-bold text-white mb-3">Guaranteed Seats</h3>
-                            <p className="text-slate-400 text-sm leading-relaxed">Real-time seat locking prevents double bookings. Your perfect spot is secured.</p>
-                        </div>
-                    </div>
-                </section>
-            </div>
-
-            {/* Clean Footer */}
-            <footer className="border-t border-base-800 bg-base-950 py-12 text-center mt-20">
-                <div className="max-w-1400px mx-auto px-6 flex flex-col items-center justify-center">
-                    <Link to="/" className="text-2xl font-black text-white tracking-tighter mb-4 flex items-center">
-                        <span className="text-primary-500 mr-2">
-                            <Play size={24} fill="currentColor" />
-                        </span>
-                        ReelVerse.
+                    <Link
+                        to="/movies"
+                        className="text-primary-400 hover:text-primary-300 transition"
+                    >
+                        View all →
                     </Link>
-                    <p className="text-slate-500 text-sm mt-4">
-                        &copy; {new Date().getFullYear()} ReelVerse. All rights reserved. Premium Cinema Experience.
-                    </p>
                 </div>
+
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    variants={{
+                        hidden: { opacity: 0 },
+                        show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+                    }}
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7"
+                >
+                    {movies.slice(0, 4).map((movie, i) => (
+                        <motion.div
+                            key={movie._id}
+                            variants={{
+                                hidden: { opacity: 0, y: 40 },
+                                show: { opacity: 1, y: 0 },
+                            }}
+                        >
+                            <MovieCard movie={movie} index={i} />
+                        </motion.div>
+                    ))}
+                </motion.div>
+            </section>
+
+            {/* UPCOMING */}
+            <section className="max-w-1400px mx-auto px-6 pb-32">
+                <div className="flex justify-between items-center mb-10">
+                    <h2 className="text-4xl font-bold text-white">Upcoming</h2>
+
+                    <Link
+                        to="/upcoming-movies"
+                        className="text-primary-400 hover:text-primary-300 transition"
+                    >
+                        View all →
+                    </Link>
+                </div>
+
+                <div className="flex gap-6 overflow-x-auto scrollbar-hide">
+                    {upcomingMovies.map((movie, i) => (
+                        <div key={movie._id} className="min-w-[300px]">
+                            <MovieCard movie={movie} index={i} />
+                        </div>
+                    ))}
+                </div>
+            </section>
+
+            {/* FOOTER */}
+            <footer className="border-t border-white/10 py-10 text-center text-gray-500">
+                © {new Date().getFullYear()} ReelVerse. Premium Cinema Experience.
             </footer>
         </div>
     );

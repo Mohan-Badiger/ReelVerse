@@ -15,7 +15,7 @@ const OTPModal = ({ isOpen, onClose, email }) => {
         e.preventDefault();
         setIsLoading(true);
         try {
-            const res = await api.post('/auth/verify-otp', { email, otp });
+            const res = await api.post('/auth/verify-email', { email, otp });
             dispatch(setCredentials(res.data));
             toast.success('Account verified and logged in successfully!');
             onClose();
