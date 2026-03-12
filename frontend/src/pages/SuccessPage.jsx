@@ -49,21 +49,43 @@ const SuccessPage = () => {
         setIsDownloading(true);
 
         try {
-            const canvas = await html2canvas(ticketRef.current, { scale: 2, useCORS: true });
-            const imgData = canvas.toDataURL('image/png');
+            const canvas = await html2canvas(ticketRef.current, { 
+                scale: 3, 
+                useCORS: true, 
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            });
+            const imgData = canvas.toDataURL('image/png', 1.0);
+            
+            const pdfWidth = 16;
+            const pdfHeight = 9;
             const pdf = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4'
+                orientation: 'landscape',
+                unit: 'in',
+                format: [pdfWidth, pdfHeight]
             });
 
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            const imgRatio = canvas.width / canvas.height;
+            const pdfRatio = pdfWidth / pdfHeight;
+            let finalWidth = pdfWidth;
+            let finalHeight = pdfHeight;
+            let xOffset = 0;
+            let yOffset = 0;
 
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            if (imgRatio > pdfRatio) {
+                finalHeight = finalWidth / imgRatio;
+                yOffset = (pdfHeight - finalHeight) / 2;
+            } else {
+                finalWidth = finalHeight * imgRatio;
+                xOffset = (pdfWidth - finalWidth) / 2;
+            }
+
+            pdf.addImage(imgData, 'PNG', xOffset, yOffset, finalWidth, finalHeight);
             pdf.save(`ReelVerse-Ticket-${booking._id.substring(0, 6)}.pdf`);
+            toast.success('Ticket downloaded successfully!');
         } catch (error) {
             console.error('Failed to generate PDF', error);
+            toast.error('Failed to generate ticket PDF');
         } finally {
             setIsDownloading(false);
         }
