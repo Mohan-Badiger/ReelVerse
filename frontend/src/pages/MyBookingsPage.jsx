@@ -3,7 +3,7 @@ import axios from 'axios';
 import { toast } from 'react-hot-toast';
 import { Link } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import html2canvas from 'html2canvas';
+import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
 import { Download } from 'lucide-react';
 
@@ -65,7 +65,27 @@ const MyBookingsPage = () => {
                 scale: 3, 
                 useCORS: true, 
                 allowTaint: true,
-                backgroundColor: '#ffffff'
+                backgroundColor: '#ffffff',
+                onclone: (clonedDoc) => {
+                    const elements = clonedDoc.getElementsByTagName('*');
+                    for (let i = 0; i < elements.length; i++) {
+                        const el = elements[i];
+                        const style = clonedDoc.defaultView.getComputedStyle(el);
+                        // html2canvas fails on oklab CSS functions which CSS variables in Tailwind v4 resolve to
+                        if (style.backgroundImage.includes('oklab')) {
+                            el.style.backgroundImage = 'none';
+                        }
+                        if (style.backgroundColor.includes('oklab')) {
+                            el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+                        }
+                        if (style.color.includes('oklab')) {
+                            el.style.color = 'rgba(0, 0, 0, 1)';
+                        }
+                        if (style.borderColor.includes('oklab')) {
+                            el.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                        }
+                    }
+                }
             });
             const imgData = canvas.toDataURL('image/png', 1.0);
             
@@ -249,7 +269,7 @@ const MyBookingsPage = () => {
                                                 className="w-full h-full object-cover"
                                                 crossOrigin="anonymous"
                                             />
-                                            <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-4">
+                                            <div className="absolute inset-0 flex items-end p-4" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))' }}>
                                                 <span className="text-white font-bold tracking-widest uppercase text-xs">ReelVerse Ticket</span>
                                             </div>
                                         </div>
