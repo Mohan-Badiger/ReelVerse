@@ -11,27 +11,36 @@ export const createMovieReview = async (req, res, next) => {
         const { rating, comment } = req.body;
         const movieId = req.params.movieId;
 
-        // Ensure user actually booked this movie
         const userBookings = await Booking.find({ user: req.user._id, paymentStatus: 'Completed' }).populate('show');
 
         let hasBookedMovie = false;
+        let hasOrphanedBooking = false;
+
         for (const booking of userBookings) {
-            if (booking.show && booking.show.movie.toString() === movieId) {
+            const bookedMovieId = booking.movie ? booking.movie.toString() : (booking.show?.movie ? booking.show.movie.toString() : null);
+            
+            if (bookedMovieId === movieId) {
                 hasBookedMovie = true;
                 break;
             }
+            
+            // If movie link is missing AND show is gone, it's an orphaned booking from before our fix
+            if (!bookedMovieId && !booking.show) {
+                hasOrphanedBooking = true;
+            }
         }
 
-        if (!hasBookedMovie) {
+        // Allow review if we found the movie OR if they have an orphaned booking (legacy support)
+        if (!hasBookedMovie && !hasOrphanedBooking) {
             res.status(400);
-            return next(new Error('You can only review movies you have booked.'));
+            return next(new Error('You can only review movies you have successfully booked.'));
         }
 
         const movie = await Movie.findById(movieId);
 
         if (!movie) {
             res.status(404);
-            return next(new Error('Movie not found'));
+            return next(new Error('Target movie not found in database.'));
         }
 
         // Check if user already reviewed
@@ -39,7 +48,7 @@ export const createMovieReview = async (req, res, next) => {
 
         if (alreadyReviewed) {
             res.status(400);
-            return next(new Error('You have already reviewed this movie'));
+            return next(new Error('You have already submitted a review for this movie. Multiple reviews are not allowed.'));
         }
 
         const review = new Review({

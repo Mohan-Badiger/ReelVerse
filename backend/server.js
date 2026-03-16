@@ -19,25 +19,18 @@ import couponRoutes from './routes/couponRoutes.js';
 import reviewRoutes from './routes/reviewRoutes.js';
 
 import adminRoutes from './routes/adminRoutes.js';
+import { cleanupOldShows } from './utils/showCleanup.js';
 
 dotenv.config();
+// Force reload to pick up reviewController changes
+
 
 // Connect Database
 connectDB();
 
 const app = express();
 
-// Security HTTP headers
-app.use(helmet());
-
-// Rate Limiting
-const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 100, // limit each IP to 100 requests per windowMs
-});
-app.use('/api/', limiter);
-
-// Middleware
+// 1. CORS Middleware (Must be before rate limiter/security if we want error responses to have CORS headers)
 app.use(cors({
     origin: [
         process.env.FRONTEND_URL || 'http://localhost:5173',
@@ -45,6 +38,19 @@ app.use(cors({
     ],
     credentials: true
 }));
+
+// 2. Security HTTP headers
+app.use(helmet());
+
+// 3. Rate Limiting (Relaxed for development/standard usage)
+const limiter = rateLimit({
+    windowMs: 15 * 60 * 1000, // 15 minutes
+    max: 500, // Increased from 100 to avoid blocking users during rapid navigation/dev
+    message: 'Too many requests from this IP, please try again after 15 minutes',
+});
+app.use('/api/', limiter);
+
+// 4. Other Middleware
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
@@ -86,4 +92,12 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
+    
+    // Initial cleanup of past showtimes
+    cleanupOldShows();
+
+    // Schedule cleanup every 24 hours
+    setInterval(() => {
+        cleanupOldShows();
+    }, 24 * 60 * 60 * 1000);
 });

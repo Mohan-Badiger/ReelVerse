@@ -170,10 +170,10 @@ const MyBookingsPage = () => {
                                     <div className="flex justify-between items-start mb-4">
                                         <div>
                                             <h2 className="text-2xl font-bold text-white mb-1">
-                                                {booking.show?.movie?.title || 'Unknown Movie'}
+                                                {booking.show?.movie?.title || 'Show Details Unavailable'}
                                             </h2>
                                             <p className="text-gray-400">
-                                                {booking.show?.theatre?.name}, {booking.show?.theatre?.city}
+                                                {booking.show?.theatre?.name ? `${booking.show.theatre.name}, ${booking.show.theatre.city}` : 'Theatre details archived'}
                                             </p>
                                         </div>
 
@@ -297,8 +297,8 @@ const MyBookingsPage = () => {
 
                                                 <div className="mb-4">
                                                     <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Cinema</p>
-                                                    <p className="font-bold">{booking.show?.theatre?.name}</p>
-                                                    <p className="text-sm text-gray-600">{booking.show?.theatre?.city}</p>
+                                                    <p className="font-bold">{booking.show?.theatre?.name || 'Archived Theatre'}</p>
+                                                    <p className="text-sm text-gray-600">{booking.show?.theatre?.city || ''}</p>
                                                 </div>
 
                                                 <div>

@@ -159,6 +159,7 @@ export const verifyPayment = async (req, res, next) => {
         // Create Booking Record
         const booking = new Booking({
             user: req.user._id,
+            movie: show.movie._id,
             show: showId,
             seatsBooked: seats,
             totalPrice,

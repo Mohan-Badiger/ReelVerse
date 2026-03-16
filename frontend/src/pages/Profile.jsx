@@ -191,10 +191,10 @@ const Profile = () => {
                                             >
 
                                                 {/* Poster */}
-                                                <div className="md:w-40 shrink-0">
+                                                <div className="md:w-40 shrink-0 bg-base-800">
                                                     <img
-                                                        src={booking.show.movie.posterUrl}
-                                                        alt={booking.show.movie.title}
+                                                        src={booking.show?.movie?.posterUrl || 'https://via.placeholder.com/300x450?text=Details+Unavailable'}
+                                                        alt={booking.show?.movie?.title || 'Show Unavailable'}
                                                         className="w-full h-48 md:h-full object-cover"
                                                     />
                                                 </div>
@@ -208,12 +208,12 @@ const Profile = () => {
 
                                                             <div>
                                                                 <h3 className="text-xl font-bold text-white">
-                                                                    {booking.show.movie.title}
+                                                                    {booking.show?.movie?.title || 'Show Details Unavailable'}
                                                                 </h3>
 
                                                                 <p className="flex items-center text-sm text-slate-400 mt-1">
                                                                     <MapPin size={14} className="mr-1" />
-                                                                    {booking.show.theatre.name}, {booking.show.theatre.city}
+                                                                    {booking.show?.theatre?.name ? `${booking.show.theatre.name}, ${booking.show.theatre.city}` : 'Theatre details archived'}
                                                                 </p>
                                                             </div>
 
@@ -231,7 +231,7 @@ const Profile = () => {
                                                                 </p>
 
                                                                 <p className="text-white text-sm">
-                                                                    {new Date(booking.show.date).toLocaleDateString()} • {booking.show.time}
+                                                                    {booking.show ? `${new Date(booking.show.date).toLocaleDateString()} • ${booking.show.time}` : 'Date details archived'}
                                                                 </p>
                                                             </div>
 
