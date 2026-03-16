@@ -119,7 +119,13 @@ const Home = () => {
                                     to={`/movie/${heroMovie._id}`}
                                     className="flex items-center gap-2 bg-white text-black font-semibold px-7 py-4 rounded-lg hover:scale-105 transition"
                                 >
-                                    <Play size={18} /> Book Tickets
+                                    {heroMovie.isUpcoming ? (
+                                        <>View Details</>
+                                    ) : (
+                                        <>
+                                            <Play size={18} /> Book Tickets
+                                        </>
+                                    )}
                                 </Link>
 
                                 <Link
