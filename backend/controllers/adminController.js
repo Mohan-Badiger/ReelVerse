@@ -66,20 +66,32 @@ export const getAdminDashboard = async (req, res, next) => {
     try {
         const usersCount = await User.countDocuments();
         const moviesCount = await Movie.countDocuments();
-        const bookingsCount = await Booking.countDocuments();
+        const bookingsCount = await Booking.countDocuments({ paymentStatus: 'Completed' });
 
         // Calculate total revenue from successful bookings
-        const allBookings = await Booking.find({ status: 'confirmed' });
+        const allBookings = await Booking.find({ paymentStatus: 'Completed' });
         const totalRevenue = allBookings.reduce((acc, curr) => acc + curr.totalPrice, 0);
 
         // --- 7-Day Chart Data ---
-        // Create an array of the last 7 days (including today)
+        // Create an array of the last 7 days (including today) using local date strings
         const chartDataMap = {};
         for (let i = 6; i >= 0; i--) {
             const d = new Date();
+            d.setHours(0, 0, 0, 0); // Start of day local time
             d.setDate(d.getDate() - i);
-            const dateStr = d.toISOString().split('T')[0]; // YYYY-MM-DD
-            chartDataMap[dateStr] = { name: d.toLocaleDateString('en-US', { weekday: 'short' }), bookings: 0, revenue: 0, dateFull: dateStr };
+            
+            // Generate a local YYYY-MM-DD key for consistent grouping
+            const year = d.getFullYear();
+            const month = String(d.getMonth() + 1).padStart(2, '0');
+            const day = String(d.getDate()).padStart(2, '0');
+            const localKey = `${year}-${month}-${day}`;
+            
+            chartDataMap[localKey] = { 
+                name: d.toLocaleDateString('en-US', { weekday: 'short' }), 
+                bookings: 0, 
+                revenue: 0, 
+                dateFull: localKey 
+            };
         }
 
         // Only consider bookings from the last 7 days
@@ -88,15 +100,20 @@ export const getAdminDashboard = async (req, res, next) => {
         sevenDaysAgo.setHours(0, 0, 0, 0);
 
         const recentChartBookings = await Booking.find({
-            status: 'confirmed',
+            paymentStatus: 'Completed',
             createdAt: { $gte: sevenDaysAgo }
         });
 
         recentChartBookings.forEach(b => {
-            const bDateStr = new Date(b.createdAt).toISOString().split('T')[0];
-            if (chartDataMap[bDateStr]) {
-                chartDataMap[bDateStr].revenue += b.totalPrice;
-                chartDataMap[bDateStr].bookings += 1;
+            const bDate = new Date(b.createdAt);
+            const year = bDate.getFullYear();
+            const month = String(bDate.getMonth() + 1).padStart(2, '0');
+            const day = String(bDate.getDate()).padStart(2, '0');
+            const localKey = `${year}-${month}-${day}`;
+            
+            if (chartDataMap[localKey]) {
+                chartDataMap[localKey].revenue += b.totalPrice;
+                chartDataMap[localKey].bookings += 1;
             }
         });
 
