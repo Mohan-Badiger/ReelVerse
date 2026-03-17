@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Ticket, User, Settings, Calendar, MapPin, CreditCard, Download, Clock, CheckCircle2 } from 'lucide-react';
+import { Ticket, User, Settings, Calendar, MapPin, CreditCard, Download, Clock, CheckCircle2, Mail, Lock } from 'lucide-react';
 import api from '../utils/axios';
 import { setCredentials } from '../store/slices/authSlice';
 
@@ -340,12 +340,15 @@ const Profile = () => {
                                             Email Address
                                         </label>
 
-                                        <input
-                                            type="email"
-                                            value={userInfo?.email}
-                                            disabled
-                                            className="box-input w-full h-12 opacity-60 cursor-not-allowed"
-                                        />
+                                        <div className="relative">
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                            <input
+                                                type="email"
+                                                value={userInfo?.email}
+                                                disabled
+                                                className="box-input w-full pl-12 h-12 opacity-60 cursor-not-allowed"
+                                            />
+                                        </div>
 
                                         <p className="text-xs text-slate-500 mt-2">
                                             To change your email address, please contact support.
@@ -357,14 +360,17 @@ const Profile = () => {
                                             New Password
                                         </label>
 
-                                        <input
-                                            type="password"
-                                            value={password}
-                                            onChange={(e) => setPassword(e.target.value)}
-                                            placeholder="Leave blank to keep current password"
-                                            className="box-input w-full h-12"
-                                            minLength={8}
-                                        />
+                                        <div className="relative">
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                            <input
+                                                type="password"
+                                                value={password}
+                                                onChange={(e) => setPassword(e.target.value)}
+                                                placeholder="Leave blank to keep current password"
+                                                className="box-input w-full pl-12 h-12"
+                                                minLength={8}
+                                            />
+                                        </div>
                                     </div>
 
                                     <button
