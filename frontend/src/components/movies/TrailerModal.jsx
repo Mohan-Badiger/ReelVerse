@@ -37,7 +37,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[100] flex items-center justify-center">
+                <div className="fixed inset-0 z-[100] flex">
 
                     {/* Backdrop */}
                     <motion.div
@@ -60,7 +60,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl }) => {
                         <iframe
                             src={embedUrl}
                             title="Movie Trailer"
-                            className="w-full h-full rounded-md shadow-2xl border border-white/10"
+                            className="w-full h-[90vh] rounded-md shadow-2xl border border-white/10"
                             allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                             allowFullScreen
                         />
