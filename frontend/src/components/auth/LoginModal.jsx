@@ -76,7 +76,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Email</label>
                                     <div className="relative flex items-center">
-                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" />
+                                        {/* <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
                                         <input
                                             type="email"
                                             placeholder="name@example.com"
@@ -91,7 +91,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Password</label>
                                     <div className="relative flex items-center">
-                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" />
+                                        {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
                                         <input
                                             type="password"
                                             placeholder="••••••••"
