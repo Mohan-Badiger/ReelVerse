@@ -322,14 +322,17 @@ const Profile = () => {
                                             Display Name
                                         </label>
 
-                                        <div className="relative">
-                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                        <div className="relative flex items-center">
+                                            {/* <User
+                                                className="absolute left-3 text-slate-500 pointer-events-none"
+                                                size={18}
+                                            /> */}
 
                                             <input
                                                 type="text"
                                                 value={name}
                                                 onChange={(e) => setName(e.target.value)}
-                                                className="box-input w-full pl-12 h-12"
+                                                className="box-input w-full pl-10 pr-3 py-3 h-12 leading-none"
                                                 required
                                             />
                                         </div>
@@ -341,7 +344,7 @@ const Profile = () => {
                                         </label>
 
                                         <div className="relative">
-                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                            {/* <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} /> */}
                                             <input
                                                 type="email"
                                                 value={userInfo?.email}
@@ -361,7 +364,7 @@ const Profile = () => {
                                         </label>
 
                                         <div className="relative">
-                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
+                                            {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} /> */}
                                             <input
                                                 type="password"
                                                 value={password}
