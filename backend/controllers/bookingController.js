@@ -1,5 +1,27 @@
 import Booking from '../models/Booking.js';
 
+const updatePastBookingsStatus = async (bookings) => {
+    if (!bookings) return;
+    const currentTime = new Date();
+    const bookingsArray = Array.isArray(bookings) ? bookings : [bookings];
+    
+    for (let booking of bookingsArray) {
+        if (booking.status === 'upcoming') {
+            let showDateTime = null;
+            if (booking.date && booking.showtime) {
+                showDateTime = new Date(`${new Date(booking.date).toDateString()} ${booking.showtime}`);
+            } else if (booking.show && booking.show.date && booking.show.time) {
+                showDateTime = new Date(`${new Date(booking.show.date).toDateString()} ${booking.show.time}`);
+            }
+            
+            if (showDateTime && currentTime > showDateTime) {
+                booking.status = 'completed';
+                await booking.save();
+            }
+        }
+    }
+};
+
 // @desc    Get user bookings
 // @access  Private
 export const getUserBookings = async (req, res, next) => {
@@ -13,6 +35,8 @@ export const getUserBookings = async (req, res, next) => {
                 ]
             })
             .sort({ createdAt: -1 });
+
+        await updatePastBookingsStatus(bookings);
 
         res.json(bookings);
     } catch (error) {
@@ -45,6 +69,8 @@ export const getBookingById = async (req, res, next) => {
             return next(new Error('Not authorized to view this booking'));
         }
 
+        await updatePastBookingsStatus(booking);
+
         res.json(booking);
     } catch (error) {
         next(error);
@@ -66,6 +92,8 @@ export const getAllBookings = async (req, res, next) => {
                 ]
             })
             .sort({ createdAt: -1 });
+
+        await updatePastBookingsStatus(bookings);
 
         res.json(bookings);
     } catch (error) {
@@ -116,6 +144,7 @@ export const cancelBooking = async (req, res, next) => {
 
         // Cancel the booking
         booking.paymentStatus = 'Cancelled';
+        booking.status = 'cancelled';
         await booking.save();
 
         // Release the seats in the show

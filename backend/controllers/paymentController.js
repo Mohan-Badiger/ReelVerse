@@ -167,6 +167,12 @@ export const verifyPayment = async (req, res, next) => {
             orderId: razorpay_order_id,
             paymentId: razorpay_payment_id,
             qrCode: qrCodeDataUrl,
+            movieName: show.movie.title,
+            moviePoster: show.movie.posterUrl,
+            theatreName: `${show.theatre.name}, ${show.theatre.city}`,
+            showtime: show.time,
+            date: show.date,
+            status: 'upcoming'
         });
 
         const createdBooking = await booking.save();
