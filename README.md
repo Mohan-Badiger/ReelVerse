@@ -34,5 +34,6 @@ Refer to `backend/.env.example` for all required keys. You must create a `.env` 
 3. Add `VITE_API_URL` if not using local proxy configurations.
 4. Vercel will automatically use `vercel.json` to handle React Router client-side routing.
 
-### Designed By Mohan
+### Designed By Mohan Badiger
 Portfolio : https://mohanbadiger.site
+
