@@ -15,7 +15,7 @@ const Users = () => {
             const res = await adminApi.get('/users');
             setUsers(res.data);
         } catch (error) {
-            toast.error('Failed to load users');
+            console.error('Failed to load users:', error);
         } finally {
             setIsLoading(false);
         }

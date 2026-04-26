@@ -14,7 +14,7 @@ const AdminBookings = () => {
             const res = await api.get('/bookings');
             setBookings(res.data);
         } catch (error) {
-            toast.error('Failed to load bookings');
+            console.error('Failed to load bookings:', error);
         } finally {
             setIsLoading(false);
         }

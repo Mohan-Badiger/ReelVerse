@@ -14,7 +14,7 @@ const AdminMovies = () => {
             const res = await api.get('/movies');
             setMovies(res.data);
         } catch (error) {
-            toast.error('Failed to load movies');
+            console.error('Failed to load movies:', error);
         } finally {
             setIsLoading(false);
         }

@@ -26,7 +26,7 @@ const MyBookingsPage = () => {
             setBookings(data);
             setLoading(false);
         } catch (error) {
-            toast.error(error.response?.data?.message || 'Failed to fetch bookings');
+            console.error('Failed to fetch bookings:', error);
             setLoading(false);
         }
     };
@@ -62,9 +62,9 @@ const MyBookingsPage = () => {
         setDownloadingId(booking._id);
 
         try {
-            const canvas = await html2canvas(ticketElement, { 
-                scale: 3, 
-                useCORS: true, 
+            const canvas = await html2canvas(ticketElement, {
+                scale: 3,
+                useCORS: true,
                 allowTaint: true,
                 backgroundColor: '#ffffff',
                 onclone: (clonedDoc) => {
@@ -89,7 +89,7 @@ const MyBookingsPage = () => {
                 }
             });
             const imgData = canvas.toDataURL('image/png', 1.0);
-            
+
             const pdfWidth = 16;
             const pdfHeight = 9;
             const pdf = new jsPDF({
@@ -192,14 +192,14 @@ const MyBookingsPage = () => {
                         <div className="grid gap-6">
                             {filteredBookings.map((booking) => {
                                 const bStatus = booking.status || (booking.paymentStatus === 'Cancelled' ? 'cancelled' : 'completed');
-                                
+
                                 return (
                                     <div
                                         key={booking._id}
                                         className="bg-base-900 rounded-xl overflow-hidden flex flex-col md:flex-row shadow-lg border border-base-800 min-h-[220px]"
                                     >
                                         {/* Movie Poster */}
-                                        <div className="w-full md:w-[180px] flex-shrink-0">
+                                        <div className="w-full md:w-[180px] shrink-0">
                                             <img
                                                 src={
                                                     booking.moviePoster ||
@@ -212,7 +212,7 @@ const MyBookingsPage = () => {
                                         </div>
 
                                         {/* Booking Details */}
-                                        <div className="p-6 flex-grow flex flex-col justify-between">
+                                        <div className="p-6 grow flex flex-col justify-between">
                                             <div>
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
@@ -289,7 +289,7 @@ const MyBookingsPage = () => {
                                                             )}
                                                             Download Ticket
                                                         </button>
-                                                        
+
                                                         {bStatus === 'upcoming' && (
                                                             <button
                                                                 onClick={() => handleCancelBooking(booking._id)}

@@ -24,7 +24,7 @@ const Profile = () => {
                     const res = await api.get('/bookings/mybookings');
                     setBookings(res.data);
                 } catch (error) {
-                    toast.error('Failed to fetch bookings');
+                    console.error('Failed to fetch bookings:', error);
                 } finally {
                     setLoadingBookings(false);
                 }

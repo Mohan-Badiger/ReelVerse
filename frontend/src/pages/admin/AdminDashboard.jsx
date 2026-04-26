@@ -38,7 +38,7 @@ const AdminDashboard = () => {
                 const res = await api.get('/admin/dashboard');
                 setMetrics(res.data.metrics);
             } catch (error) {
-                toast.error('Failed to load dashboard metrics');
+                console.error('Failed to load dashboard metrics:', error);
             } finally {
                 setIsLoading(false);
             }

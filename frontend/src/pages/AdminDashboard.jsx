@@ -24,7 +24,7 @@ const AdminDashboard = () => {
             setTheatres(theRes.data);
             setBookings(bookRes.data);
         } catch (error) {
-            toast.error('Failed to load dashboard data');
+            console.error('Failed to load dashboard data:', error);
         } finally {
             setIsLoading(false);
         }
@@ -59,7 +59,7 @@ const AdminDashboard = () => {
     return (
         <div className="max-w-[1600px] mx-auto px-6 py-12 flex flex-col md:flex-row gap-8">
             {/* Sidebar */}
-            <div className="w-full md:w-64 flex-shrink-0">
+            <div className="w-full md:w-64 shrink-0">
                 <div className="glass bg-base-800 rounded-sm p-6 border border-base-800 sticky top-24">
                     <h2 className="text-xl font-bold text-white mb-6 px-2">Admin Panel</h2>
                     <div className="space-y-2">
