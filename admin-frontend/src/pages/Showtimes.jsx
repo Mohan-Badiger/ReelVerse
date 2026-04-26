@@ -20,7 +20,7 @@ const Showtimes = () => {
             const res = await coreApi.get('/showtimes');
             setShowtimes(res.data);
         } catch (error) {
-            toast.error('Failed to load showtimes');
+            console.error('Failed to load showtimes:', error);
         } finally {
             setIsLoading(false);
         }

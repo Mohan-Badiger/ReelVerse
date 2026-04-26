@@ -18,7 +18,7 @@ const UpcomingMovies = () => {
             const res = await coreApi.get('/movies/upcoming');
             setMovies(res.data);
         } catch (error) {
-            toast.error('Failed to load upcoming movies');
+            console.error('Failed to load upcoming movies:', error);
         } finally {
             setIsLoading(false);
         }

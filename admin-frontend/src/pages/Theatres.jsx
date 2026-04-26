@@ -18,7 +18,7 @@ const Theatres = () => {
             const res = await coreApi.get('/theatres');
             setTheatres(res.data);
         } catch (error) {
-            toast.error('Failed to load theatres');
+            console.error('Failed to load theatres:', error);
         } finally {
             setIsLoading(false);
         }
