@@ -24,7 +24,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
             document.body.style.overflow = 'unset'; // Unlock scrolling
             setTimeout(() => setIsLoading(true), 300);
         }
-        
+
         return () => {
             document.body.style.overflow = 'unset'; // Cleanup on unmount
         };
@@ -56,7 +56,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
     const modalContent = (
         <AnimatePresence>
             {isOpen && (
-                <div className="fixed inset-0 z-[9999] flex items-center justify-center p-4 sm:p-6">
+                <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 sm:p-6">
 
                     {/* Premium Cinematic Backdrop */}
                     <motion.div
@@ -76,9 +76,9 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98, y: 10 }}
-                        transition={{ 
-                            type: "spring", 
-                            stiffness: 400, 
+                        transition={{
+                            type: "spring",
+                            stiffness: 400,
                             damping: 35,
                             mass: 0.8
                         }}
@@ -110,7 +110,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                             {/* Loading State */}
                             <AnimatePresence>
                                 {isLoading && (
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         className="absolute inset-0 flex flex-col items-center justify-center bg-base-950 z-10"
