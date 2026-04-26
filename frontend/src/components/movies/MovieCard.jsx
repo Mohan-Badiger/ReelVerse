@@ -81,7 +81,7 @@ const MovieCard = ({ movie, index }) => {
                   e.preventDefault();
                   setShowTrailer(true);
                 }}
-                className="flex items-center justify-center gap-1 bg-base-800/80 backdrop-blur-md text-white border border-white/10 text-xs font-semibold py-2 rounded-md hover:bg-white hover:text-black transition active:scale-95"
+                className="flex items-center justify-center gap-1 bg-base-800/80 backdrop-blur-md text-white border border-white/10 text-xs font-semibold py-2 rounded-md hover:bg-primary-500 hover:text-white hover:border-primary-400 hover:shadow-[0_0_15px_rgba(99,102,241,0.5)] transition-all duration-300 active:scale-95"
               >
                 <Film size={14} />
                 Trailer
@@ -110,6 +110,7 @@ const MovieCard = ({ movie, index }) => {
         isOpen={showTrailer}
         onClose={() => setShowTrailer(false)}
         trailerUrl={movie.trailerUrl}
+        movieTitle={movie.title}
       />
     </>
   );
