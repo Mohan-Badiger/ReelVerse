@@ -155,9 +155,9 @@ const MovieDetails = () => {
                         {movie.trailerUrl && (
                             <button
                                 onClick={() => setShowTrailer(true)}
-                                className="flex items-center gap-2 bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-md text-sm font-semibold border border-white/20 transition backdrop-blur-md hover:scale-105"
+                                className="group flex items-center gap-2 bg-primary-600/20 hover:bg-primary-500/40 text-primary-100 hover:text-white px-5 py-2.5 rounded-md text-sm font-bold border border-primary-500/30 hover:border-primary-400 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-300 backdrop-blur-md hover:-translate-y-0.5"
                             >
-                                <Play size={16} fill="currentColor" />
+                                <Play size={16} fill="currentColor" className="transition-transform duration-300 group-hover:scale-110" />
                                 Watch Trailer
                             </button>
                         )}
@@ -194,9 +194,9 @@ const MovieDetails = () => {
                             {movie.trailerUrl && (
                                 <button
                                     onClick={() => setShowTrailer(true)}
-                                    className="px-8 py-3 bg-white text-base-950 font-black rounded-sm flex items-center justify-center gap-2 hover:bg-slate-200 transition-all uppercase tracking-wider text-sm"
+                                    className="group px-8 py-3 bg-white text-base-950 font-black rounded-sm flex items-center justify-center gap-2 hover:bg-primary-50 hover:text-primary-600 hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all duration-300 uppercase tracking-wider text-sm hover:-translate-y-0.5"
                                 >
-                                    <Play size={18} fill="currentColor" />
+                                    <Play size={18} fill="currentColor" className="transition-transform duration-300 group-hover:scale-110" />
                                     Watch Trailer
                                 </button>
                             )}
@@ -379,6 +379,7 @@ const MovieDetails = () => {
                 isOpen={showTrailer}
                 onClose={() => setShowTrailer(false)}
                 trailerUrl={movie.trailerUrl}
+                movieTitle={movie.title}
             />
         </div>
     );
