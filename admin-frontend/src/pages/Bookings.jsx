@@ -15,7 +15,7 @@ const Bookings = () => {
             const res = await coreApi.get('/bookings');
             setBookings(res.data);
         } catch (error) {
-            toast.error('Failed to load bookings');
+            console.error('Failed to load bookings:', error);
         } finally {
             setIsLoading(false);
         }

@@ -63,7 +63,7 @@ const Dashboard = () => {
             setChartData(res.data.chartData || []);
             setRecentActivity(res.data.recentActivity || []);
         } catch (error) {
-            toast.error('Failed to load dashboard metrics');
+            console.error('Failed to load dashboard metrics:', error);
         } finally {
             setIsLoading(false);
             if (isManualRefresh) setIsRefreshing(false);
