@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LogOut, User, Menu, X, Ticket } from 'lucide-react';
+import { LogOut, User, Menu, X, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout } from '../../store/slices/authSlice';
 import api from '../../utils/axios';
@@ -19,7 +19,7 @@ const Navbar = () => {
 
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [scrolled, setScrolled] = useState(false);
-    const [modalState, setModalState] = useState({ type: null, email: '' }); // 'login', 'register', 'otp', null
+    const [modalState, setModalState] = useState({ type: null, email: '' });
 
     useEffect(() => {
         const handleScroll = () => {
@@ -47,37 +47,72 @@ const Navbar = () => {
 
     const closeModals = () => setModalState({ type: null, email: '' });
 
+    // Nav Links Data
+    const navLinks = [
+        { name: 'Home', path: '/' },
+        { name: 'Movies', path: '/movies' },
+        { name: 'Theatres', path: '/theatres' },
+    ];
+
     return (
         <>
-            <header className={`fixed top-0 w-full z-40 h-16 transition-all duration-300 ${scrolled ? 'bg-base-950/80 backdrop-blur-md border-b border-base-800 shadow-sm' : 'bg-transparent'
-                }`}>
-                <div className="max-w-[1400px] mx-auto h-full px-6 flex items-center justify-between">
+            {/* Navbar Wrapper */}
+            <header className={`fixed top-0 w-full z-40 transition-[padding] duration-500 ease-out flex justify-center ${
+                scrolled ? 'pt-4 px-4' : 'pt-0 px-0'
+            }`}>
+                <motion.div 
+                    layout
+                    initial={false}
+                    transition={{ type: "spring", stiffness: 200, damping: 25 }}
+                    className={`w-full flex items-center justify-between px-6 sm:px-8 transition-[background-color,backdrop-filter,border-radius,box-shadow,height,max-width] duration-500 ease-out ${
+                        scrolled 
+                            ? 'max-w-[1200px] bg-base-950/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] rounded-full h-16' 
+                            : 'max-w-[1400px] bg-transparent h-20 rounded-none'
+                    }`}
+                >
 
-                    <Link to="/" className="flex items-center gap-2 group">
-                        <span className="text-xl font-bold tracking-tight text-base-50 group-hover:text-white transition-colors">
+                    {/* Logo */}
+                    <Link to="/" className="flex items-center gap-2 group shrink-0">
+                        <span className="text-2xl font-black tracking-tight py-1 pr-1 bg-linear-to-r from-primary-400 to-accent-400 text-transparent bg-clip-text group-hover:from-white group-hover:to-primary-200 transition-all duration-300">
                             ReelVerse
                         </span>
                     </Link>
 
                     {/* Desktop Nav */}
-                    <nav className="hidden md:flex items-center space-x-8">
-                        <Link to="/" className="text-sm font-medium text-base-300 hover:text-base-50 transition-colors">Home</Link>
-                        <Link to="/movies" className="text-sm font-medium text-base-300 hover:text-base-50 transition-colors">Movies</Link>
-                        <Link to="/theatres" className="text-sm font-medium text-base-300 hover:text-base-50 transition-colors">Theatres</Link>
+                    <nav className="hidden md:flex items-center space-x-1 lg:space-x-2">
+                        {navLinks.map((link) => (
+                            <Link
+                                key={link.name}
+                                to={link.path}
+                                className={`relative px-4 py-2 text-sm font-semibold transition-colors duration-300 rounded-full group ${location.pathname === link.path ? 'text-white' : 'text-slate-300 hover:text-white'
+                                    }`}
+                            >
+                                <span className="relative z-10">{link.name}</span>
+                                {location.pathname === link.path && (
+                                    <motion.div
+                                        layoutId="navbar-indicator"
+                                        className="absolute inset-0 bg-white/10 rounded-full z-0"
+                                        transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
+                                    />
+                                )}
+                                <div className="absolute inset-0 bg-white/5 rounded-full opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-0" />
+                            </Link>
+                        ))}
                     </nav>
 
-                    <div className="hidden md:flex items-center space-x-6">
+                    {/* Desktop Actions */}
+                    <div className="hidden md:flex items-center space-x-4 shrink-0">
                         {userInfo ? (
                             <div className="flex items-center gap-4">
-                                <Link to="/profile" className="flex items-center gap-2 px-3 py-1.5 rounded-sm hover:bg-base-800 transition-colors border border-transparent hover:border-base-700">
-                                    <div className="w-7 h-7 rounded-sm bg-base-800 border border-base-700 flex items-center justify-center text-xs font-semibold text-primary-400">
+                                <Link to="/profile" className="group flex items-center gap-2.5 pl-2 pr-4 py-1.5 rounded-full hover:bg-base-800 border border-transparent hover:border-base-700 transition-all duration-300">
+                                    <div className="w-8 h-8 rounded-full bg-linear-to-br from-primary-500 to-accent-600 flex items-center justify-center text-sm font-bold text-white shadow-sm">
                                         {userInfo.name.charAt(0).toUpperCase()}
                                     </div>
-                                    <span className="text-sm font-medium text-base-100">{userInfo.name.split(' ')[0]}</span>
+                                    <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{userInfo.name.split(' ')[0]}</span>
                                 </Link>
                                 <button
                                     onClick={handleLogout}
-                                    className="p-2 rounded-sm text-base-400 hover:text-rose-400 hover:bg-rose-500/10 transition-colors"
+                                    className="p-2.5 rounded-full text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-300"
                                     title="Sign Out"
                                 >
                                     <LogOut size={18} />
@@ -86,62 +121,108 @@ const Navbar = () => {
                         ) : (
                             <button
                                 onClick={() => setModalState({ type: 'login', email: '' })}
-                                className="box-button-primary py-2 px-5 text-sm"
+                                className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white transition-all duration-300 bg-primary-600 rounded-full overflow-hidden hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] active:scale-95"
                             >
-                                Sign In
+                                <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-linear-to-b from-transparent via-transparent to-black"></span>
+                                <span className="relative">Sign In</span>
                             </button>
                         )}
                     </div>
 
                     {/* Mobile Toggle */}
                     <button
-                        className="md:hidden p-2 -mr-2 text-base-300 hover:text-base-50"
+                        className="md:hidden p-2 -mr-2 text-slate-300 hover:text-white transition-colors z-50"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                     >
-                        {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
+                        {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
                     </button>
-                </div>
+                </motion.div>
             </header>
 
-            {/* Mobile Menu */}
+            {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isMenuOpen && (
-                    <motion.div
-                        initial={{ opacity: 0, y: -10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: -10 }}
-                        transition={{ duration: 0.2 }}
-                        className="fixed top-16 left-0 w-full bg-base-950/95 backdrop-blur-xl border-b border-base-800 z-30 md:hidden shadow-sm"
-                    >
-                        <div className="flex flex-col p-6 space-y-2">
-                            <Link to="/" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Home</Link>
-                            <Link to="/movies" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Movies</Link>
-                            <Link to="/theatres" className="px-4 py-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">Theatres</Link>
-
-                            <div className="h-px w-full bg-base-800 my-2" />
-
-                            {userInfo ? (
-                                <>
-                                    <Link to="/profile" className="px-4 py-3 flex items-center gap-3 text-base-100 font-medium hover:bg-base-900 rounded-sm">
-                                        <User size={18} className="text-primary-400" /> My Tickets
-                                    </Link>
-                                    <button
-                                        onClick={handleLogout}
-                                        className="px-4 py-3 w-full text-left flex items-center gap-3 text-rose-400 font-medium hover:bg-rose-500/10 rounded-sm"
+                    <>
+                        <motion.div
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            exit={{ opacity: 0 }}
+                            transition={{ duration: 0.3 }}
+                            className="fixed inset-0 bg-base-950/80 backdrop-blur-sm z-30 md:hidden"
+                            onClick={() => setIsMenuOpen(false)}
+                        />
+                        <motion.div
+                            initial={{ x: '100%' }}
+                            animate={{ x: 0 }}
+                            exit={{ x: '100%' }}
+                            transition={{ type: 'spring', bounce: 0, duration: 0.4 }}
+                            className="fixed top-0 right-0 w-full max-w-sm h-full bg-base-900 border-l border-white/10 z-40 md:hidden flex flex-col pt-24 px-6 pb-6 shadow-2xl"
+                        >
+                            <div className="flex flex-col space-y-2 flex-1">
+                                {navLinks.map((link, i) => (
+                                    <motion.div
+                                        key={link.name}
+                                        initial={{ opacity: 0, x: 20 }}
+                                        animate={{ opacity: 1, x: 0 }}
+                                        transition={{ delay: i * 0.1, duration: 0.3 }}
                                     >
-                                        <LogOut size={18} /> Sign Out
-                                    </button>
-                                </>
-                            ) : (
-                                <button
-                                    onClick={() => { setIsMenuOpen(false); setModalState({ type: 'login', email: '' }); }}
-                                    className="box-button-primary w-full mt-2"
-                                >
-                                    Sign In
-                                </button>
-                            )}
-                        </div>
-                    </motion.div>
+                                        <Link
+                                            to={link.path}
+                                            className={`flex items-center justify-between px-4 py-4 font-bold text-lg rounded-xl transition-colors ${location.pathname === link.path ? 'bg-primary-500/10 text-primary-400' : 'text-white hover:bg-base-800'
+                                                }`}
+                                        >
+                                            {link.name}
+                                            <ChevronRight size={18} className="opacity-50" />
+                                        </Link>
+                                    </motion.div>
+                                ))}
+
+                                <div className="h-px w-full bg-white/5 my-6" />
+
+                                {userInfo ? (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3, duration: 0.3 }}
+                                        className="mt-auto space-y-3"
+                                    >
+                                        <div className="flex items-center gap-4 px-4 py-4 bg-base-800/50 rounded-xl mb-4">
+                                            <div className="w-12 h-12 rounded-full bg-linear-to-br from-primary-500 to-accent-600 flex items-center justify-center text-xl font-bold text-white">
+                                                {userInfo.name.charAt(0).toUpperCase()}
+                                            </div>
+                                            <div>
+                                                <p className="text-white font-bold">{userInfo.name}</p>
+                                                <p className="text-slate-400 text-sm">{userInfo.email}</p>
+                                            </div>
+                                        </div>
+                                        <Link to="/profile" className="flex items-center gap-3 px-4 py-4 font-bold text-lg text-white hover:bg-base-800 rounded-xl transition-colors">
+                                            <User size={20} className="text-primary-400" /> My Tickets
+                                        </Link>
+                                        <button
+                                            onClick={handleLogout}
+                                            className="w-full flex items-center gap-3 px-4 py-4 font-bold text-lg text-rose-400 hover:bg-rose-500/10 rounded-xl transition-colors"
+                                        >
+                                            <LogOut size={20} /> Sign Out
+                                        </button>
+                                    </motion.div>
+                                ) : (
+                                    <motion.div
+                                        initial={{ opacity: 0, y: 20 }}
+                                        animate={{ opacity: 1, y: 0 }}
+                                        transition={{ delay: 0.3, duration: 0.3 }}
+                                        className="mt-auto"
+                                    >
+                                        <button
+                                            onClick={() => { setIsMenuOpen(false); setModalState({ type: 'login', email: '' }); }}
+                                            className="w-full py-4 text-center text-white font-bold text-lg bg-primary-600 rounded-xl hover:bg-primary-500 transition-colors"
+                                        >
+                                            Sign In
+                                        </button>
+                                    </motion.div>
+                                )}
+                            </div>
+                        </motion.div>
+                    </>
                 )}
             </AnimatePresence>
 
