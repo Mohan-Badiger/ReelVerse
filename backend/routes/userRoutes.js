@@ -4,6 +4,8 @@ import {
     updateUserProfile,
     forgotPassword,
     resetPassword,
+    addMovieToWatchlist,
+    removeMovieFromWatchlist
 } from '../controllers/userController.js';
 import { protect } from '../middleware/authMiddleware.js';
 
@@ -16,5 +18,8 @@ router
     .route('/profile')
     .get(protect, getUserProfile)
     .put(protect, updateUserProfile);
+
+router.post('/watchlist/:movieId', protect, addMovieToWatchlist);
+router.delete('/watchlist/:movieId', protect, removeMovieFromWatchlist);
 
 export default router;
