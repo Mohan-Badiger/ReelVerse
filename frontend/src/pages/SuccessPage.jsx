@@ -1,7 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { CheckCircle, ArrowRight, Download, Calendar, MapPin, Grid } from 'lucide-react';
+import { CheckCircle, ArrowRight, Download, Calendar, MapPin, Grid, Share2 } from 'lucide-react';
 import Confetti from 'react-confetti';
 import html2canvas from 'html2canvas-pro';
 import jsPDF from 'jspdf';
@@ -107,6 +107,68 @@ const SuccessPage = () => {
             console.error('Failed to generate PDF', error);
             toast.error('Failed to generate ticket PDF');
         } finally {
+            setIsDownloading(false);
+        }
+    };
+
+    const handleShareTicket = async () => {
+        if (!ticketRef.current || isDownloading) return;
+        setIsDownloading(true);
+
+        try {
+            const canvas = await html2canvas(ticketRef.current, { 
+                scale: 3, 
+                useCORS: true, 
+                allowTaint: true,
+                backgroundColor: '#ffffff',
+                onclone: (clonedDoc) => {
+                    const elements = clonedDoc.getElementsByTagName('*');
+                    for (let i = 0; i < elements.length; i++) {
+                        const el = elements[i];
+                        const style = clonedDoc.defaultView.getComputedStyle(el);
+                        if (style.backgroundImage.includes('oklab')) el.style.backgroundImage = 'none';
+                        if (style.backgroundColor.includes('oklab')) el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
+                        if (style.color.includes('oklab')) el.style.color = 'rgba(0, 0, 0, 1)';
+                        if (style.borderColor.includes('oklab')) el.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                    }
+                }
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) throw new Error('Failed to generate image blob');
+                
+                const file = new File([blob], `ReelVerse-Ticket-${booking._id.substring(0, 6)}.png`, { type: 'image/png' });
+                
+                // Try Web Share API first (Mobile devices)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            title: `Ticket for ${booking.show.movie.title}`,
+                            text: 'Got my tickets on ReelVerse!',
+                            files: [file],
+                        });
+                        toast.success('Shared successfully!');
+                    } catch (shareError) {
+                        if (shareError.name !== 'AbortError') {
+                            throw shareError;
+                        }
+                    }
+                } else {
+                    // Fallback to Download (Desktop)
+                    const url = URL.createObjectURL(blob);
+                    const link = document.createElement('a');
+                    link.download = file.name;
+                    link.href = url;
+                    link.click();
+                    URL.revokeObjectURL(url);
+                    toast.success('Ticket image downloaded for sharing!');
+                }
+                setIsDownloading(false);
+            }, 'image/png', 1.0);
+            
+        } catch (error) {
+            console.error('Failed to generate share image', error);
+            toast.error('Failed to prepare ticket for sharing');
             setIsDownloading(false);
         }
     };
@@ -265,7 +327,15 @@ const SuccessPage = () => {
                     ) : (
                         <Download size={20} className="mr-3" />
                     )}
-                    {isDownloading ? 'Generating...' : 'Download Ticket PDF'}
+                    {isDownloading ? 'Generating...' : 'Download PDF'}
+                </button>
+                <button
+                    onClick={handleShareTicket}
+                    disabled={isDownloading}
+                    className="w-full sm:w-auto px-8 py-4 bg-primary-600 hover:bg-primary-500 text-white rounded-sm font-bold flex items-center justify-center text-lg transition-all shadow-sm active:scale-95 duration-200 disabled:opacity-50"
+                >
+                    <Share2 size={20} className="mr-3" />
+                    Share to Story
                 </button>
                 <Link
                     to="/profile"
