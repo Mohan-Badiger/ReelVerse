@@ -38,7 +38,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        if (!movies.length) return;
+        if (!movies.length || showTrailer) return;
 
         const interval = setInterval(() => {
             setHeroMovie((current) => {
@@ -49,7 +49,7 @@ const Home = () => {
         }, 6000);
 
         return () => clearInterval(interval);
-    }, [movies]);
+    }, [movies, showTrailer]);
 
     if (isLoading) {
         return (
