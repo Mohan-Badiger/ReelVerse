@@ -86,8 +86,8 @@ const Users = () => {
                             </thead>
                             <tbody className="divide-y divide-base-800/60">
                                 {users.filter(u =>
-                                    u.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                    u.email.toLowerCase().includes(searchTerm.toLowerCase())
+                                    (u.name || '').toLowerCase().includes(searchTerm.toLowerCase()) ||
+                                    (u.email || '').toLowerCase().includes(searchTerm.toLowerCase())
                                 ).map((user, index) => (
                                     <motion.tr
                                         initial={{ opacity: 0, y: 10 }}
@@ -99,9 +99,9 @@ const Users = () => {
                                         <td className="py-4 px-6">
                                             <div className="flex items-center gap-3">
                                                 <div className="w-8 h-8 rounded-sm bg-base-800 border border-base-700 flex items-center justify-center text-xs font-bold text-primary-400">
-                                                    {user.name.charAt(0).toUpperCase()}
+                                                    {(user.name || '?').charAt(0).toUpperCase()}
                                                 </div>
-                                                <span className="font-medium text-base-100">{user.name}</span>
+                                                <span className="font-medium text-base-100">{user.name || 'Unknown User'}</span>
                                             </div>
                                         </td>
                                         <td className="py-4 px-6 text-base-300">{user.email}</td>

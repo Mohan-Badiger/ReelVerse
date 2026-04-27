@@ -23,6 +23,18 @@ const CheckoutPage = () => {
     const [appliedCoupon, setAppliedCoupon] = useState(null);
     const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
 
+    // Prevent scrolling when payment overlays are active
+    useEffect(() => {
+        if (isProcessingPayment || isPaymentPopupOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+        return () => {
+            document.body.style.overflow = 'unset';
+        };
+    }, [isProcessingPayment, isPaymentPopupOpen]);
+
     useEffect(() => {
         const fetchShow = async () => {
             try {
@@ -185,6 +197,7 @@ const CheckoutPage = () => {
             setIsPaymentPopupOpen(true);
             paymentObject.open();
 
+
         } catch (error) {
             toast.error(error.response?.data?.message || 'Checkout failed');
         } finally {
@@ -210,7 +223,7 @@ const CheckoutPage = () => {
         <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
             {/* Payment Processing Overlay */}
             {isProcessingPayment && (
-                <div className="fixed inset-0 z-[100] bg-base-950/90 backdrop-blur-md flex flex-col items-center justify-center fade-in">
+                <div className="fixed inset-0 z-[100] bg-base-950/95 backdrop-blur-md flex flex-col items-center justify-center fade-in" style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}>
                     <div className="w-16 h-16 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin mb-6"></div>
                     <h2 className="text-2xl font-bold text-white mb-2">Processing your booking...</h2>
                     <p className="text-slate-400">Please wait while we confirm your ticket.</p>
@@ -219,7 +232,7 @@ const CheckoutPage = () => {
 
             {/* Razorpay Popup Blur Overlay */}
             {isPaymentPopupOpen && (
-                <div className="fixed inset-0 z-[60] bg-black/60 backdrop-blur-md fade-in pointer-events-none"></div>
+                <div className="fixed inset-0 z-60 bg-black/60 backdrop-blur-md fade-in pointer-events-none"></div>
             )}
 
             {/* Step Indicator */}
@@ -247,8 +260,8 @@ const CheckoutPage = () => {
 
                     {/* Screen Preview */}
                     <div className="w-full max-w-2xl mx-auto mb-20 relative">
-                        <div className="h-2 w-full bg-primary-500/30 rounded-sm blur-[2px] shadow-[0_0_30px_theme(colors.primary.500/30%)]"></div>
-                        <div className="absolute top-2 w-full h-16 bg-gradient-to-b from-primary-500/10 to-transparent flex justify-center pt-3">
+                        <div className="h-2 w-full bg-primary-500/30 rounded-sm blur-[2px] shadow-0_0_30px_theme(colors.primary.500/30%)"></div>
+                        <div className="absolute top-2 w-full h-16 bg-linear-to-b from-primary-500/10 to-transparent flex justify-center pt-3">
                             <span className="text-white/40 text-xs tracking-[1em] uppercase font-bold">Screen</span>
                         </div>
                     </div>
