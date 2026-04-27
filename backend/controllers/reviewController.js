@@ -2,6 +2,7 @@ import Review from '../models/Review.js';
 import Movie from '../models/Movie.js';
 import Booking from '../models/Booking.js';
 import Show from '../models/Show.js';
+import { generateMovieVibeSummary, enhanceReviewText } from '../utils/aiService.js';
 
 // @desc    Create new review
 // @route   POST /api/reviews/:movieId
@@ -68,6 +69,21 @@ export const createMovieReview = async (req, res, next) => {
         movie.rating = avgRating;
         await movie.save(); // Assuming we update Movie model with rating later or it already has one
 
+        // Asynchronously generate AI Vibe Tags and Summary in the background
+        (async () => {
+            try {
+                const updatedReviews = await Review.find({ movie: movieId });
+                const aiResult = await generateMovieVibeSummary(movie.title, updatedReviews);
+                if (aiResult) {
+                    movie.vibeTags = aiResult.vibeTags || [];
+                    movie.aiSummary = aiResult.aiSummary || '';
+                    await movie.save();
+                }
+            } catch (aiError) {
+                console.error("Failed to generate background AI summary:", aiError);
+            }
+        })();
+
         res.status(201).json({ message: 'Review added' });
     } catch (error) {
         next(error);
@@ -109,6 +125,26 @@ export const deleteMovieReview = async (req, res, next) => {
         await Movie.findByIdAndUpdate(movieId, { rating: avgRating });
 
         res.json({ message: 'Review removed' });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Enhance review text with AI
+// @route   POST /api/reviews/enhance
+// @access  Private
+export const enhanceReview = async (req, res, next) => {
+    try {
+        const { draftText } = req.body;
+        
+        if (!draftText) {
+            res.status(400);
+            return next(new Error('Please provide draft text to enhance'));
+        }
+
+        const enhancedText = await enhanceReviewText(draftText);
+        
+        res.json({ enhancedText });
     } catch (error) {
         next(error);
     }
