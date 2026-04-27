@@ -41,6 +41,10 @@ const userSchema = new mongoose.Schema(
         },
         resetPasswordToken: String,
         resetPasswordExpire: Date,
+        watchlist: [{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Movie'
+        }]
     },
     {
         timestamps: true,

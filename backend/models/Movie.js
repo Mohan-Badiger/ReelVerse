@@ -15,6 +15,8 @@ const movieSchema = new mongoose.Schema(
         rating: { type: Number, default: 0 },
         isUpcoming: { type: Boolean, default: false },
         trailerUrl: { type: String },
+        vibeTags: { type: [String], default: [] },
+        aiSummary: { type: String, default: '' },
     },
     { timestamps: true }
 );

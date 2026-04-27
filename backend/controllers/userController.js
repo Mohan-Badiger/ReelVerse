@@ -15,6 +15,7 @@ export const getUserProfile = async (req, res, next) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
+                watchlist: user.watchlist || [],
             });
         } else {
             res.status(404);
@@ -157,6 +158,55 @@ export const resetPassword = async (req, res, next) => {
             success: true,
             message: 'Password reset successful',
         });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Add movie to watchlist
+// @route   POST /api/users/watchlist/:movieId
+// @access  Private
+export const addMovieToWatchlist = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const movieId = req.params.movieId;
+
+        if (!user) {
+            res.status(404);
+            return next(new Error('User not found'));
+        }
+
+        if (user.watchlist.includes(movieId)) {
+            res.status(400);
+            return next(new Error('Movie already in watchlist'));
+        }
+
+        user.watchlist.push(movieId);
+        await user.save();
+
+        res.json({ message: 'Movie added to watchlist', watchlist: user.watchlist });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// @desc    Remove movie from watchlist
+// @route   DELETE /api/users/watchlist/:movieId
+// @access  Private
+export const removeMovieFromWatchlist = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id);
+        const movieId = req.params.movieId;
+
+        if (!user) {
+            res.status(404);
+            return next(new Error('User not found'));
+        }
+
+        user.watchlist = user.watchlist.filter(id => id.toString() !== movieId);
+        await user.save();
+
+        res.json({ message: 'Movie removed from watchlist', watchlist: user.watchlist });
     } catch (error) {
         next(error);
     }
