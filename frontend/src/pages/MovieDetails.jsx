@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare, Play, Film } from 'lucide-react';
+import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare, Play, Film, Heart, Sparkles } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/axios';
 import TrailerModal from '../components/movies/TrailerModal';
+import MovieDetailsSkeleton from '../components/common/MovieDetailsSkeleton';
 
 const MovieDetails = () => {
     const { id } = useParams();
@@ -22,6 +23,9 @@ const MovieDetails = () => {
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
     const [isSubmittingReview, setIsSubmittingReview] = useState(false);
+    const [isEnhancing, setIsEnhancing] = useState(false);
+    
+    const [isWatchlisted, setIsWatchlisted] = useState(false);
 
     // Group shows by date then theatre
     const [selectedDate, setSelectedDate] = useState('');
@@ -38,6 +42,10 @@ const MovieDetails = () => {
 
                 setMovie(movieRes.data);
                 setReviews(reviewsRes.data);
+                
+                if (userInfo && userInfo.watchlist && userInfo.watchlist.includes(id)) {
+                    setIsWatchlisted(true);
+                }
 
                 // Group logic: Date -> Theatre ID -> Showtimes
                 const rawShows = showsRes.data;
@@ -98,7 +106,54 @@ const MovieDetails = () => {
         }
     };
 
-    if (isLoading) return <div className="flex justify-center items-center h-[80vh]"><div className="w-10 h-10 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin"></div></div>;
+    const handleEnhanceReview = async () => {
+        if (!comment.trim()) {
+            return toast.error("Write a draft first to enhance it!");
+        }
+        
+        setIsEnhancing(true);
+        try {
+            const res = await api.post('/reviews/enhance', { draftText: comment }, {
+                headers: { Authorization: `Bearer ${userInfo.token}` }
+            });
+            setComment(res.data.enhancedText);
+            toast.success('Review enhanced with AI ✨');
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to enhance review');
+        } finally {
+            setIsEnhancing(false);
+        }
+    };
+
+    const toggleWatchlist = async () => {
+        if (!userInfo) {
+            return toast.error('Please log in to add to watchlist');
+        }
+        
+        // Optimistic UI update
+        const previousState = isWatchlisted;
+        setIsWatchlisted(!previousState);
+        
+        try {
+            if (previousState) {
+                await api.delete(`/users/watchlist/${id}`, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` }
+                });
+                toast.success('Removed from watchlist');
+            } else {
+                await api.post(`/users/watchlist/${id}`, {}, {
+                    headers: { Authorization: `Bearer ${userInfo.token}` }
+                });
+                toast.success('Added to watchlist');
+            }
+        } catch (error) {
+            // Revert state on failure
+            setIsWatchlisted(previousState);
+            toast.error('Failed to update watchlist');
+        }
+    };
+
+    if (isLoading) return <MovieDetailsSkeleton />;
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
     return (
@@ -161,6 +216,14 @@ const MovieDetails = () => {
                                 Watch Trailer
                             </button>
                         )}
+                        
+                        <button
+                            onClick={toggleWatchlist}
+                            className={`flex items-center justify-center p-2.5 rounded-md border transition-all duration-300 active:scale-90 ${isWatchlisted ? 'bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-white/5 border-base-800 text-slate-300 hover:text-white hover:border-white/30 backdrop-blur-md'}`}
+                            title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}
+                        >
+                            <Heart size={22} fill={isWatchlisted ? 'currentColor' : 'none'} className={isWatchlisted ? 'animate-pulse' : ''} />
+                        </button>
                     </div>
 
                     <p className="text-slate-300 text-base md:text-lg mb-8 max-w-2xl leading-relaxed">{movie.description}</p>
@@ -286,10 +349,41 @@ const MovieDetails = () => {
 
             {/* Reviews Section */}
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-16 box-panel p-8 bg-base-950/30">
-                <h2 className="text-2xl font-bold text-white mb-8 flex items-center border-b border-base-800 pb-4">
-                    <MessageSquare className="text-primary-500 mr-3" size={28} />
-                    Movie Reviews
-                </h2>
+                <div className="flex justify-between items-center border-b border-base-800 pb-4 mb-8">
+                    <h2 className="text-2xl font-bold text-white flex items-center">
+                        <MessageSquare className="text-primary-500 mr-3" size={28} />
+                        Movie Reviews
+                    </h2>
+                </div>
+
+                {/* AI Vibe Summary (If available) */}
+                {(movie.vibeTags?.length > 0 || movie.aiSummary) && (
+                    <div className="mb-10 bg-linear-to-r from-primary-900/20 to-accent-900/10 border border-primary-500/20 p-6 rounded-sm relative overflow-hidden">
+                        <div className="absolute top-0 right-0 p-4 opacity-10">
+                            <Sparkles size={64} />
+                        </div>
+                        <div className="flex items-center gap-2 mb-3 text-primary-400 font-bold text-sm tracking-widest uppercase">
+                            <Sparkles size={16} />
+                            AI Vibe Analysis
+                        </div>
+                        
+                        {movie.vibeTags?.length > 0 && (
+                            <div className="flex flex-wrap gap-3 mb-4">
+                                {movie.vibeTags.map((tag, idx) => (
+                                    <span key={idx} className="bg-white/10 text-white px-4 py-1.5 rounded-full text-sm font-medium border border-white/10 backdrop-blur-sm shadow-sm">
+                                        {tag}
+                                    </span>
+                                ))}
+                            </div>
+                        )}
+                        
+                        {movie.aiSummary && (
+                            <p className="text-slate-300 text-base leading-relaxed max-w-3xl font-medium italic">
+                                "{movie.aiSummary}"
+                            </p>
+                        )}
+                    </div>
+                )}
 
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
                     {/* Review List */}
@@ -348,7 +442,7 @@ const MovieDetails = () => {
                                         </div>
                                     </div>
 
-                                    <div>
+                                    <div className="relative">
                                         <label className="block text-sm text-slate-400 mb-2">Your Review</label>
                                         <textarea
                                             className="w-full bg-base-950 border border-base-800 text-white p-3 rounded-sm focus:border-primary-500 focus:ring-1 focus:ring-primary-500 transition-colors placeholder:text-slate-600 resize-none h-32 text-sm"
@@ -357,6 +451,16 @@ const MovieDetails = () => {
                                             onChange={(e) => setComment(e.target.value)}
                                             required
                                         ></textarea>
+                                        
+                                        <button
+                                            type="button"
+                                            onClick={handleEnhanceReview}
+                                            disabled={isEnhancing || !comment.trim()}
+                                            className="absolute bottom-3 right-3 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 hover:text-white px-3 py-1.5 rounded-sm text-xs font-bold border border-indigo-500/30 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                                        >
+                                            <Sparkles size={14} />
+                                            {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
+                                        </button>
                                     </div>
 
                                     <button
