@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LogOut, User, Menu, X, ChevronRight } from 'lucide-react';
+import { useSelector, useDispatch } from 'react-redux';
+import { LogOut, User, Menu, X, ChevronRight, Heart } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { logout } from '../../store/slices/authSlice';
 import api from '../../utils/axios';
@@ -110,6 +111,9 @@ const Navbar = () => {
                                     </div>
                                     <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{userInfo.name.split(' ')[0]}</span>
                                 </Link>
+                                <Link to="/watchlist" className="p-2.5 rounded-full text-slate-400 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-300" title="My Watchlist">
+                                    <Heart size={18} />
+                                </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="p-2.5 rounded-full text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-300"
@@ -197,6 +201,9 @@ const Navbar = () => {
                                         </div>
                                         <Link to="/profile" className="flex items-center gap-3 px-4 py-4 font-bold text-lg text-white hover:bg-base-800 rounded-xl transition-colors">
                                             <User size={20} className="text-primary-400" /> My Tickets
+                                        </Link>
+                                        <Link to="/watchlist" className="flex items-center gap-3 px-4 py-4 font-bold text-lg text-white hover:bg-base-800 rounded-xl transition-colors">
+                                            <Heart size={20} className="text-primary-400" /> Watchlist
                                         </Link>
                                         <button
                                             onClick={handleLogout}

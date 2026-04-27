@@ -7,7 +7,7 @@ import crypto from 'crypto';
 // @access  Private
 export const getUserProfile = async (req, res, next) => {
     try {
-        const user = await User.findById(req.user._id);
+        const user = await User.findById(req.user._id).populate('watchlist');
 
         if (user) {
             res.json({

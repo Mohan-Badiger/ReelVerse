@@ -13,6 +13,7 @@ const SuccessPage = lazy(() => import('./pages/SuccessPage'));
 const Theatres = lazy(() => import('./pages/Theatres'));
 const UpcomingMovies = lazy(() => import('./pages/UpcomingMovies'));
 const MyBookingsPage = lazy(() => import('./pages/MyBookingsPage'));
+const Watchlist = lazy(() => import('./pages/Watchlist'));
 
 
 const ProtectedRoute = ({ children }) => {
@@ -31,7 +32,7 @@ function App() {
                 <Route path="/*" element={
                     <div className="min-h-screen flex flex-col pt-16">
                         <Navbar />
-                        <main className="flex-grow">
+                        <main className="grow">
                             <Suspense fallback={
                                 <div className="h-[80vh] flex items-center justify-center">
                                     <div className="w-8 h-8 rounded-sm border-4 border-t-primary-500 border-base-800 animate-spin" />
@@ -58,6 +59,14 @@ function App() {
                                         element={
                                             <ProtectedRoute>
                                                 <MyBookingsPage />
+                                            </ProtectedRoute>
+                                        }
+                                    />
+                                    <Route
+                                        path="/watchlist"
+                                        element={
+                                            <ProtectedRoute>
+                                                <Watchlist />
                                             </ProtectedRoute>
                                         }
                                     />
