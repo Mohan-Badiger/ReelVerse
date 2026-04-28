@@ -223,7 +223,7 @@ const CheckoutPage = () => {
         <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
             {/* Payment Processing Overlay */}
             {isProcessingPayment && (
-                <div className="fixed inset-0 z-[100] bg-base-950/95 backdrop-blur-md flex flex-col items-center justify-center fade-in" style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}>
+                <div className="fixed inset-0 z-100 bg-base-950/95 backdrop-blur-md flex flex-col items-center justify-center fade-in" style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}>
                     <div className="w-16 h-16 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin mb-6"></div>
                     <h2 className="text-2xl font-bold text-white mb-2">Processing your booking...</h2>
                     <p className="text-slate-400">Please wait while we confirm your ticket.</p>
