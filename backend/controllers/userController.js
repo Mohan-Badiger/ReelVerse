@@ -176,7 +176,7 @@ export const addMovieToWatchlist = async (req, res, next) => {
             return next(new Error('User not found'));
         }
 
-        if (user.watchlist.includes(movieId)) {
+        if (user.watchlist.some(id => id.toString() === movieId)) {
             res.status(400);
             return next(new Error('Movie already in watchlist'));
         }
