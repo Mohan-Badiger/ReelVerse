@@ -191,14 +191,18 @@ const Home = () => {
 
             {/* NOW SHOWING */}
             <section className="max-w-[1400px] mx-auto px-6 py-28">
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-4xl font-bold text-white">Now Showing</h2>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-8 rounded-full bg-primary-500"></div>
+                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">Now Showing</h2>
+                    </div>
 
                     <Link
                         to="/movies"
-                        className="text-primary-400 hover:text-primary-300 transition"
+                        className="text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1 group"
                     >
-                        View all →
+                        View all
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
                     </Link>
                 </div>
 
@@ -208,11 +212,11 @@ const Home = () => {
                     viewport={{ once: true }}
                     variants={{
                         hidden: { opacity: 0 },
-                        show: { opacity: 1, transition: { staggerChildren: 0.1 } },
+                        show: { opacity: 1, transition: { staggerChildren: 0.08 } },
                     }}
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-7"
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
                 >
-                    {movies.slice(0, 4).map((movie, i) => (
+                    {movies.slice(0, 5).map((movie, i) => (
                         <motion.div
                             key={movie._id}
                             variants={{
@@ -228,24 +232,43 @@ const Home = () => {
 
             {/* UPCOMING */}
             <section className="max-w-[1400px] mx-auto px-6 pb-32">
-                <div className="flex justify-between items-center mb-10">
-                    <h2 className="text-4xl font-bold text-white">Upcoming</h2>
+                <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
+                    <div className="flex items-center gap-3">
+                        <div className="w-1.5 h-8 rounded-full bg-accent-500"></div>
+                        <h2 className="text-3xl md:text-4xl font-black text-white tracking-tight">Upcoming</h2>
+                    </div>
 
                     <Link
                         to="/upcoming-movies"
-                        className="text-primary-400 hover:text-primary-300 transition"
+                        className="text-sm font-semibold text-primary-400 hover:text-primary-300 transition-colors flex items-center gap-1 group"
                     >
-                        View all →
+                        View all
+                        <span className="transition-transform group-hover:translate-x-1">→</span>
                     </Link>
                 </div>
 
-                <div className="flex gap-6 overflow-x-auto scrollbar-hide">
-                    {upcomingMovies.map((movie, i) => (
-                        <div key={movie._id} className="min-w-[300px]">
+                <motion.div
+                    initial="hidden"
+                    whileInView="show"
+                    viewport={{ once: true }}
+                    variants={{
+                        hidden: { opacity: 0 },
+                        show: { opacity: 1, transition: { staggerChildren: 0.08 } },
+                    }}
+                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
+                >
+                    {upcomingMovies.slice(0, 5).map((movie, i) => (
+                        <motion.div
+                            key={movie._id}
+                            variants={{
+                                hidden: { opacity: 0, y: 40 },
+                                show: { opacity: 1, y: 0 },
+                            }}
+                        >
                             <MovieCard movie={movie} index={i} />
-                        </div>
+                        </motion.div>
                     ))}
-                </div>
+                </motion.div>
             </section>
 
             {/* FOOTER */}
