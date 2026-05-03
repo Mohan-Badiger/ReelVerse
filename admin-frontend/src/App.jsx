@@ -14,6 +14,7 @@ const Showtimes = lazy(() => import('./pages/Showtimes'));
 const AddShows = lazy(() => import('./pages/AddShows'));
 const UpcomingMovies = lazy(() => import('./pages/UpcomingMovies'));
 const Users = lazy(() => import('./pages/Users'));
+const Coupons = lazy(() => import('./pages/Coupons'));
 
 const ProtectedRoute = ({ children }) => {
     const { adminToken } = useSelector((state) => state.auth);
@@ -48,6 +49,7 @@ function App() {
                     <Route path="add-shows" element={<AddShows />} />
                     <Route path="upcoming-movies" element={<UpcomingMovies />} />
                     <Route path="users" element={<Users />} />
+                    <Route path="coupons" element={<Coupons />} />
                 </Route>
             </Routes>
         </Router>
