@@ -132,8 +132,26 @@ const MyBookingsPage = () => {
         );
     }
 
+    const getBookingStatus = (b) => {
+        if (b.status && b.status !== 'upcoming') return b.status;
+        if (b.paymentStatus === 'Cancelled') return 'cancelled';
+        
+        let showDateTime = null;
+        if (b.date && b.showtime) {
+            showDateTime = new Date(`${new Date(b.date).toDateString()} ${b.showtime}`);
+        } else if (b.show && b.show.date && b.show.time) {
+            showDateTime = new Date(`${new Date(b.show.date).toDateString()} ${b.show.time}`);
+        }
+        
+        if (showDateTime && new Date() > showDateTime) {
+            return 'completed';
+        }
+        
+        return b.status || 'upcoming';
+    };
+
     const filteredBookings = bookings.filter(b => {
-        const bStatus = b.status || (b.paymentStatus === 'Cancelled' ? 'cancelled' : 'completed');
+        const bStatus = getBookingStatus(b);
         return bStatus === activeTab;
     });
 
@@ -191,7 +209,7 @@ const MyBookingsPage = () => {
                     ) : (
                         <div className="grid gap-6">
                             {filteredBookings.map((booking) => {
-                                const bStatus = booking.status || (booking.paymentStatus === 'Cancelled' ? 'cancelled' : 'completed');
+                                const bStatus = getBookingStatus(booking);
 
                                 return (
                                     <div
@@ -203,10 +221,11 @@ const MyBookingsPage = () => {
                                             <img
                                                 src={
                                                     booking.moviePoster ||
+                                                    booking.movie?.posterUrl ||
                                                     booking.show?.movie?.posterUrl ||
                                                     'https://via.placeholder.com/300x450?text=No+Poster'
                                                 }
-                                                alt={booking.movieName || booking.show?.movie?.title || 'Movie'}
+                                                alt={booking.movieName || booking.movie?.title || booking.show?.movie?.title || 'Movie'}
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>
@@ -217,7 +236,7 @@ const MyBookingsPage = () => {
                                                 <div className="flex justify-between items-start mb-4">
                                                     <div>
                                                         <h2 className="text-2xl font-bold text-white mb-1">
-                                                            {booking.movieName || booking.show?.movie?.title || 'Movie Details Unavailable'}
+                                                            {booking.movieName || booking.movie?.title || booking.show?.movie?.title || 'Movie Details Unavailable'}
                                                         </h2>
                                                         <p className="text-gray-400">
                                                             {booking.theatreName || (booking.show?.theatre?.name ? `${booking.show.theatre.name}, ${booking.show.theatre.city}` : 'Theatre details unavailable')}
@@ -316,8 +335,8 @@ const MyBookingsPage = () => {
                                                 >
                                                     <div className="w-1/3 bg-base-900 relative">
                                                         <img
-                                                            src={booking.moviePoster || booking.show?.movie?.posterUrl || 'https://via.placeholder.com/300x450?text=No+Poster'}
-                                                            alt={booking.movieName || booking.show?.movie?.title || 'Movie'}
+                                                            src={booking.moviePoster || booking.movie?.posterUrl || booking.show?.movie?.posterUrl || 'https://via.placeholder.com/300x450?text=No+Poster'}
+                                                            alt={booking.movieName || booking.movie?.title || booking.show?.movie?.title || 'Movie'}
                                                             className="w-full h-full object-cover"
                                                             crossOrigin="anonymous"
                                                         />
@@ -331,9 +350,9 @@ const MyBookingsPage = () => {
                                                         <div className="absolute -left-3 -bottom-3 w-6 h-6 bg-base-950 rounded-full"></div>
 
                                                         <div>
-                                                            <h2 className="text-2xl font-black mb-1 leading-none uppercase">{booking.movieName || booking.show?.movie?.title || 'Unknown Movie'}</h2>
+                                                            <h2 className="text-2xl font-black mb-1 leading-none uppercase">{booking.movieName || booking.movie?.title || booking.show?.movie?.title || 'Unknown Movie'}</h2>
                                                             <p className="text-gray-500 text-sm font-semibold tracking-wider mb-6 pb-4 border-b border-gray-200">
-                                                                {booking.show?.movie?.language || 'EN'} • {booking.show?.movie?.duration ? booking.show?.movie?.duration + ' mins' : 'Duration N/A'}
+                                                                {booking.movie?.language || booking.show?.movie?.language || 'EN'} • {booking.movie?.duration || booking.show?.movie?.duration ? (booking.movie?.duration || booking.show?.movie?.duration) + ' mins' : 'Duration N/A'}
                                                             </p>
 
                                                             <div className="flex gap-4 mb-4">
