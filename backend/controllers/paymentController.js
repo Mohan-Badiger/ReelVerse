@@ -34,6 +34,10 @@ export const createOrder = async (req, res, next) => {
                 res.status(400);
                 return next(new Error('Invalid or expired coupon provided during checkout'));
             }
+            if (coupon.usedBy && coupon.usedBy.includes(req.user._id)) {
+                res.status(400);
+                return next(new Error('You have already used this coupon'));
+            }
             discountPercentage = coupon.discountPercentage;
             appliedCoupon = coupon;
         }
@@ -128,8 +132,10 @@ export const verifyPayment = async (req, res, next) => {
         const { couponCode } = req.body;
         if (couponCode) {
             const coupon = await Coupon.findOne({ code: couponCode.toUpperCase() });
-            if (coupon) {
+            if (coupon && (!coupon.usedBy || !coupon.usedBy.includes(req.user._id))) {
                 coupon.usedCount += 1;
+                if (!coupon.usedBy) coupon.usedBy = [];
+                coupon.usedBy.push(req.user._id);
                 await coupon.save();
             }
         }
