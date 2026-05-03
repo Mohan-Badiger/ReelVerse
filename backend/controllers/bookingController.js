@@ -6,7 +6,7 @@ const updatePastBookingsStatus = async (bookings) => {
     const bookingsArray = Array.isArray(bookings) ? bookings : [bookings];
     
     for (let booking of bookingsArray) {
-        if (booking.status === 'upcoming') {
+        if (!booking.status || booking.status === 'upcoming') {
             let showDateTime = null;
             if (booking.date && booking.showtime) {
                 showDateTime = new Date(`${new Date(booking.date).toDateString()} ${booking.showtime}`);
@@ -16,6 +16,9 @@ const updatePastBookingsStatus = async (bookings) => {
             
             if (showDateTime && currentTime > showDateTime) {
                 booking.status = 'completed';
+                await booking.save();
+            } else if (!booking.status) {
+                booking.status = 'upcoming';
                 await booking.save();
             }
         }
@@ -27,6 +30,7 @@ const updatePastBookingsStatus = async (bookings) => {
 export const getUserBookings = async (req, res, next) => {
     try {
         const bookings = await Booking.find({ user: req.user._id })
+            .populate('movie', 'title posterUrl language duration')
             .populate({
                 path: 'show',
                 populate: [
