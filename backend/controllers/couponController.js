@@ -27,6 +27,25 @@ export const createCoupon = async (req, res, next) => {
     }
 };
 
+// @desc    Get active coupons (for users)
+// @route   GET /api/coupons/active
+// @access  Public
+export const getActiveCoupons = async (req, res, next) => {
+    try {
+        const coupons = await Coupon.find({
+            isActive: true,
+            expiryDate: { $gt: new Date() }
+        }).sort({ discountPercentage: -1 });
+        
+        // Filter out coupons that have reached max usage
+        const activeCoupons = coupons.filter(c => c.usedCount < c.maxUses);
+        
+        res.json(activeCoupons);
+    } catch (error) {
+        next(error);
+    }
+};
+
 // @desc    Get all coupons
 // @route   GET /api/coupons
 // @access  Private/Admin
@@ -71,6 +90,11 @@ export const validateCoupon = async (req, res, next) => {
         if (coupon.usedCount >= coupon.maxUses) {
             res.status(400);
             return next(new Error('This coupon has reached its maximum usage limit'));
+        }
+
+        if (coupon.usedBy && coupon.usedBy.includes(req.user._id)) {
+            res.status(400);
+            return next(new Error('You have already used this coupon'));
         }
 
         res.json({
