@@ -6,9 +6,7 @@ import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router-dom';
 
 const PRESET_TIMINGS = [
-    '10:00 AM', '11:30 AM', '12:00 PM', '02:00 PM',
-    '03:00 PM', '04:30 PM', '06:00 PM', '07:30 PM',
-    '09:00 PM', '10:30 PM'
+    '09:00 AM', '12:30 PM', '04:00 PM', '07:30 PM', '10:30 PM'
 ];
 
 const getFormattedDate = (daysToAdd) => {
@@ -293,14 +291,14 @@ const AddShows = () => {
                                                             key={time}
                                                             onClick={() => toggleShowtime(block.id, time)}
                                                             className={`
-                                                                px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-1.5 border
+                                                                px-5 py-2.5 rounded-full text-sm font-semibold transition-all duration-300 flex items-center gap-2 border shadow-sm
                                                                 ${isSelected
-                                                                    ? 'bg-primary-600 text-white border-primary-500 shadow-[0_0_10px_rgba(99,102,241,0.3)] ring-1 ring-primary-500'
-                                                                    : 'bg-base-900 text-base-300 border-base-700 hover:border-base-600 hover:bg-base-800'
+                                                                    ? 'bg-linear-to-r from-primary-600 to-indigo-500 text-white border-primary-500/50 shadow-[0_0_15px_rgba(99,102,241,0.4)] scale-105'
+                                                                    : 'bg-base-900 text-base-300 border-base-800 hover:border-primary-500/30 hover:bg-base-800 hover:text-white'
                                                                 }
                                                             `}
                                                         >
-                                                            {isSelected && <Check size={14} className="shrink-0" />} {time}
+                                                            {isSelected && <Check size={14} className="shrink-0 animate-pulse" />} {time}
                                                         </button>
                                                     );
                                                 })}
@@ -321,10 +319,10 @@ const AddShows = () => {
                                                             key={dayOption.value}
                                                             onClick={() => toggleDay(block.id, dayOption.value)}
                                                             className={`
-                                                                w-full flex items-center justify-between px-4 py-3 rounded-sm border transition-all text-left
+                                                                w-full flex items-center justify-between px-5 py-4 rounded-xl border transition-all duration-300 text-left
                                                                 ${isSelected
-                                                                    ? 'bg-primary-500/10 border-primary-500/50 text-primary-300'
-                                                                    : 'bg-base-900 border-base-800 text-base-300 hover:bg-base-800'
+                                                                    ? 'bg-linear-to-r from-primary-500/10 to-indigo-500/5 border-primary-500/50 text-white shadow-[0_0_20px_rgba(99,102,241,0.15)] scale-[1.02]'
+                                                                    : 'bg-base-900 border-base-800 text-base-400 hover:bg-base-800 hover:border-base-700 hover:text-base-200'
                                                                 }
                                                             `}
                                                         >
