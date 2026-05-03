@@ -26,9 +26,9 @@ const Bookings = () => {
     }, []);
 
     const formatCurrency = (amount) => {
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-IN', {
             style: 'currency',
-            currency: 'USD'
+            currency: 'INR'
         }).format(amount);
     };
 
@@ -120,9 +120,13 @@ const Bookings = () => {
                                             {formatCurrency(booking.totalPrice)}
                                         </td>
                                         <td className="py-4 px-6 text-center">
-                                            {booking.status === 'confirmed' ? (
+                                            {booking.paymentStatus === 'Completed' || booking.status === 'upcoming' || booking.status === 'completed' ? (
                                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">
                                                     <CheckCircle2 size={12} /> Confirmed
+                                                </span>
+                                            ) : booking.status === 'cancelled' || booking.paymentStatus === 'Cancelled' ? (
+                                                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-rose-500/10 text-rose-400 border border-rose-500/20">
+                                                    Cancelled
                                                 </span>
                                             ) : (
                                                 <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-sm text-xs font-semibold bg-amber-500/10 text-amber-400 border border-amber-500/20">
