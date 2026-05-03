@@ -8,6 +8,7 @@ const couponSchema = new mongoose.Schema(
         isActive: { type: Boolean, default: true },
         maxUses: { type: Number, default: 100 },
         usedCount: { type: Number, default: 0 },
+        usedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
     },
     { timestamps: true }
 );
