@@ -7,8 +7,10 @@ import {
     updateMovie,
     deleteMovie,
     getUpcomingMovies,
+    addReminder
 } from '../controllers/movieController.js';
 import { protectAdmin } from '../middleware/adminMiddleware.js';
+import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 const upload = multer();
@@ -25,5 +27,7 @@ router
     .get(getMovieById)
     .put(protectAdmin, upload.single('poster'), updateMovie)
     .delete(protectAdmin, deleteMovie);
+
+router.post('/:id/remind', protect, addReminder);
 
 export default router;
