@@ -6,7 +6,6 @@ import Film from "lucide-react/dist/esm/icons/film";
 import Heart from "lucide-react/dist/esm/icons/heart";
 import Clock from "lucide-react/dist/esm/icons/clock";
 import Calendar from "lucide-react/dist/esm/icons/calendar";
-import Bell from "lucide-react/dist/esm/icons/bell";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -35,33 +34,7 @@ const MovieCard = ({ movie, index = 0 }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
-  const [isReminding, setIsReminding] = useState(false);
-  const [hasReminder, setHasReminder] = useState(false);
 
-  const handleRemindMe = async (e) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    if (!userInfo) {
-      toast.error('Please login to set a reminder');
-      return;
-    }
-
-    setIsReminding(true);
-    try {
-      const res = await api.post(`/movies/${movie._id}/remind`);
-      toast.success(res.data.message || 'Reminder updated successfully');
-      if (res.data.action === 'removed') {
-         setHasReminder(false);
-      } else {
-         setHasReminder(true);
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || 'Failed to update reminder');
-    } finally {
-      setIsReminding(false);
-    }
-  };
 
   // Check if movie is in user's watchlist
   useEffect(() => {
@@ -158,7 +131,7 @@ const MovieCard = ({ movie, index = 0 }) => {
           movie.rating > 0 && (
             <div className="absolute top-2.5 right-2.5 z-10">
               <div className="bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-full text-[11px] font-bold text-amber-400 flex items-center gap-1 border border-amber-500/20 shadow-lg">
-                <Star size={11} fill="currentColor" /> {movie.rating.toFixed(1)}
+                <Star size={11} fill="currentColor" /> {movie.rating.toFixed(1)} IMDb
               </div>
             </div>
           )
@@ -196,12 +169,16 @@ const MovieCard = ({ movie, index = 0 }) => {
           </h3>
 
           {/* Meta Info */}
-          <div className="flex items-center flex-wrap gap-2 text-[11px] text-slate-300 mb-2.5">
-            <span>{movie.isUpcoming ? `Release ${new Date(movie.releaseDate).getFullYear()}` : new Date(movie.releaseDate).getFullYear()}</span>
+          <div className="flex items-center flex-wrap gap-2 text-[11px] text-slate-300 mb-2.5 font-medium">
+            <span className="flex items-center gap-1">
+              <Calendar size={10} className="text-primary-400" />
+              {movie.isUpcoming ? 'Releasing ' : ''}
+              {new Date(movie.releaseDate).toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
+            </span>
             {movie.duration && (
               <>
                 <span className="w-1 h-1 bg-slate-500 rounded-full"></span>
-                <span>{movie.duration}m</span>
+                <span className="flex items-center gap-1"><Clock size={10} className="text-slate-400" /> {movie.duration}m</span>
               </>
             )}
             {movie.language && (
@@ -210,6 +187,12 @@ const MovieCard = ({ movie, index = 0 }) => {
                 <span className="uppercase tracking-wide">{movie.language}</span>
               </>
             )}
+          </div>
+
+          {/* More Important Data (Cast & Director) */}
+          <div className="text-[10px] text-slate-400 mb-2.5 line-clamp-2 leading-tight">
+             {movie.director && <><span className="text-slate-300 font-semibold">Dir:</span> {movie.director} &bull; </>}
+             {movie.cast && movie.cast.length > 0 && <><span className="text-slate-300 font-semibold">Cast:</span> {movie.cast.join(', ')}</>}
           </div>
 
           {/* Genre Tags */}
@@ -252,16 +235,7 @@ const MovieCard = ({ movie, index = 0 }) => {
               )}
             </Link>
 
-            {movie.isUpcoming && (
-              <button
-                onClick={handleRemindMe}
-                disabled={isReminding}
-                className={`flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg transition-all duration-300 active:scale-95 shadow-lg disabled:opacity-50 ${hasReminder ? 'bg-primary-600/20 text-primary-400 border border-primary-500/30 hover:bg-primary-600/30' : 'bg-primary-600 hover:bg-primary-500 text-white shadow-primary-500/20'}`}
-              >
-                <Bell size={13} fill={hasReminder ? "currentColor" : "none"} className={isReminding ? "animate-pulse" : ""} />
-                {isReminding ? 'Wait...' : hasReminder ? 'Remove Reminder' : 'Remind Me'}
-              </button>
-            )}
+
           </div>
         </div>
       </m.div>

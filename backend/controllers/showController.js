@@ -35,6 +35,7 @@ const generateSeats = (seatCount = 120) => {
 export const getAllShows = async (req, res, next) => {
     try {
         const shows = await Show.find()
+            .select('-seats') // Exclude seats for list views to improve performance
             .populate('movie', 'title posterUrl duration language')
             .populate('theatre', 'name city address location screens');
         res.json(shows);
