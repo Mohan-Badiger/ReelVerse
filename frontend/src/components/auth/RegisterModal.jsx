@@ -3,12 +3,16 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/axios';
+import { useDispatch } from 'react-redux';
+import { setCredentials } from '../../store/slices/authSlice';
+import { GoogleLogin } from '@react-oauth/google';
 
 const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isLoading, setIsLoading] = useState(false);
+    const dispatch = useDispatch();
 
     const handleRegister = async (e) => {
         e.preventDefault();
@@ -94,12 +98,12 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                         {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
                                         <input
                                             type="password"
-                                            placeholder="Min. 8 characters"
+                                            placeholder="Min. 6 characters"
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             className="box-input pl-12 h-12"
                                             required
-                                            minLength={8}
+                                            minLength={6}
                                         />
                                     </div>
                                 </div>
@@ -116,6 +120,40 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                     )}
                                 </button>
                             </form>
+
+                            <div className="mt-6">
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-t border-base-800"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className="px-2 bg-[#171a21] text-base-500">Or continue with</span>
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-center">
+                                    <GoogleLogin
+                                        onSuccess={async (credentialResponse) => {
+                                            setIsLoading(true);
+                                            try {
+                                                const res = await api.post('/auth/google', { credential: credentialResponse.credential });
+                                                dispatch(setCredentials(res.data));
+                                                toast.success('Logged in with Google successfully!');
+                                                onClose();
+                                            } catch (err) {
+                                                toast.error(err.response?.data?.message || 'Google Login failed');
+                                            } finally {
+                                                setIsLoading(false);
+                                            }
+                                        }}
+                                        onError={() => toast.error('Google Login Failed')}
+                                        theme="filled_black"
+                                        shape="rectangular"
+                                        text="continue_with"
+                                        size="large"
+                                        width={340}
+                                    />
+                                </div>
+                            </div>
 
                             <p className="mt-6 text-center text-sm text-base-400">
                                 Already have an account?{' '}

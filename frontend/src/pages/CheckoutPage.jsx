@@ -237,13 +237,40 @@ const CheckoutPage = () => {
     return (
         <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
             {/* Payment Processing Overlay */}
-            {isProcessingPayment && (
-                <div className="fixed inset-0 z-100 bg-base-950/95 backdrop-blur-md flex flex-col items-center justify-center fade-in" style={{ top: 0, left: 0, width: '100vw', height: '100vh' }}>
-                    <div className="w-16 h-16 border-4 border-base-800 border-t-primary-500 rounded-sm animate-spin mb-6"></div>
-                    <h2 className="text-2xl font-bold text-white mb-2">Processing your booking...</h2>
-                    <p className="text-slate-400">Please wait while we confirm your ticket.</p>
-                </div>
-            )}
+            <AnimatePresence>
+                {isProcessingPayment && (
+                    <motion.div 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        className="fixed inset-0 z-[9999] bg-base-950 flex flex-col items-center justify-center"
+                    >
+                        <div className="relative">
+                            <div className="w-20 h-20 border-4 border-base-800 rounded-full"></div>
+                            <div className="w-20 h-20 border-4 border-primary-500 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
+                            <div className="absolute inset-0 flex items-center justify-center">
+                                <span className="text-xl">🍿</span>
+                            </div>
+                        </div>
+                        <motion.h2 
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.2 }}
+                            className="text-2xl font-bold text-white mt-8 mb-2 tracking-tight"
+                        >
+                            Confirming your ticket...
+                        </motion.h2>
+                        <motion.p 
+                            initial={{ y: 10, opacity: 0 }}
+                            animate={{ y: 0, opacity: 1 }}
+                            transition={{ delay: 0.3 }}
+                            className="text-base-400"
+                        >
+                            Please don't close this window
+                        </motion.p>
+                    </motion.div>
+                )}
+            </AnimatePresence>
 
             {/* Razorpay Popup Blur Overlay */}
             {isPaymentPopupOpen && (
@@ -395,7 +422,9 @@ const CheckoutPage = () => {
                                                                 {coupon.code}
                                                             </span>
                                                         </div>
-                                                        <p className="text-sm text-slate-300 font-medium">{coupon.description || `Save ${coupon.discountPercentage}% on your booking`}</p>
+                                                        <p className="text-sm text-slate-300 font-medium">
+                                                            {coupon.description || `Save ${coupon.discountPercentage}% on your booking${coupon.minAmount ? ` (Min. ₹${coupon.minAmount})` : ''}`}
+                                                        </p>
                                                     </div>
                                                     <button
                                                         onClick={() => handleApplyCoupon(coupon.code)}

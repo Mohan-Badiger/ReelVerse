@@ -4,6 +4,7 @@ import { X, Mail, Lock } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { useDispatch } from 'react-redux';
 import { setCredentials } from '../../store/slices/authSlice';
+import { GoogleLogin } from '@react-oauth/google';
 import api from '../../utils/axios';
 
 const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
@@ -98,6 +99,7 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
                                             value={password}
                                             onChange={(e) => setPassword(e.target.value)}
                                             className="box-input pl-12 h-12"
+                                            minLength={6}
                                             required
                                         />
                                     </div>
@@ -115,6 +117,40 @@ const LoginModal = ({ isOpen, onClose, onSwitchToRegister, onShowOTP }) => {
                                     )}
                                 </button>
                             </form>
+
+                            <div className="mt-6">
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-t border-base-800"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className="px-2 bg-[#171a21] text-base-500">Or continue with</span>
+                                    </div>
+                                </div>
+                                <div className="mt-6 flex justify-center">
+                                    <GoogleLogin
+                                        onSuccess={async (credentialResponse) => {
+                                            setIsLoading(true);
+                                            try {
+                                                const res = await api.post('/auth/google', { credential: credentialResponse.credential });
+                                                dispatch(setCredentials(res.data));
+                                                toast.success('Logged in with Google successfully!');
+                                                onClose();
+                                            } catch (err) {
+                                                toast.error(err.response?.data?.message || 'Google Login failed');
+                                            } finally {
+                                                setIsLoading(false);
+                                            }
+                                        }}
+                                        onError={() => toast.error('Google Login Failed')}
+                                        theme="filled_black"
+                                        shape="rectangular"
+                                        text="continue_with"
+                                        size="large"
+                                        width={340}
+                                    />
+                                </div>
+                            </div>
 
                             <p className="mt-6 text-center text-sm text-base-400">
                                 Don't have an account?{' '}
