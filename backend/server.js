@@ -41,7 +41,10 @@ app.use(cors({
 }));
 
 // 2. Security HTTP headers
-app.use(helmet());
+app.use(helmet({
+    crossOriginOpenerPolicy: { policy: "same-origin-allow-popups" },
+    crossOriginResourcePolicy: { policy: "cross-origin" }
+}));
 
 // 3. Rate Limiting (Relaxed for development/standard usage)
 const limiter = rateLimit({
