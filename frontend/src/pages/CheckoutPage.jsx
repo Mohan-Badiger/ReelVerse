@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldAlert, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/axios';
@@ -87,9 +87,9 @@ const CheckoutPage = () => {
         setIsApplyingCoupon(true);
         try {
             const totalPrice = selectedSeats.length * show.ticketPrice;
-            const res = await api.post('/coupons/validate', { 
+            const res = await api.post('/coupons/validate', {
                 code: codeToApply,
-                amount: totalPrice 
+                amount: totalPrice
             }, {
                 headers: {
                     Authorization: `Bearer ${userInfo.token}`,
@@ -239,11 +239,11 @@ const CheckoutPage = () => {
             {/* Payment Processing Overlay */}
             <AnimatePresence>
                 {isProcessingPayment && (
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-[9999] bg-base-950 flex flex-col items-center justify-center"
+                        className="fixed inset-0 z-9999 bg-base-950 flex flex-col items-center justify-center"
                     >
                         <div className="relative">
                             <div className="w-20 h-20 border-4 border-base-800 rounded-full"></div>
@@ -252,7 +252,7 @@ const CheckoutPage = () => {
                                 <span className="text-xl">🍿</span>
                             </div>
                         </div>
-                        <motion.h2 
+                        <motion.h2
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.2 }}
@@ -260,7 +260,7 @@ const CheckoutPage = () => {
                         >
                             Confirming your ticket...
                         </motion.h2>
-                        <motion.p 
+                        <motion.p
                             initial={{ y: 10, opacity: 0 }}
                             animate={{ y: 0, opacity: 1 }}
                             transition={{ delay: 0.3 }}

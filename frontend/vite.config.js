@@ -18,4 +18,27 @@ export default defineConfig({
       },
     },
   },
+  build: {
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+      },
+    },
+    cssCodeSplit: true,
+    reportCompressedSize: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-redux': ['@reduxjs/toolkit', 'react-redux'],
+          'vendor-framer': ['framer-motion'],
+          'vendor-utils': ['axios', 'react-hot-toast'],
+          'vendor-canvas': ['html2canvas', 'html2canvas-pro', 'jspdf'],
+        },
+      },
+    },
+    chunkSizeWarningLimit: 600,
+  },
 })

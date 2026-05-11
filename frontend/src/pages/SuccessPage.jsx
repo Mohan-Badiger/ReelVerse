@@ -50,30 +50,10 @@ const SuccessPage = () => {
 
         try {
             const canvas = await html2canvas(ticketRef.current, { 
-                scale: 3, 
+                scale: 2, 
                 useCORS: true, 
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                onclone: (clonedDoc) => {
-                    const elements = clonedDoc.getElementsByTagName('*');
-                    for (let i = 0; i < elements.length; i++) {
-                        const el = elements[i];
-                        const style = clonedDoc.defaultView.getComputedStyle(el);
-                        // html2canvas fails on oklab CSS functions which CSS variables in Tailwind v4 resolve to
-                        if (style.backgroundImage.includes('oklab')) {
-                            el.style.backgroundImage = 'none';
-                        }
-                        if (style.backgroundColor.includes('oklab')) {
-                            el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-                        }
-                        if (style.color.includes('oklab')) {
-                            el.style.color = 'rgba(0, 0, 0, 1)';
-                        }
-                        if (style.borderColor.includes('oklab')) {
-                            el.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-                        }
-                    }
-                }
+                allowTaint: false, // Must be false to allow toDataURL
+                backgroundColor: '#121212',
             });
             const imgData = canvas.toDataURL('image/png', 1.0);
             
@@ -117,21 +97,10 @@ const SuccessPage = () => {
 
         try {
             const canvas = await html2canvas(ticketRef.current, { 
-                scale: 3, 
+                scale: 2, 
                 useCORS: true, 
-                allowTaint: true,
-                backgroundColor: '#ffffff',
-                onclone: (clonedDoc) => {
-                    const elements = clonedDoc.getElementsByTagName('*');
-                    for (let i = 0; i < elements.length; i++) {
-                        const el = elements[i];
-                        const style = clonedDoc.defaultView.getComputedStyle(el);
-                        if (style.backgroundImage.includes('oklab')) el.style.backgroundImage = 'none';
-                        if (style.backgroundColor.includes('oklab')) el.style.backgroundColor = 'rgba(255, 255, 255, 1)';
-                        if (style.color.includes('oklab')) el.style.color = 'rgba(0, 0, 0, 1)';
-                        if (style.borderColor.includes('oklab')) el.style.borderColor = 'rgba(0, 0, 0, 0.1)';
-                    }
-                }
+                allowTaint: false,
+                backgroundColor: '#121212',
             });
 
             canvas.toBlob(async (blob) => {
@@ -239,71 +208,75 @@ const SuccessPage = () => {
             >
                 <div
                     ref={ticketRef}
-                    className="bg-white text-black w-full max-w-2xl rounded shadow-2xl overflow-hidden flex flex-col md:flex-row relative"
-                    style={{ minHeight: '300px' }}
+                    className="w-full max-w-3xl mx-auto rounded-xl overflow-hidden flex flex-col md:flex-row relative"
+                    style={{ backgroundColor: '#121212', color: '#ffffff', minHeight: '320px', boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.5)' }}
                 >
                     {/* Left Section: Poster */}
-                    <div className="w-full md:w-1/3 bg-base-900 relative">
+                    <div className="w-full md:w-2/5 relative">
                         <img
                             src={booking.show.movie.posterUrl}
                             alt={booking.show.movie.title}
                             className="w-full h-full object-cover"
                             crossOrigin="anonymous"
+                            style={{ minHeight: '100%' }}
                         />
-                        <div className="absolute inset-0 flex items-end p-4" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0))' }}>
-                            <span className="text-white font-bold tracking-widest uppercase text-xs">ReelVerse Ticket</span>
+                        <div className="absolute inset-0 p-6 flex items-end" style={{ background: 'linear-gradient(to top, #121212 0%, rgba(18,18,18,0) 100%)' }}>
+                            <span style={{ color: '#f59e0b', fontWeight: 'bold', letterSpacing: '3px', textTransform: 'uppercase', fontSize: '13px' }}>ReelVerse Premier</span>
                         </div>
                     </div>
 
                     {/* Right Section: Details & QR */}
-                    <div className="w-full md:w-2/3 p-6 md:p-8 flex flex-col justify-between border-l-2 border-dashed border-gray-300 relative">
+                    <div className="w-full md:w-3/5 p-8 flex flex-col justify-between relative" style={{ borderLeft: '2px dashed #333333' }}>
                         {/* Cutouts for classic ticket look */}
-                        <div className="absolute -left-3 -top-3 w-6 h-6 bg-base-950 rounded-full md:block hidden"></div>
-                        <div className="absolute -left-3 -bottom-3 w-6 h-6 bg-base-950 rounded-full md:block hidden"></div>
+                        <div className="absolute -left-4 -top-4 w-8 h-8 rounded-full md:block hidden" style={{ backgroundColor: '#09090b' }}></div>
+                        <div className="absolute -left-4 -bottom-4 w-8 h-8 rounded-full md:block hidden" style={{ backgroundColor: '#09090b' }}></div>
 
                         <div>
-                            <h2 className="text-2xl font-black mb-1 leading-none uppercase">{booking.show.movie.title}</h2>
-                            <p className="text-gray-500 text-sm font-semibold tracking-wider mb-6 pb-4 border-b border-gray-200">
+                            <h2 style={{ fontSize: '32px', fontWeight: '900', marginBottom: '8px', lineHeight: '1.1', textTransform: 'uppercase' }}>{booking.show.movie.title}</h2>
+                            <p style={{ color: '#a1a1aa', fontSize: '14px', fontWeight: '600', letterSpacing: '1px', marginBottom: '24px', paddingBottom: '16px', borderBottom: '1px solid #333333' }}>
                                 {booking.show.movie.language} • {booking.show.movie.duration} mins
                             </p>
 
-                            <div className="flex gap-4 mb-4">
+                            <div className="flex gap-4 mb-6">
                                 <div className="flex-1">
-                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Date</p>
-                                    <p className="font-bold">{new Date(booking.show.date).toLocaleDateString()}</p>
+                                    <p style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Date</p>
+                                    <p style={{ fontWeight: '700', fontSize: '16px' }}>{new Date(booking.show.date).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' })}</p>
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Time</p>
-                                    <p className="font-bold">{booking.show.time}</p>
+                                    <p style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Time</p>
+                                    <p style={{ fontWeight: '700', fontSize: '16px' }}>{booking.show.time}</p>
                                 </div>
                             </div>
 
-                            <div className="mb-4">
-                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Cinema</p>
-                                <p className="font-bold">{booking.show.theatre.name}</p>
-                                <p className="text-sm text-gray-600">{booking.show.theatre.city}</p>
-                            </div>
-
-                            <div>
-                                <p className="text-xs text-gray-500 uppercase tracking-wider mb-1">Seats</p>
-                                <p className="font-black text-lg text-primary-600">{booking.seatsBooked.join(', ')}</p>
+                            <div className="flex gap-4 mb-6">
+                                <div className="flex-1">
+                                    <p style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Cinema</p>
+                                    <p style={{ fontWeight: '700', fontSize: '16px' }}>{booking.show.theatre.name}</p>
+                                    <p style={{ fontSize: '14px', color: '#a1a1aa' }}>{booking.show.theatre.city}</p>
+                                </div>
+                                <div className="flex-1">
+                                    <p style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Seats</p>
+                                    <p style={{ fontWeight: '900', fontSize: '20px', color: '#f59e0b' }}>{booking.seatsBooked.join(', ')}</p>
+                                </div>
                             </div>
                         </div>
 
-                        <div className="mt-6 flex items-center justify-between pt-4 border-t border-gray-200">
+                        <div className="mt-4 flex items-center justify-between pt-6" style={{ borderTop: '1px solid #333333' }}>
                             <div>
-                                <p className="text-xs text-gray-400 uppercase tracking-wider">Total Paid</p>
-                                <p className="font-black text-xl">₹{booking.totalPrice}</p>
+                                <p style={{ fontSize: '12px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '1px' }}>Total Paid</p>
+                                <p style={{ fontWeight: '900', fontSize: '24px' }}>₹{booking.totalPrice}</p>
                             </div>
                             {booking.qrCode && (
                                 <div className="text-center">
-                                    <img
-                                        src={booking.qrCode}
-                                        alt="Ticket QR Code"
-                                        className="w-20 h-20 bg-white p-1 border border-gray-200"
-                                        crossOrigin="anonymous"
-                                    />
-                                    <p className="text-[9px] text-gray-400 uppercase tracking-widest mt-1">ID: {booking._id.substring(0, 8)}</p>
+                                    <div style={{ backgroundColor: '#ffffff', padding: '6px', borderRadius: '4px' }}>
+                                        <img
+                                            src={booking.qrCode}
+                                            alt="Ticket QR Code"
+                                            style={{ width: '80px', height: '80px' }}
+                                            crossOrigin="anonymous"
+                                        />
+                                    </div>
+                                    <p style={{ fontSize: '10px', color: '#71717a', textTransform: 'uppercase', letterSpacing: '2px', marginTop: '6px' }}>ID: {booking._id.substring(0, 8)}</p>
                                 </div>
                             )}
                         </div>

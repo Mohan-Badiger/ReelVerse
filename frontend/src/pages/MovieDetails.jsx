@@ -1,8 +1,20 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare, Play, Film, Heart, Sparkles, Bell } from 'lucide-react';
+import { m } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import Calendar from 'lucide-react/dist/esm/icons/calendar';
+import Clock from 'lucide-react/dist/esm/icons/clock';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import Ticket from 'lucide-react/dist/esm/icons/ticket';
+import Star from 'lucide-react/dist/esm/icons/star';
+import StarHalf from 'lucide-react/dist/esm/icons/star-half';
+import MessageSquare from 'lucide-react/dist/esm/icons/message-square';
+import Play from 'lucide-react/dist/esm/icons/play';
+import Film from 'lucide-react/dist/esm/icons/film';
+import Heart from 'lucide-react/dist/esm/icons/heart';
+import Sparkles from 'lucide-react/dist/esm/icons/sparkles';
+import Bell from 'lucide-react/dist/esm/icons/bell';
 import toast from 'react-hot-toast';
 import api from '../utils/axios';
 import TrailerModal from '../components/movies/TrailerModal';
@@ -181,22 +193,36 @@ const MovieDetails = () => {
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
     return (
-        <div className="max-w-[1200px] mx-auto px-6 py-12 fade-in">
+        <main className="max-w-[1200px] mx-auto px-6 py-12 fade-in">
+            <Helmet>
+                <title>{`${movie.title} | ReelVerse - Book Tickets Now`}</title>
+                <meta name="description" content={`Book tickets for ${movie.title}. Directed by ${movie.director}. ${movie.description.substring(0, 150)}...`} />
+                <meta property="og:title" content={`${movie.title} | ReelVerse`} />
+                <meta property="og:description" content={movie.description.substring(0, 160)} />
+                <meta property="og:image" content={movie.posterUrl} />
+            </Helmet>
             {/* Movie Header Card */}
-            <motion.div
+            <m.div
                 initial={{ opacity: 0, y: 30 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="box-panel flex flex-col md:flex-row gap-8 p-8 mb-16 relative overflow-hidden"
             >
                 <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
-                    <img src={movie.backdropUrl || movie.posterUrl} alt="bg" className="w-full h-full object-cover blur-3xl opacity-50" />
+                    <img 
+                        src={movie.backdropUrl?.includes('cloudinary') ? movie.backdropUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1200/') : (movie.backdropUrl || movie.posterUrl)} 
+                        alt="bg" 
+                        className="w-full h-full object-cover blur-3xl opacity-50" 
+                        fetchPriority="high"
+                    />
                     <div className="absolute inset-0 bg-base-900/90"></div>
                 </div>
 
                 <div className="relative z-10 mx-auto md:mx-0">
                     <img
-                        src={movie.posterUrl}
+                        src={movie.posterUrl.includes('cloudinary') ? movie.posterUrl.replace('/upload/', '/upload/f_auto,q_auto,w_500/') : movie.posterUrl}
                         alt={movie.title}
+                        width="320"
+                        height="480"
                         className="w-full md:w-80 h-auto rounded-sm shadow-sm object-cover border border-base-800"
                     />
                     {movie.isUpcoming && (
@@ -299,11 +325,11 @@ const MovieDetails = () => {
                         </div>
                     )}
                 </div>
-            </motion.div>
+            </m.div>
 
             {/* Showtimes Section */}
             {!movie.isUpcoming && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
+                <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
                     <h2 className="text-2xl font-bold text-white mb-6 flex items-center">
                         <Ticket className="text-primary-500 mr-3" size={28} />
                         Select a Showtime
@@ -370,11 +396,11 @@ const MovieDetails = () => {
                             </div>
                         </div>
                     )}
-                </motion.div>
+                </m.div>
             )}
 
             {/* Reviews Section */}
-            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-16 box-panel p-8 bg-base-950/30">
+            <m.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.3 }} className="mt-16 box-panel p-8 bg-base-950/30">
                 <div className="flex justify-between items-center border-b border-base-800 pb-4 mb-8">
                     <h2 className="text-2xl font-bold text-white flex items-center">
                         <MessageSquare className="text-primary-500 mr-3" size={28} />
@@ -502,7 +528,7 @@ const MovieDetails = () => {
                         </div>
                     </div>
                 </div>
-            </motion.div>
+            </m.div>
 
             {/* Trailer Modal */}
             <TrailerModal
@@ -511,7 +537,7 @@ const MovieDetails = () => {
                 trailerUrl={movie.trailerUrl}
                 movieTitle={movie.title}
             />
-        </div>
+        </main>
     );
 };
 

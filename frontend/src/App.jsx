@@ -1,5 +1,6 @@
 import { Suspense, lazy } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { motion, LazyMotion, domAnimation } from 'framer-motion';
 import { Toaster } from 'react-hot-toast';
 import { useSelector } from 'react-redux';
 import Navbar from './components/common/Navbar';
@@ -24,58 +25,60 @@ const ProtectedRoute = ({ children }) => {
 function App() {
     return (
         <Router>
-            <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-base-800' }} />
+            <LazyMotion features={domAnimation} strict>
+                <Toaster position="top-right" reverseOrder={false} toastOptions={{ className: 'box-panel bg-base-900 text-white font-medium border border-base-800' }} />
 
-            <Routes>
+                <Routes>
 
-                {/* User Routes - Wrapped with standard Navbar and layout */}
-                <Route path="/*" element={
-                    <div className="min-h-screen flex flex-col pt-16">
-                        <Navbar />
-                        <main className="grow">
-                            <Suspense fallback={
-                                <div className="h-[80vh] flex items-center justify-center">
-                                    <div className="w-8 h-8 rounded-sm border-4 border-t-primary-500 border-base-800 animate-spin" />
-                                </div>
-                            }>
-                                <Routes>
-                                    <Route path="/" element={<Home />} />
-                                    <Route path="/movies" element={<Movies />} />
-                                    <Route path="/movie/:id" element={<MovieDetails />} />
-                                    <Route path="/checkout/:showId" element={<CheckoutPage />} />
-                                    <Route path="/booking/success" element={<SuccessPage />} />
-                                    <Route path="/theatres" element={<Theatres />} />
-                                    <Route path="/upcoming-movies" element={<UpcomingMovies />} />
-                                    <Route
-                                        path="/profile"
-                                        element={
-                                            <ProtectedRoute>
-                                                <Profile />
-                                            </ProtectedRoute>
-                                        }
-                                    />
-                                    <Route
-                                        path="/dashboard/bookings"
-                                        element={
-                                            <ProtectedRoute>
-                                                <MyBookingsPage />
-                                            </ProtectedRoute>
-                                        }
-                                    />
-                                    <Route
-                                        path="/watchlist"
-                                        element={
-                                            <ProtectedRoute>
-                                                <Watchlist />
-                                            </ProtectedRoute>
-                                        }
-                                    />
-                                </Routes>
-                            </Suspense>
-                        </main>
-                    </div>
-                } />
-            </Routes>
+                    {/* User Routes - Wrapped with standard Navbar and layout */}
+                    <Route path="/*" element={
+                        <div className="min-h-screen flex flex-col pt-16">
+                            <Navbar />
+                            <main className="grow">
+                                <Suspense fallback={
+                                    <div className="h-[80vh] flex items-center justify-center">
+                                        <div className="w-8 h-8 rounded-sm border-4 border-t-primary-500 border-base-800 animate-spin" />
+                                    </div>
+                                }>
+                                    <Routes>
+                                        <Route path="/" element={<Home />} />
+                                        <Route path="/movies" element={<Movies />} />
+                                        <Route path="/movie/:id" element={<MovieDetails />} />
+                                        <Route path="/checkout/:showId" element={<CheckoutPage />} />
+                                        <Route path="/booking/success" element={<SuccessPage />} />
+                                        <Route path="/theatres" element={<Theatres />} />
+                                        <Route path="/upcoming-movies" element={<UpcomingMovies />} />
+                                        <Route
+                                            path="/profile"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <Profile />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path="/dashboard/bookings"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <MyBookingsPage />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                        <Route
+                                            path="/watchlist"
+                                            element={
+                                                <ProtectedRoute>
+                                                    <Watchlist />
+                                                </ProtectedRoute>
+                                            }
+                                        />
+                                    </Routes>
+                                </Suspense>
+                            </main>
+                        </div>
+                    } />
+                </Routes>
+            </LazyMotion>
         </Router>
     );
 }

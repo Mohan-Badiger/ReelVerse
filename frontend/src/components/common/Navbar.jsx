@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { LogOut, User, Menu, X, ChevronRight, Heart } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
+import LogOut from 'lucide-react/dist/esm/icons/log-out';
+import User from 'lucide-react/dist/esm/icons/user';
+import Menu from 'lucide-react/dist/esm/icons/menu';
+import X from 'lucide-react/dist/esm/icons/x';
+import ChevronRight from 'lucide-react/dist/esm/icons/chevron-right';
+import Heart from 'lucide-react/dist/esm/icons/heart';
+import { m, AnimatePresence } from 'framer-motion';
 import { logout } from '../../store/slices/authSlice';
 import api from '../../utils/axios';
 import toast from 'react-hot-toast';
 
-import LoginModal from '../auth/LoginModal';
-import RegisterModal from '../auth/RegisterModal';
-import OTPModal from '../auth/OTPModal';
+import { lazy, Suspense } from 'react';
+const LoginModal = lazy(() => import('../auth/LoginModal'));
+const RegisterModal = lazy(() => import('../auth/RegisterModal'));
+const OTPModal = lazy(() => import('../auth/OTPModal'));
 
 const Navbar = () => {
     const { userInfo } = useSelector((state) => state.auth);
@@ -60,7 +66,7 @@ const Navbar = () => {
             <header className={`fixed top-0 w-full z-40 transition-[padding] duration-500 ease-out flex justify-center ${
                 scrolled ? 'pt-4 px-4' : 'pt-0 px-0'
             }`}>
-                <motion.div 
+                <m.div 
                     layout
                     initial={false}
                     transition={{ type: "spring", stiffness: 200, damping: 25 }}
@@ -89,7 +95,7 @@ const Navbar = () => {
                             >
                                 <span className="relative z-10">{link.name}</span>
                                 {location.pathname === link.path && (
-                                    <motion.div
+                                    <m.div
                                         layoutId="navbar-indicator"
                                         className="absolute inset-0 bg-white/10 rounded-full z-0"
                                         transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
@@ -110,13 +116,14 @@ const Navbar = () => {
                                     </div>
                                     <span className="text-sm font-semibold text-slate-200 group-hover:text-white transition-colors">{userInfo.name.split(' ')[0]}</span>
                                 </Link>
-                                <Link to="/watchlist" className="p-2.5 rounded-full text-slate-400 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-300" title="My Watchlist">
+                                <Link to="/watchlist" className="p-2.5 rounded-full text-slate-400 hover:text-primary-400 hover:bg-primary-500/10 transition-all duration-300" title="My Watchlist" aria-label="My Watchlist">
                                     <Heart size={18} />
                                 </Link>
                                 <button
                                     onClick={handleLogout}
                                     className="p-2.5 rounded-full text-slate-400 hover:text-rose-400 hover:bg-rose-500/10 transition-all duration-300"
                                     title="Sign Out"
+                                    aria-label="Sign Out"
                                 >
                                     <LogOut size={18} />
                                 </button>
@@ -136,17 +143,18 @@ const Navbar = () => {
                     <button
                         className="md:hidden p-2 -mr-2 text-slate-300 hover:text-white transition-colors z-50"
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-label={isMenuOpen ? "Close menu" : "Open menu"}
                     >
                         {isMenuOpen ? <X size={26} /> : <Menu size={26} />}
                     </button>
-                </motion.div>
+                </m.div>
             </header>
 
             {/* Mobile Menu Overlay */}
             <AnimatePresence>
                 {isMenuOpen && (
                     <>
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
@@ -154,7 +162,7 @@ const Navbar = () => {
                             className="fixed inset-0 bg-base-950/80 backdrop-blur-sm z-30 md:hidden"
                             onClick={() => setIsMenuOpen(false)}
                         />
-                        <motion.div
+                        <m.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
@@ -163,7 +171,7 @@ const Navbar = () => {
                         >
                             <div className="flex flex-col space-y-2 flex-1">
                                 {navLinks.map((link, i) => (
-                                    <motion.div
+                                    <m.div
                                         key={link.name}
                                         initial={{ opacity: 0, x: 20 }}
                                         animate={{ opacity: 1, x: 0 }}
@@ -177,13 +185,13 @@ const Navbar = () => {
                                             {link.name}
                                             <ChevronRight size={18} className="opacity-50" />
                                         </Link>
-                                    </motion.div>
+                                    </m.div>
                                 ))}
 
                                 <div className="h-px w-full bg-white/5 my-6" />
 
                                 {userInfo ? (
-                                    <motion.div
+                                    <m.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.3, duration: 0.3 }}
@@ -210,9 +218,9 @@ const Navbar = () => {
                                         >
                                             <LogOut size={20} /> Sign Out
                                         </button>
-                                    </motion.div>
+                                    </m.div>
                                 ) : (
-                                    <motion.div
+                                    <m.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
                                         transition={{ delay: 0.3, duration: 0.3 }}
@@ -224,32 +232,33 @@ const Navbar = () => {
                                         >
                                             Sign In
                                         </button>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </div>
-                        </motion.div>
+                        </m.div>
                     </>
                 )}
             </AnimatePresence>
 
-            {/* Modals */}
-            <LoginModal
-                isOpen={modalState.type === 'login'}
-                onClose={closeModals}
-                onSwitchToRegister={() => setModalState({ type: 'register', email: '' })}
-                onShowOTP={(email) => setModalState({ type: 'otp', email })}
-            />
-            <RegisterModal
-                isOpen={modalState.type === 'register'}
-                onClose={closeModals}
-                onSwitchToLogin={() => setModalState({ type: 'login', email: '' })}
-                onShowOTP={(email) => setModalState({ type: 'otp', email })}
-            />
-            <OTPModal
-                isOpen={modalState.type === 'otp'}
-                onClose={closeModals}
-                email={modalState.email}
-            />
+            <Suspense fallback={null}>
+                <LoginModal
+                    isOpen={modalState.type === 'login'}
+                    onClose={closeModals}
+                    onSwitchToRegister={() => setModalState({ type: 'register', email: '' })}
+                    onShowOTP={(email) => setModalState({ type: 'otp', email })}
+                />
+                <RegisterModal
+                    isOpen={modalState.type === 'register'}
+                    onClose={closeModals}
+                    onSwitchToLogin={() => setModalState({ type: 'login', email: '' })}
+                    onShowOTP={(email) => setModalState({ type: 'otp', email })}
+                />
+                <OTPModal
+                    isOpen={modalState.type === 'otp'}
+                    onClose={closeModals}
+                    email={modalState.email}
+                />
+            </Suspense>
         </>
     );
 };

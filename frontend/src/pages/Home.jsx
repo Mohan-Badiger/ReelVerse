@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { Play } from "lucide-react";
+import { m, AnimatePresence } from "framer-motion";
+import Play from "lucide-react/dist/esm/icons/play";
 import { Link } from "react-router-dom";
 import api from "../utils/axios";
 import MovieCard from "../components/movies/MovieCard";
@@ -64,14 +64,14 @@ const Home = () => {
     }
 
     return (
-        <div className="-mt-16">
+        <main className="-mt-16">
 
             {/* HERO SECTION */}
             {heroMovie && (
                 <section className="relative min-h-[85vh] lg:h-[90vh] flex flex-col justify-end pb-24 overflow-hidden">
 
                     <AnimatePresence mode="wait">
-                        <motion.div
+                        <m.div
                             key={heroMovie._id}
                             initial={{ opacity: 0, scale: 1.05 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -80,14 +80,17 @@ const Home = () => {
                             className="absolute inset-0 z-0"
                         >
                             <img
-                                src={heroMovie.backdropUrl || heroMovie.posterUrl}
+                                src={heroMovie.backdropUrl?.includes('cloudinary') ? heroMovie.backdropUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1920/') : (heroMovie.backdropUrl || heroMovie.posterUrl)}
                                 alt={heroMovie.title}
+                                fetchPriority="high"
+                                width="1920"
+                                height="1080"
                                 className="w-full h-full object-cover opacity-50"
                             />
 
                             <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/80 to-transparent" />
                             <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/50 to-transparent" />
-                        </motion.div>
+                        </m.div>
                     </AnimatePresence>
 
                     {/* Animated glow */}
@@ -99,7 +102,7 @@ const Home = () => {
                     {/* Hero Content */}
                     <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6">
 
-                        <motion.div
+                        <m.div
                             key={`content-${heroMovie._id}`}
                             initial="hidden"
                             animate="visible"
@@ -112,27 +115,27 @@ const Home = () => {
                             }}
                             className="max-w-3xl"
                         >
-                            <motion.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
+                            <m.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
                                 <span className="inline-block px-3 py-1 mb-6 border border-primary-500/30 bg-primary-500/10 text-primary-400 uppercase tracking-widest text-xs font-bold rounded-sm backdrop-blur-md">
                                     Now Showing
                                 </span>
-                            </motion.div>
+                            </m.div>
 
-                            <motion.h1
+                            <m.h1
                                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                                 className="text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-white via-slate-200 to-slate-400 mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
                             >
                                 {heroMovie.title}
-                            </motion.h1>
+                            </m.h1>
 
-                            <motion.p
+                            <m.p
                                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                                 className="text-slate-300 text-base md:text-xl mb-10 line-clamp-3 leading-relaxed max-w-2xl font-light"
                             >
                                 {heroMovie.description}
-                            </motion.p>
+                            </m.p>
 
-                            <motion.div
+                            <m.div
                                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
                                 className="flex flex-wrap gap-4"
                             >
@@ -159,8 +162,8 @@ const Home = () => {
                                         Watch Trailer
                                     </button>
                                 )}
-                            </motion.div>
-                        </motion.div>
+                            </m.div>
+                        </m.div>
                     </div>
 
                     {/* Premium Progress Indicators */}
@@ -206,7 +209,7 @@ const Home = () => {
                     </Link>
                 </div>
 
-                <motion.div
+                <m.div
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true }}
@@ -217,7 +220,7 @@ const Home = () => {
                     className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
                 >
                     {movies.slice(0, 5).map((movie, i) => (
-                        <motion.div
+                        <m.div
                             key={movie._id}
                             variants={{
                                 hidden: { opacity: 0, y: 40 },
@@ -225,9 +228,9 @@ const Home = () => {
                             }}
                         >
                             <MovieCard movie={movie} index={i} />
-                        </motion.div>
+                        </m.div>
                     ))}
-                </motion.div>
+                </m.div>
             </section>
 
             {/* UPCOMING */}
@@ -247,7 +250,7 @@ const Home = () => {
                     </Link>
                 </div>
 
-                <motion.div
+                <m.div
                     initial="hidden"
                     whileInView="show"
                     viewport={{ once: true }}
@@ -258,7 +261,7 @@ const Home = () => {
                     className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
                 >
                     {upcomingMovies.slice(0, 5).map((movie, i) => (
-                        <motion.div
+                        <m.div
                             key={movie._id}
                             variants={{
                                 hidden: { opacity: 0, y: 40 },
@@ -266,16 +269,16 @@ const Home = () => {
                             }}
                         >
                             <MovieCard movie={movie} index={i} />
-                        </motion.div>
+                        </m.div>
                     ))}
-                </motion.div>
+                </m.div>
             </section>
 
             {/* FOOTER */}
             <footer className="border-t border-white/10 py-10 text-center text-gray-500">
                 © {new Date().getFullYear()} ReelVerse. Premium Cinema Experience.
             </footer>
-        </div>
+        </main>
     );
 };
 

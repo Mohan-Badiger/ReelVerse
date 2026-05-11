@@ -1,6 +1,12 @@
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
-import { Play, Star, Film, Heart, Clock, Calendar, Bell } from "lucide-react";
+import { m } from "framer-motion";
+import Play from "lucide-react/dist/esm/icons/play";
+import Star from "lucide-react/dist/esm/icons/star";
+import Film from "lucide-react/dist/esm/icons/film";
+import Heart from "lucide-react/dist/esm/icons/heart";
+import Clock from "lucide-react/dist/esm/icons/clock";
+import Calendar from "lucide-react/dist/esm/icons/calendar";
+import Bell from "lucide-react/dist/esm/icons/bell";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -107,7 +113,7 @@ const MovieCard = ({ movie, index = 0 }) => {
 
   return (
     <>
-      <motion.div
+      <m.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.04, duration: 0.35 }}
@@ -115,9 +121,11 @@ const MovieCard = ({ movie, index = 0 }) => {
       >
         {/* Poster */}
         <img
-          src={movie.posterUrl}
+          src={movie.posterUrl.includes('cloudinary') ? movie.posterUrl.replace('/upload/', '/upload/f_auto,q_auto,w_400/') : movie.posterUrl}
           alt={movie.title}
           loading="lazy"
+          width="400"
+          height="600"
           className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
         />
 
@@ -125,6 +133,7 @@ const MovieCard = ({ movie, index = 0 }) => {
         <button
           onClick={toggleWatchlist}
           disabled={isToggling}
+          aria-label={isInWatchlist ? 'Remove from watchlist' : 'Add to watchlist'}
           className={`absolute top-2.5 left-2.5 z-20 w-9 h-9 rounded-full flex items-center justify-center transition-all duration-300 backdrop-blur-md border
             ${isInWatchlist
               ? 'bg-rose-500/90 border-rose-400 text-white shadow-lg shadow-rose-500/30 scale-100'
@@ -255,7 +264,7 @@ const MovieCard = ({ movie, index = 0 }) => {
             )}
           </div>
         </div>
-      </motion.div>
+      </m.div>
 
       {/* Trailer Modal */}
       <TrailerModal

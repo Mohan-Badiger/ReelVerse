@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { Search, Filter, Film, X, ChevronDown } from 'lucide-react';
+import { m } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
+import Search from 'lucide-react/dist/esm/icons/search';
+import Filter from 'lucide-react/dist/esm/icons/filter';
+import Film from 'lucide-react/dist/esm/icons/film';
+import X from 'lucide-react/dist/esm/icons/x';
+import ChevronDown from 'lucide-react/dist/esm/icons/chevron-down';
 import api from '../utils/axios';
 import MovieCard from '../components/movies/MovieCard';
 import SkeletonCard from '../components/common/SkeletonCard';
@@ -58,14 +63,18 @@ const Movies = () => {
     const hasActiveFilters = searchTerm || selectedGenre !== 'All' || selectedLanguage !== 'All';
 
     return (
-        <div className="min-h-screen">
+        <main className="min-h-screen">
+            <Helmet>
+                <title>All Movies | ReelVerse - Premium Online Movie Booking</title>
+                <meta name="description" content="Browse our extensive collection of latest movies. Filter by genre and language to find your perfect cinematic experience." />
+            </Helmet>
             {/* Page Header with gradient background */}
             <div className="relative overflow-hidden border-b border-base-800/50">
                 <div className="absolute inset-0 bg-linear-to-br from-primary-600/8 via-transparent to-accent-500/5"></div>
                 <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary-500/5 blur-[120px] rounded-full"></div>
 
                 <div className="relative max-w-[1400px] mx-auto px-6 pt-16 pb-10">
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className="flex flex-col md:flex-row md:items-end justify-between gap-6"
@@ -109,11 +118,11 @@ const Movies = () => {
                                 <Filter size={20} />
                             </button>
                         </div>
-                    </motion.div>
+                    </m.div>
 
                     {/* Filter Bar */}
                     {showFilters && (
-                        <motion.div
+                        <m.div
                             initial={{ opacity: 0, height: 0 }}
                             animate={{ opacity: 1, height: 'auto' }}
                             exit={{ opacity: 0, height: 0 }}
@@ -159,7 +168,7 @@ const Movies = () => {
                             <span className="text-xs text-slate-500 ml-auto">
                                 {filteredMovies.length} movie{filteredMovies.length !== 1 ? 's' : ''} found
                             </span>
-                        </motion.div>
+                        </m.div>
                     )}
                 </div>
             </div>
@@ -175,7 +184,7 @@ const Movies = () => {
                 ) : (
                     <>
                         {filteredMovies.length === 0 ? (
-                            <motion.div
+                            <m.div
                                 initial={{ opacity: 0, scale: 0.95 }}
                                 animate={{ opacity: 1, scale: 1 }}
                                 className="flex flex-col items-center justify-center py-20 text-center"
@@ -193,9 +202,9 @@ const Movies = () => {
                                 >
                                     Clear Filters
                                 </button>
-                            </motion.div>
+                            </m.div>
                         ) : (
-                            <motion.div
+                            <m.div
                                 initial="hidden"
                                 animate="visible"
                                 variants={{
@@ -208,7 +217,7 @@ const Movies = () => {
                                 className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
                             >
                                 {filteredMovies.map((movie, idx) => (
-                                    <motion.div
+                                    <m.div
                                         key={movie._id}
                                         variants={{
                                             hidden: { opacity: 0, y: 25 },
@@ -216,14 +225,14 @@ const Movies = () => {
                                         }}
                                     >
                                         <MovieCard movie={movie} index={idx} />
-                                    </motion.div>
+                                    </m.div>
                                 ))}
-                            </motion.div>
+                            </m.div>
                         )}
                     </>
                 )}
             </div>
-        </div>
+        </main>
     );
 };
 

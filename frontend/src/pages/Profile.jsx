@@ -2,7 +2,17 @@ import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { motion, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
-import { Ticket, User, Settings, Calendar, MapPin, CreditCard, Download, Clock, CheckCircle2, Mail, Lock } from 'lucide-react';
+import Ticket from 'lucide-react/dist/esm/icons/ticket';
+import User from 'lucide-react/dist/esm/icons/user';
+import Settings from 'lucide-react/dist/esm/icons/settings';
+import Calendar from 'lucide-react/dist/esm/icons/calendar';
+import MapPin from 'lucide-react/dist/esm/icons/map-pin';
+import CreditCard from 'lucide-react/dist/esm/icons/credit-card';
+import Download from 'lucide-react/dist/esm/icons/download';
+import Clock from 'lucide-react/dist/esm/icons/clock';
+import CheckCircle2 from 'lucide-react/dist/esm/icons/check-circle-2';
+import Mail from 'lucide-react/dist/esm/icons/mail';
+import Lock from 'lucide-react/dist/esm/icons/lock';
 import api from '../utils/axios';
 import { setCredentials } from '../store/slices/authSlice';
 
@@ -274,11 +284,12 @@ const Profile = () => {
                                                     {/* Actions */}
                                                     <div className="flex justify-end pt-6">
 
-                                                        <button className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-sm font-semibold rounded-sm transition">
-
-                                                            <Download size={16} />
-                                                            Download Ticket
-
+                                                        <button 
+                                                            onClick={() => window.location.href = `/booking/success?bookingId=${booking._id}`}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 text-sm font-semibold rounded-sm transition border border-primary-500/20"
+                                                        >
+                                                            <Ticket size={16} />
+                                                            View & Download Ticket
                                                         </button>
 
                                                     </div>
