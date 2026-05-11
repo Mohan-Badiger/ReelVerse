@@ -20,6 +20,7 @@ import reviewRoutes from './routes/reviewRoutes.js';
 
 import adminRoutes from './routes/adminRoutes.js';
 import { cleanupOldShows } from './utils/showCleanup.js';
+import { checkAndSendReminders } from './utils/reminderService.js';
 
 dotenv.config();
 // Force reload to pick up reviewController changes
@@ -95,9 +96,11 @@ app.listen(PORT, () => {
 
     // Initial cleanup of past showtimes
     cleanupOldShows();
+    checkAndSendReminders();
 
     // Schedule cleanup every 24 hours
     setInterval(() => {
         cleanupOldShows();
+        checkAndSendReminders();
     }, 24 * 60 * 60 * 1000);
 });

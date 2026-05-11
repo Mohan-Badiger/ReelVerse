@@ -1,11 +1,12 @@
 import Coupon from '../models/Coupon.js';
+import Booking from '../models/Booking.js';
 
 // @desc    Create a new coupon
 // @route   POST /api/coupons
 // @access  Private/Admin
 export const createCoupon = async (req, res, next) => {
     try {
-        const { code, discountPercentage, expiryDate, maxUses } = req.body;
+        const { code, discountPercentage, expiryDate, maxUses, couponType, description, minAmount } = req.body;
 
         const couponExists = await Coupon.findOne({ code: code.toUpperCase() });
         if (couponExists) {
@@ -18,6 +19,9 @@ export const createCoupon = async (req, res, next) => {
             discountPercentage,
             expiryDate,
             maxUses: maxUses || 100,
+            couponType: couponType || 'ALL_USERS',
+            description: description || '',
+            minAmount: minAmount || 0,
         });
 
         const createdCoupon = await coupon.save();
@@ -97,10 +101,30 @@ export const validateCoupon = async (req, res, next) => {
             return next(new Error('You have already used this coupon'));
         }
 
+        // Specific Type Checks
+        if (coupon.couponType === 'FIRST_BOOKING') {
+            const hasPastBookings = await Booking.findOne({ 
+                user: req.user._id, 
+                paymentStatus: 'Completed' 
+            });
+            if (hasPastBookings) {
+                res.status(400);
+                return next(new Error('This coupon is only valid for your first booking'));
+            }
+        }
+
+        // Amount Check
+        if (req.body.amount && req.body.amount < coupon.minAmount) {
+            res.status(400);
+            return next(new Error(`Minimum booking amount of ₹${coupon.minAmount} is required for this coupon`));
+        }
+
         res.json({
             message: 'Coupon is valid',
             discountPercentage: coupon.discountPercentage,
             code: coupon.code,
+            couponType: coupon.couponType,
+            description: coupon.description
         });
 
     } catch (error) {
