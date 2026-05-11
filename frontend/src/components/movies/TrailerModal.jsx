@@ -1,5 +1,7 @@
-import { motion, AnimatePresence } from 'framer-motion';
-import { X, Film, Loader2 } from 'lucide-react';
+import { m, AnimatePresence } from 'framer-motion';
+import X from 'lucide-react/dist/esm/icons/x';
+import Film from 'lucide-react/dist/esm/icons/film';
+import Loader2 from 'lucide-react/dist/esm/icons/loader-2';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 
@@ -59,7 +61,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                 <div className="fixed inset-0 z-9999 flex items-center justify-center p-4 sm:p-6">
 
                     {/* Premium Cinematic Backdrop */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
@@ -69,10 +71,10 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                     >
                         {/* Subtle glow in the center */}
                         <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(99,102,241,0.12)_0%,transparent_70%)] pointer-events-none" />
-                    </motion.div>
+                    </m.div>
 
                     {/* Trailer Container */}
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0, scale: 0.95, y: 20 }}
                         animate={{ opacity: 1, scale: 1, y: 0 }}
                         exit={{ opacity: 0, scale: 0.98, y: 10 }}
@@ -110,14 +112,14 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                             {/* Loading State */}
                             <AnimatePresence>
                                 {isLoading && (
-                                    <motion.div
+                                    <m.div
                                         initial={{ opacity: 1 }}
                                         exit={{ opacity: 0 }}
                                         className="absolute inset-0 flex flex-col items-center justify-center bg-base-950 z-10"
                                     >
                                         <Loader2 size={36} className="text-primary-500 animate-spin mb-4" />
                                         <p className="text-slate-400 text-xs sm:text-sm font-medium tracking-widest uppercase animate-pulse">Loading Trailer</p>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </AnimatePresence>
 
@@ -130,7 +132,7 @@ const TrailerModal = ({ isOpen, onClose, trailerUrl, movieTitle }) => {
                                 onLoad={() => setIsLoading(false)}
                             />
                         </div>
-                    </motion.div>
+                    </m.div>
 
                 </div>
             )}

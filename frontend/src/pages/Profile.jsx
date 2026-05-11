@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
+import { m, AnimatePresence } from 'framer-motion';
 import toast from 'react-hot-toast';
 import Ticket from 'lucide-react/dist/esm/icons/ticket';
 import User from 'lucide-react/dist/esm/icons/user';
@@ -19,6 +20,7 @@ import { setCredentials } from '../store/slices/authSlice';
 const Profile = () => {
     const { userInfo } = useSelector((state) => state.auth);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [activeTab, setActiveTab] = useState('bookings');
     const [name, setName] = useState(userInfo?.name || '');
@@ -146,7 +148,7 @@ const Profile = () => {
                         {/* BOOKINGS TAB */}
                         {activeTab === 'bookings' ? (
 
-                            <motion.div
+                            <m.div
                                 key="bookings"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -181,7 +183,7 @@ const Profile = () => {
                                         </p>
 
                                         <button
-                                            onClick={() => window.location.href = '/movies'}
+                                            onClick={() => navigate('/movies')}
                                             className="px-6 py-3 bg-white text-black font-semibold rounded-sm hover:bg-slate-200 transition"
                                         >
                                             Browse Movies
@@ -285,8 +287,8 @@ const Profile = () => {
                                                     <div className="flex justify-end pt-6">
 
                                                         <button 
-                                                            onClick={() => window.location.href = `/booking/success?bookingId=${booking._id}`}
-                                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 text-sm font-semibold rounded-sm transition border border-primary-500/20"
+                                                            onClick={() => navigate(`/booking/success?bookingId=${booking._id}`)}
+                                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 text-sm font-semibold rounded-sm transition border border-primary-500/20 active:scale-95"
                                                         >
                                                             <Ticket size={16} />
                                                             View & Download Ticket
@@ -304,13 +306,13 @@ const Profile = () => {
 
                                 )}
 
-                            </motion.div>
+                            </m.div>
 
                         ) : (
 
                             /* SETTINGS TAB */
 
-                            <motion.div
+                            <m.div
                                 key="settings"
                                 initial={{ opacity: 0, x: 20 }}
                                 animate={{ opacity: 1, x: 0 }}
@@ -334,10 +336,10 @@ const Profile = () => {
                                         </label>
 
                                         <div className="relative flex items-center">
-                                            {/* <User
+                                            <User
                                                 className="absolute left-3 text-slate-500 pointer-events-none"
                                                 size={18}
-                                            /> */}
+                                            />
 
                                             <input
                                                 type="text"
@@ -355,7 +357,7 @@ const Profile = () => {
                                         </label>
 
                                         <div className="relative">
-                                            {/* <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} /> */}
+                                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                             <input
                                                 type="email"
                                                 value={userInfo?.email}
@@ -375,7 +377,7 @@ const Profile = () => {
                                         </label>
 
                                         <div className="relative">
-                                            {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} /> */}
+                                            <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500" size={18} />
                                             <input
                                                 type="password"
                                                 value={password}
@@ -397,7 +399,7 @@ const Profile = () => {
 
                                 </form>
 
-                            </motion.div>
+                            </m.div>
 
                         )}
 

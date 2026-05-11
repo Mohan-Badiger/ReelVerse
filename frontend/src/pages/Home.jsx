@@ -3,6 +3,8 @@ import { m, AnimatePresence } from "framer-motion";
 import Play from "lucide-react/dist/esm/icons/play";
 import { Link } from "react-router-dom";
 import api from "../utils/axios";
+import { Helmet } from "react-helmet-async";
+
 import MovieCard from "../components/movies/MovieCard";
 import SkeletonCard from "../components/common/SkeletonCard";
 import TrailerModal from "../components/movies/TrailerModal";
@@ -11,6 +13,7 @@ const Home = () => {
     const [movies, setMovies] = useState([]);
     const [upcomingMovies, setUpcomingMovies] = useState([]);
     const [heroMovie, setHeroMovie] = useState(null);
+    const [initialHeroMovie, setInitialHeroMovie] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [showTrailer, setShowTrailer] = useState(false);
 
@@ -26,7 +29,9 @@ const Home = () => {
 
                 setMovies(showing);
                 setUpcomingMovies(upcomingRes.data);
-                setHeroMovie(showing[0] || upcomingRes.data[0]);
+                const firstMovie = showing[0] || upcomingRes.data[0];
+                setHeroMovie(firstMovie);
+                setInitialHeroMovie(firstMovie);
             } catch (error) {
                 console.error(error);
             } finally {
@@ -63,8 +68,23 @@ const Home = () => {
         );
     }
 
+    const getOptimizedUrl = (url, width = '1920') => {
+        if (!url) return '';
+        if (url.includes('cloudinary')) {
+            return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+        }
+        return url;
+    };
+
+    const initialLcpImage = getOptimizedUrl(initialHeroMovie?.backdropUrl || initialHeroMovie?.posterUrl);
+
     return (
         <main className="-mt-16">
+            <Helmet>
+                <title>ReelVerse | Premium Cinema Experience</title>
+                <meta name="description" content="Book tickets for the latest movies at ReelVerse. Experience premium cinema with easy online booking, real-time seat selection, and digital tickets." />
+                {initialLcpImage && <link rel="preload" as="image" href={initialLcpImage} fetchPriority="high" />}
+            </Helmet>
 
             {/* HERO SECTION */}
             {heroMovie && (
@@ -80,7 +100,7 @@ const Home = () => {
                             className="absolute inset-0 z-0"
                         >
                             <img
-                                src={heroMovie.backdropUrl?.includes('cloudinary') ? heroMovie.backdropUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1920/') : (heroMovie.backdropUrl || heroMovie.posterUrl)}
+                                src={getOptimizedUrl(heroMovie.backdropUrl || heroMovie.posterUrl)}
                                 alt={heroMovie.title}
                                 fetchPriority="high"
                                 width="1920"

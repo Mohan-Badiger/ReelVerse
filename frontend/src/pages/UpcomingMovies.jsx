@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { m } from "framer-motion";
 import { AlertCircle, Film, Calendar, Search, X } from "lucide-react";
 import api from "../utils/axios";
 import MovieCard from "../components/movies/MovieCard";
@@ -38,7 +38,7 @@ const UpcomingMovies = () => {
         <div className="absolute bottom-0 left-1/4 w-[400px] h-[200px] bg-primary-500/5 blur-[100px] rounded-full"></div>
 
         <div className="relative max-w-[1400px] mx-auto px-6 pt-16 pb-10">
-          <motion.div
+          <m.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             className="flex flex-col md:flex-row md:items-end justify-between gap-6"
@@ -74,7 +74,7 @@ const UpcomingMovies = () => {
                 </button>
               )}
             </div>
-          </motion.div>
+          </m.div>
         </div>
       </div>
 
@@ -89,7 +89,7 @@ const UpcomingMovies = () => {
               ))}
           </div>
         ) : filteredMovies.length === 0 ? (
-          <motion.div
+          <m.div
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             className="flex flex-col items-center justify-center py-20 text-center"
@@ -114,7 +114,7 @@ const UpcomingMovies = () => {
                 Clear Search
               </button>
             )}
-          </motion.div>
+          </m.div>
         ) : (
           <>
             {/* Results count */}
@@ -124,7 +124,7 @@ const UpcomingMovies = () => {
               </p>
             </div>
 
-            <motion.div
+            <m.div
               initial="hidden"
               animate="visible"
               variants={{
@@ -137,7 +137,7 @@ const UpcomingMovies = () => {
               className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
             >
               {filteredMovies.map((movie, idx) => (
-                <motion.div
+                <m.div
                   key={movie._id}
                   variants={{
                     hidden: { opacity: 0, y: 25 },
@@ -145,9 +145,9 @@ const UpcomingMovies = () => {
                   }}
                 >
                   <MovieCard movie={movie} index={idx} />
-                </motion.div>
+                </m.div>
               ))}
-            </motion.div>
+            </m.div>
           </>
         )}
       </div>

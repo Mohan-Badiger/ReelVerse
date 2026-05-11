@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { m, AnimatePresence } from 'framer-motion';
 import { X, Mail, Lock, User } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../../utils/axios';
@@ -31,7 +31,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
     return (
         <AnimatePresence>
             {isOpen && (
-                <motion.div
+                <m.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     exit={{ opacity: 0 }}
@@ -39,7 +39,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                     className="fixed inset-0 bg-base-950/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
                     onClick={onClose}
                 >
-                    <motion.div
+                    <m.div
                         initial={{ scale: 0.95, opacity: 0, y: 10 }}
                         animate={{ scale: 1, opacity: 1, y: 0 }}
                         exit={{ scale: 0.95, opacity: 0, y: 10 }}
@@ -65,7 +65,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Full Name</label>
                                     <div className="relative flex items-center">
-                                        {/* <User className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="text"
                                             placeholder="John Doe"
@@ -80,7 +80,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Email</label>
                                     <div className="relative flex items-center">
-                                        {/* <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="email"
                                             placeholder="name@example.com"
@@ -95,7 +95,7 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                 <div className="space-y-1">
                                     <label className="text-xs font-semibold text-base-300 ml-1 uppercase tracking-wider">Password</label>
                                     <div className="relative flex items-center">
-                                        {/* <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" /> */}
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 text-base-500 w-5 h-5 pointer-events-none" />
                                         <input
                                             type="password"
                                             placeholder="Min. 6 characters"
@@ -166,8 +166,8 @@ const RegisterModal = ({ isOpen, onClose, onSwitchToLogin, onShowOTP }) => {
                                 </button>
                             </p>
                         </div>
-                    </motion.div>
-                </motion.div>
+                    </m.div>
+                </m.div>
             )}
         </AnimatePresence>
     );

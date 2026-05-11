@@ -192,6 +192,16 @@ const MovieDetails = () => {
     if (isLoading) return <MovieDetailsSkeleton />;
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
+    const getOptimizedUrl = (url, width = '1200') => {
+        if (!url) return '';
+        if (url.includes('cloudinary')) {
+            return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+        }
+        return url;
+    };
+
+    const backdropUrl = getOptimizedUrl(movie.backdropUrl || movie.posterUrl);
+
     return (
         <main className="max-w-[1200px] mx-auto px-6 py-12 fade-in">
             <Helmet>
@@ -200,6 +210,7 @@ const MovieDetails = () => {
                 <meta property="og:title" content={`${movie.title} | ReelVerse`} />
                 <meta property="og:description" content={movie.description.substring(0, 160)} />
                 <meta property="og:image" content={movie.posterUrl} />
+                {backdropUrl && <link rel="preload" as="image" href={backdropUrl} fetchPriority="high" />}
             </Helmet>
             {/* Movie Header Card */}
             <m.div
@@ -209,7 +220,7 @@ const MovieDetails = () => {
             >
                 <div className="absolute inset-0 z-0 opacity-20 pointer-events-none">
                     <img 
-                        src={movie.backdropUrl?.includes('cloudinary') ? movie.backdropUrl.replace('/upload/', '/upload/f_auto,q_auto,w_1200/') : (movie.backdropUrl || movie.posterUrl)} 
+                        src={backdropUrl} 
                         alt="bg" 
                         className="w-full h-full object-cover blur-3xl opacity-50" 
                         fetchPriority="high"

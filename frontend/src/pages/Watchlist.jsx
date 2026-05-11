@@ -48,9 +48,9 @@ const Watchlist = () => {
                     {[1, 2, 3, 4, 5].map(n => <SkeletonCard key={n} />)}
                 </div>
             ) : watchlist.length > 0 ? (
-                <motion.div 
-                    initial={{ opacity: 0 }} 
-                    animate={{ opacity: 1 }} 
+                <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
                     className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6"
                 >
                     {watchlist.map(movie => (
@@ -58,7 +58,7 @@ const Watchlist = () => {
                     ))}
                 </motion.div>
             ) : (
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0, y: 20 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex flex-col items-center justify-center py-20 text-center box-panel"
@@ -70,8 +70,8 @@ const Watchlist = () => {
                     <p className="text-slate-400 max-w-md mb-8">
                         You haven't added any movies to your watchlist yet. Browse our collection and click the heart icon to save them here!
                     </p>
-                    <Link 
-                        to="/movies" 
+                    <Link
+                        to="/movies"
                         className="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-sm font-bold flex items-center gap-2 transition-all"
                     >
                         Browse Movies

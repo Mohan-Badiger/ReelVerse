@@ -1,8 +1,9 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
-import { motion, AnimatePresence } from 'framer-motion';
-import { ShieldAlert, X } from 'lucide-react';
+import { m, AnimatePresence } from 'framer-motion';
+import ShieldAlert from 'lucide-react/dist/esm/icons/shield-alert';
+import X from 'lucide-react/dist/esm/icons/x';
 import toast from 'react-hot-toast';
 import api from '../utils/axios';
 
@@ -239,36 +240,38 @@ const CheckoutPage = () => {
             {/* Payment Processing Overlay */}
             <AnimatePresence>
                 {isProcessingPayment && (
-                    <motion.div
+                    <m.div
                         initial={{ opacity: 0 }}
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
-                        className="fixed inset-0 z-9999 bg-base-950 flex flex-col items-center justify-center"
+                        className="fixed inset-0 z-9999 flex flex-col items-center justify-center p-6"
                     >
-                        <div className="relative">
-                            <div className="w-20 h-20 border-4 border-base-800 rounded-full"></div>
-                            <div className="w-20 h-20 border-4 border-primary-500 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
-                            <div className="absolute inset-0 flex items-center justify-center">
-                                <span className="text-xl">🍿</span>
+                        {/* Glassmorphism Backdrop */}
+                        <m.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            className="absolute inset-0 bg-base-950/80 backdrop-blur-xl"
+                        />
+                        
+                        <m.div 
+                            initial={{ scale: 0.9, opacity: 0 }}
+                            animate={{ scale: 1, opacity: 1 }}
+                            className="relative z-10 flex flex-col items-center text-center"
+                        >
+                            <div className="relative mb-10">
+                                <div className="w-20 h-20 border-4 border-white/5 rounded-full"></div>
+                                <div className="w-20 h-20 border-4 border-primary-500 rounded-full border-t-transparent animate-spin absolute top-0 left-0"></div>
+                                <div className="absolute inset-0 flex items-center justify-center text-2xl">
+                                    🍿
+                                </div>
                             </div>
-                        </div>
-                        <motion.h2
-                            initial={{ y: 10, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-2xl font-bold text-white mt-8 mb-2 tracking-tight"
-                        >
-                            Confirming your ticket...
-                        </motion.h2>
-                        <motion.p
-                            initial={{ y: 10, opacity: 0 }}
-                            animate={{ y: 0, opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-base-400"
-                        >
-                            Please don't close this window
-                        </motion.p>
-                    </motion.div>
+                            
+                            <h2 className="text-3xl font-black text-white mb-3 tracking-tighter uppercase">Confirming Booking</h2>
+                            <p className="text-slate-400 font-medium max-w-xs leading-relaxed">
+                                We're finalizing your seats and generating your digital tickets. Please don't refresh.
+                            </p>
+                        </m.div>
+                    </m.div>
                 )}
             </AnimatePresence>
 
@@ -320,7 +323,7 @@ const CheckoutPage = () => {
                                             const isSelected = selectedSeats.includes(seat.seatId);
 
                                             return (
-                                                <motion.button
+                                                <m.button
                                                     whileHover={!seat.isBooked ? { scale: 1.1 } : {}}
                                                     whileTap={!seat.isBooked ? { scale: 0.9 } : {}}
                                                     key={seat.seatId}
@@ -330,12 +333,12 @@ const CheckoutPage = () => {
                                                             ? 'bg-red-500/20 text-red-500 cursor-not-allowed border border-red-500/30'
                                                             : isSelected
                                                                 ? 'bg-blue-500 text-white shadow-sm shadow-blue-500/40 border-blue-400'
-                                                                : 'bg-green-500/10 text-green-500 hover:bg-green-500/30 border border-green-500/30'
-                                                        }`}
-                                                    disabled={seat.isBooked}
-                                                >
-                                                    {seat.isBooked ? <X size={14} className="opacity-50" /> : seat.number}
-                                                </motion.button>
+                                                                 : 'bg-green-500/10 text-green-500 hover:bg-green-500/30 border border-green-500/30'
+                                                         }`}
+                                                     disabled={seat.isBooked}
+                                                 >
+                                                     {seat.isBooked ? <X size={14} className="opacity-50" /> : seat.number}
+                                                 </m.button>
                                             );
                                         })}
                                     </div>
@@ -366,7 +369,7 @@ const CheckoutPage = () => {
 
                 {/* Booking Summary Card */}
                 <div className="w-full lg:w-1/3 relative">
-                    <motion.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="box-card sticky top-24 bg-base-900 border-base-800">
+                    <m.div initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} className="box-card sticky top-24 bg-base-900 border-base-800">
                         <h3 className="text-2xl font-black text-white mb-8 pb-4 border-b border-base-800">Booking Summary</h3>
 
                         <div className="space-y-6 mb-8">
@@ -407,7 +410,7 @@ const CheckoutPage = () => {
                                 {!appliedCoupon && availableCoupons.length > 0 && (
                                     <div className="mb-4 space-y-3">
                                         {availableCoupons.map((coupon, index) => (
-                                            <motion.div
+                                            <m.div
                                                 initial={{ opacity: 0, y: 10 }}
                                                 animate={{ opacity: 1, y: 0 }}
                                                 transition={{ delay: index * 0.1 }}
@@ -434,7 +437,7 @@ const CheckoutPage = () => {
                                                         Apply
                                                     </button>
                                                 </div>
-                                            </motion.div>
+                                            </m.div>
                                         ))}
                                     </div>
                                 )}
@@ -457,7 +460,7 @@ const CheckoutPage = () => {
                                         </button>
                                     </div>
                                 ) : (
-                                    <motion.div
+                                    <m.div
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
                                         className="flex justify-between items-center bg-linear-to-r from-green-500/10 to-emerald-500/5 border border-green-500/30 p-4 rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.1)]"
@@ -472,7 +475,7 @@ const CheckoutPage = () => {
                                         <button onClick={removeCoupon} className="text-slate-400 hover:text-white p-2 rounded-full hover:bg-white/10 transition-colors">
                                             <X size={16} />
                                         </button>
-                                    </motion.div>
+                                    </m.div>
                                 )}
                             </div>
 
@@ -514,7 +517,7 @@ const CheckoutPage = () => {
                             <ShieldAlert size={18} className="mr-3 shrink-0 text-slate-400" />
                             <p>Tickets can be cancelled up to 2 hours before the showtime. Transactions are processed securely via Razorpay.</p>
                         </div>
-                    </motion.div>
+                    </m.div>
                 </div>
             </div>
         </div>
