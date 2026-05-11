@@ -42,7 +42,7 @@ export const getActiveCoupons = async (req, res, next) => {
         }).sort({ discountPercentage: -1 });
         
         // Filter out coupons that have reached max usage
-        const activeCoupons = coupons.filter(c => c.usedCount < c.maxUses);
+        const activeCoupons = coupons.filter(c => (c.usedCount || 0) < (c.maxUses || Infinity));
         
         res.json(activeCoupons);
     } catch (error) {

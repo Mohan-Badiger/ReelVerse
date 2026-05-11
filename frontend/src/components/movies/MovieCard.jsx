@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Play, Star, Film, Heart, Clock, Calendar } from "lucide-react";
+import { Play, Star, Film, Heart, Clock, Calendar, Bell } from "lucide-react";
 import { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import toast from "react-hot-toast";
@@ -29,6 +29,33 @@ const MovieCard = ({ movie, index = 0 }) => {
   const { userInfo } = useSelector((state) => state.auth);
   const [isInWatchlist, setIsInWatchlist] = useState(false);
   const [isToggling, setIsToggling] = useState(false);
+  const [isReminding, setIsReminding] = useState(false);
+  const [hasReminder, setHasReminder] = useState(false);
+
+  const handleRemindMe = async (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!userInfo) {
+      toast.error('Please login to set a reminder');
+      return;
+    }
+
+    setIsReminding(true);
+    try {
+      const res = await api.post(`/movies/${movie._id}/remind`);
+      toast.success(res.data.message || 'Reminder updated successfully');
+      if (res.data.action === 'removed') {
+         setHasReminder(false);
+      } else {
+         setHasReminder(true);
+      }
+    } catch (err) {
+      toast.error(err.response?.data?.message || 'Failed to update reminder');
+    } finally {
+      setIsReminding(false);
+    }
+  };
 
   // Check if movie is in user's watchlist
   useEffect(() => {
@@ -84,7 +111,7 @@ const MovieCard = ({ movie, index = 0 }) => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: index * 0.04, duration: 0.35 }}
-        className="group relative w-full aspect-[2/3] rounded-lg overflow-hidden bg-base-900 border border-base-800/60 hover:border-primary-500/50 transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-primary-500/5"
+        className="group relative w-full aspect-2/3 rounded-lg overflow-hidden bg-base-900 border border-base-800/60 hover:border-primary-500/50 transition-all duration-500 shadow-sm hover:shadow-lg hover:shadow-primary-500/5"
       >
         {/* Poster */}
         <img
@@ -215,6 +242,17 @@ const MovieCard = ({ movie, index = 0 }) => {
                 </>
               )}
             </Link>
+
+            {movie.isUpcoming && (
+              <button
+                onClick={handleRemindMe}
+                disabled={isReminding}
+                className={`flex items-center justify-center gap-1.5 text-xs font-bold py-2 rounded-lg transition-all duration-300 active:scale-95 shadow-lg disabled:opacity-50 ${hasReminder ? 'bg-primary-600/20 text-primary-400 border border-primary-500/30 hover:bg-primary-600/30' : 'bg-primary-600 hover:bg-primary-500 text-white shadow-primary-500/20'}`}
+              >
+                <Bell size={13} fill={hasReminder ? "currentColor" : "none"} className={isReminding ? "animate-pulse" : ""} />
+                {isReminding ? 'Wait...' : hasReminder ? 'Remove Reminder' : 'Remind Me'}
+              </button>
+            )}
           </div>
         </div>
       </motion.div>

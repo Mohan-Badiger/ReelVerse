@@ -86,7 +86,11 @@ const CheckoutPage = () => {
         if (!codeToApply.trim()) return;
         setIsApplyingCoupon(true);
         try {
-            const res = await api.post('/coupons/validate', { code: codeToApply }, {
+            const totalPrice = selectedSeats.length * show.ticketPrice;
+            const res = await api.post('/coupons/validate', { 
+                code: codeToApply,
+                amount: totalPrice 
+            }, {
                 headers: {
                     Authorization: `Bearer ${userInfo.token}`,
                 }
@@ -391,7 +395,7 @@ const CheckoutPage = () => {
                                                                 {coupon.code}
                                                             </span>
                                                         </div>
-                                                        <p className="text-sm text-slate-300 font-medium">Save {coupon.discountPercentage}% on your booking</p>
+                                                        <p className="text-sm text-slate-300 font-medium">{coupon.description || `Save ${coupon.discountPercentage}% on your booking`}</p>
                                                     </div>
                                                     <button
                                                         onClick={() => handleApplyCoupon(coupon.code)}

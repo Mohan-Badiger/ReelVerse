@@ -7,22 +7,40 @@ dotenv.config();
 
 const theatres = [
     {
-        name: "PVR Cinemas",
-        location: "Mumbai, Maharashtra",
-        screens: 4,
-        facilities: ["IMAX", "3D", "Dolby Atmos", "Food"]
+        name: "PVR Nexus (Forum Mall)",
+        location: "Koramangala, Bengaluru",
+        screens: 11,
+        facilities: ["IMAX", "Gold Class", "Dolby Atmos", "Food Court"]
     },
     {
-        name: "INOX Laserplex",
-        location: "Delhi, NCR",
+        name: "INOX Mantri Square Mall",
+        location: "Malleshwaram, Bengaluru",
         screens: 6,
-        facilities: ["4DX", "Laser", "Dolby Atmos"]
+        facilities: ["Insignia", "Dolby Atmos", "Recliners", "Food"]
     },
     {
-        name: "Cinepolis",
-        location: "Bangalore, Karnataka",
-        screens: 5,
-        facilities: ["VIP Seating", "Dolby 7.1", "Food"]
+        name: "Cinepolis Meenakshi Mall",
+        location: "Bannerghatta Road, Bengaluru",
+        screens: 4,
+        facilities: ["VIP Seating", "Dolby 7.1", "Café", "Parking"]
+    },
+    {
+        name: "Urvashi Digital Cinema",
+        location: "Lalbagh Road, Bengaluru",
+        screens: 1,
+        facilities: ["4K Projection", "Dolby Atmos", "Large Screen"]
+    },
+    {
+        name: "PVR Orion Mall",
+        location: "Rajajinagar, Bengaluru",
+        screens: 11,
+        facilities: ["PVR P[XL]", "Gold Class", "Dolby Atmos", "IMAX"]
+    },
+    {
+        name: "Gopalan Cinemas Innovation Mall",
+        location: "JP Nagar, Bengaluru",
+        screens: 4,
+        facilities: ["Standard", "Dolby 5.1", "Food Stall"]
     }
 ];
 

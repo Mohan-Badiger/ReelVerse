@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { motion } from 'framer-motion';
-import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare, Play, Film, Heart, Sparkles } from 'lucide-react';
+import { Calendar, Clock, MapPin, Ticket, Star, StarHalf, MessageSquare, Play, Film, Heart, Sparkles, Bell } from 'lucide-react';
 import toast from 'react-hot-toast';
 import api from '../utils/axios';
 import TrailerModal from '../components/movies/TrailerModal';
@@ -26,6 +26,8 @@ const MovieDetails = () => {
     const [isEnhancing, setIsEnhancing] = useState(false);
     
     const [isWatchlisted, setIsWatchlisted] = useState(false);
+    const [isReminding, setIsReminding] = useState(false);
+    const [hasReminder, setHasReminder] = useState(false);
 
     // Group shows by date then theatre
     const [selectedDate, setSelectedDate] = useState('');
@@ -153,6 +155,28 @@ const MovieDetails = () => {
         }
     };
 
+    const handleRemindMe = async () => {
+        if (!userInfo) {
+            toast.error('Please login to set a reminder');
+            return;
+        }
+
+        setIsReminding(true);
+        try {
+            const res = await api.post(`/movies/${id}/remind`);
+            toast.success(res.data.message || 'Reminder updated successfully');
+            if (res.data.action === 'removed') {
+                setHasReminder(false);
+            } else {
+                setHasReminder(true);
+            }
+        } catch (error) {
+            toast.error(error.response?.data?.message || 'Failed to update reminder');
+        } finally {
+            setIsReminding(false);
+        }
+    };
+
     if (isLoading) return <MovieDetailsSkeleton />;
     if (!movie) return <div className="text-center text-slate-400 mt-20">Movie not found</div>;
 
@@ -224,6 +248,7 @@ const MovieDetails = () => {
                         >
                             <Heart size={22} fill={isWatchlisted ? 'currentColor' : 'none'} className={isWatchlisted ? 'animate-pulse' : ''} />
                         </button>
+
                     </div>
 
                     <p className="text-slate-300 text-base md:text-lg mb-8 max-w-2xl leading-relaxed">{movie.description}</p>
@@ -264,11 +289,12 @@ const MovieDetails = () => {
                                 </button>
                             )}
                             <button
-                                onClick={() => toast.success("We'll remind you when tickets go live!")}
-                                className="px-8 py-3 bg-base-800 text-white font-black rounded-sm flex items-center justify-center gap-2 hover:bg-base-700 transition-all border border-base-700 uppercase tracking-wider text-sm"
+                                onClick={handleRemindMe}
+                                disabled={isReminding}
+                                className={`px-8 py-3 font-black rounded-sm flex items-center justify-center gap-2 transition-all border uppercase tracking-wider text-sm ${hasReminder ? 'bg-primary-600/20 text-primary-400 border-primary-500/30 hover:bg-primary-600/30' : 'bg-base-800 text-white hover:bg-base-700 border-base-700'}`}
                             >
-                                <Calendar size={18} />
-                                Remind Me
+                                <Bell size={18} fill={hasReminder ? 'currentColor' : 'none'} className={isReminding ? 'animate-pulse' : ''} />
+                                {isReminding ? 'Please wait...' : hasReminder ? 'Remove Reminder' : 'Remind Me'}
                             </button>
                         </div>
                     )}
