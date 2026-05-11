@@ -4,7 +4,8 @@ import {
     loginUser,
     logoutUser,
     verifyEmail,
-    sendVerification
+    sendVerification,
+    googleLogin
 } from '../controllers/authController.js';
 
 const router = express.Router();
@@ -14,5 +15,6 @@ router.post('/login', loginUser);
 router.post('/logout', logoutUser);
 router.post('/verify-email', verifyEmail);
 router.post('/send-verification', sendVerification);
+router.post('/google', googleLogin);
 
 export default router;
