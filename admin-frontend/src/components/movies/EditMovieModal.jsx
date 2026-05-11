@@ -265,11 +265,16 @@ const EditMovieModal = ({ isOpen, onClose, onEdit, movie }) => {
                                                     <div className="bg-base-900/50 border border-base-800 p-5 rounded-xl flex items-center justify-between group hover:border-primary-500/50 transition-colors">
                                                         <div>
                                                             <p className="text-sm font-semibold text-white">Upcoming Movie</p>
-                                                            <p className="text-[10px] text-base-500 mt-0.5">Show in 'Coming Soon' section</p>
+                                                            <p className="text-[10px] text-primary-400 mt-0.5">Auto-categorized by release date</p>
                                                         </div>
                                                         <div className="relative inline-flex items-center cursor-pointer">
-                                                            <input type="checkbox" className="sr-only peer" checked={formData.isUpcoming} onChange={(e) => setFormData({ ...formData, isUpcoming: e.target.checked })} />
-                                                            <div className="w-11 h-6 bg-base-800 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-400 after:border-base-400 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600 peer-checked:after:bg-white"></div>
+                                                            <input
+                                                                type="checkbox"
+                                                                className="sr-only peer"
+                                                                checked={formData.releaseDate ? new Date(formData.releaseDate) > new Date() : formData.isUpcoming}
+                                                                readOnly
+                                                            />
+                                                            <div className="w-11 h-6 bg-base-800 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-base-400 after:border-base-400 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-600 peer-checked:after:bg-white opacity-70"></div>
                                                         </div>
                                                     </div>
                                                 </div>

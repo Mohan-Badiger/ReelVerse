@@ -13,7 +13,10 @@ const Coupons = () => {
         code: '',
         discountPercentage: 10,
         expiryDate: '',
-        maxUses: 100
+        maxUses: 100,
+        couponType: 'ALL_USERS',
+        description: '',
+        minAmount: 0
     });
 
     const fetchCoupons = async () => {
@@ -51,7 +54,15 @@ const Coupons = () => {
             toast.success('Coupon created successfully');
             setCoupons([res.data, ...coupons]);
             setIsAddModalOpen(false);
-            setNewCoupon({ code: '', discountPercentage: 10, expiryDate: '', maxUses: 100 });
+            setNewCoupon({ 
+                code: '', 
+                discountPercentage: 10, 
+                expiryDate: '', 
+                maxUses: 100, 
+                couponType: 'ALL_USERS', 
+                description: '', 
+                minAmount: 0 
+            });
         } catch (err) {
             toast.error(err.response?.data?.message || 'Failed to create coupon');
         }
@@ -98,6 +109,7 @@ const Coupons = () => {
                                     <th className="py-4 px-6 text-xs font-semibold text-base-400 uppercase tracking-wider">Usage</th>
                                     <th className="py-4 px-6 text-xs font-semibold text-base-400 uppercase tracking-wider">Expiry</th>
                                     <th className="py-4 px-6 text-xs font-semibold text-base-400 uppercase tracking-wider">Status</th>
+                                    <th className="py-4 px-6 text-xs font-semibold text-base-400 uppercase tracking-wider">Type</th>
                                     <th className="py-4 px-6 text-xs font-semibold text-base-400 uppercase tracking-wider text-right">Actions</th>
                                 </tr>
                             </thead>
@@ -137,7 +149,7 @@ const Coupons = () => {
                                                     <span className="text-xs">{coupon.usedCount} / {coupon.maxUses}</span>
                                                 </div>
                                             </td>
-                                            <td className="py-4 px-6 text-base-400 text-sm">
+                                            <td className="py-4 px-6 text-base-400 text-sm font-mono">
                                                 {new Date(coupon.expiryDate).toLocaleDateString(undefined, {
                                                     year: 'numeric',
                                                     month: 'short',
@@ -154,6 +166,11 @@ const Coupons = () => {
                                                 ) : (
                                                     <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-base-800 text-base-400 border border-base-700">Inactive</span>
                                                 )}
+                                            </td>
+                                            <td className="py-4 px-6">
+                                                <span className="text-xs font-bold text-primary-400 bg-primary-500/10 px-2 py-1 rounded border border-primary-500/20">
+                                                    {coupon.couponType.replace('_', ' ')}
+                                                </span>
                                             </td>
                                             <td className="py-4 px-6 text-right">
                                                 <button
@@ -244,6 +261,41 @@ const Coupons = () => {
                                         className="box-input w-full"
                                         value={newCoupon.expiryDate}
                                         onChange={(e) => setNewCoupon({...newCoupon, expiryDate: e.target.value})}
+                                    />
+                                </div>
+
+                                <div className="grid grid-cols-2 gap-4">
+                                    <div>
+                                        <label className="block text-sm font-medium text-base-300 mb-1">Coupon Type</label>
+                                        <select
+                                            className="box-input w-full"
+                                            value={newCoupon.couponType}
+                                            onChange={(e) => setNewCoupon({...newCoupon, couponType: e.target.value})}
+                                        >
+                                            <option value="ALL_USERS">All Users</option>
+                                            <option value="FIRST_BOOKING">First Booking Only</option>
+                                            <option value="FESTIVAL">Festival Offer</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label className="block text-sm font-medium text-base-300 mb-1">Min Booking Amt (₹)</label>
+                                        <input
+                                            type="number"
+                                            min="0"
+                                            className="box-input w-full"
+                                            value={newCoupon.minAmount}
+                                            onChange={(e) => setNewCoupon({...newCoupon, minAmount: Number(e.target.value)})}
+                                        />
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-medium text-base-300 mb-1">Offer Description</label>
+                                    <textarea
+                                        placeholder="e.g. Special Deepavali discount for all users"
+                                        className="box-input w-full h-20 resize-none"
+                                        value={newCoupon.description}
+                                        onChange={(e) => setNewCoupon({...newCoupon, description: e.target.value})}
                                     />
                                 </div>
                                 
