@@ -202,25 +202,61 @@ export const verifyPayment = async (req, res, next) => {
         const base64Data = finalQrCodeDataUrl.split(',')[1];
 
         const message = `
-          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; border: 1px solid #ddd; border-radius: 10px;">
-            <h1 style="color: #f59e0b; text-align: center;">ReelVerse Ticket</h1>
-            <p>Hi ${req.user.name || 'Moviegoer'},</p>
-            <p>Your booking is confirmed! Here are your ticket details:</p>
-            <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Movie:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${show.movie.title}</td></tr>
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Theatre:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${show.theatre.name}, ${show.theatre.city}</td></tr>
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Date & Time:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${new Date(show.date).toDateString()} at ${show.time}</td></tr>
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Seats:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">${seats.join(', ')}</td></tr>
-                <tr><td style="padding: 8px; border-bottom: 1px solid #eee;"><strong>Total Paid:</strong></td><td style="padding: 8px; border-bottom: 1px solid #eee;">₹${totalPrice}</td></tr>
-                <tr><td style="padding: 8px;"><strong>Booking ID:</strong></td><td style="padding: 8px;">${createdBooking._id}</td></tr>
-            </table>
-            
-            <div style="text-align: center; margin-top: 30px;">
-                <p style="margin-bottom: 10px;"><strong>Scan to verify ticket:</strong></p>
-                <img src="cid:ticket_qrcode" alt="QR Code" style="width: 200px; height: 200px;" />
-            </div>
+          <div style="font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 40px 20px; color: #f8fafc; min-height: 100vh;">
+            <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);">
+                <!-- Header -->
+                <div style="background: linear-gradient(to right, #4f46e5, #6366f1); padding: 30px; text-align: center; position: relative; overflow: hidden;">
+                    <div style="position: absolute; top: -50%; left: -50%; width: 200%; height: 200%; background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 60%);"></div>
+                    <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; position: relative; z-index: 1;">ReelVerse Ticket</h1>
+                    <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0 0; font-size: 14px; position: relative; z-index: 1;">Your premium cinematic experience awaits.</p>
+                </div>
 
-            <p style="text-align: center; margin-top: 30px; color: #888; font-size: 12px;">Enjoy the movie!<br/>The ReelVerse Team</p>
+                <!-- Body -->
+                <div style="padding: 40px 30px;">
+                    <p style="font-size: 16px; margin-bottom: 25px; color: #cbd5e1;">Hi <strong style="color: #ffffff;">${req.user.name || 'Moviegoer'}</strong>,</p>
+                    <p style="font-size: 15px; margin-bottom: 35px; color: #94a3b8; line-height: 1.6;">Your booking is confirmed! Please present the QR code below at the cinema entrance.</p>
+
+                    <!-- Ticket Details Card -->
+                    <div style="background-color: #1e293b; border-left: 4px solid #6366f1; border-radius: 8px; padding: 25px; margin-bottom: 40px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);">
+                        <h2 style="margin: 0 0 20px 0; color: #ffffff; font-size: 22px; font-weight: 800;">${show.movie.title}</h2>
+                        
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Location</td>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #f8fafc; font-weight: 600; text-align: right;">${show.theatre.name}, ${show.theatre.city}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Date & Time</td>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #f8fafc; font-weight: 600; text-align: right;">${new Date(show.date).toDateString()} at ${show.time}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Seats</td>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #10b981; font-weight: 700; text-align: right; font-size: 16px;">${seats.join(', ')}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Total Paid</td>
+                                <td style="padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,0.05); color: #f8fafc; font-weight: 600; text-align: right;">₹${totalPrice}</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 12px 0; color: #94a3b8; font-size: 13px; text-transform: uppercase; letter-spacing: 1px;">Booking ID</td>
+                                <td style="padding: 12px 0; color: #94a3b8; font-family: monospace; text-align: right; font-size: 12px;">${createdBooking._id}</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <!-- QR Code Section -->
+                    <div style="text-align: center; background-color: #ffffff; padding: 30px; border-radius: 12px; margin: 0 auto; width: fit-content; box-shadow: 0 10px 25px rgba(0,0,0,0.2);">
+                        <p style="margin: 0 0 15px 0; color: #0f172a; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; font-size: 12px;">Scan at Entrance</p>
+                        <img src="cid:ticket_qrcode" alt="QR Code" style="width: 200px; height: 200px; display: block; margin: 0 auto;" />
+                    </div>
+
+                </div>
+
+                <!-- Footer -->
+                <div style="background-color: #0f172a; padding: 25px; text-align: center; border-top: 1px dashed rgba(255,255,255,0.1);">
+                    <p style="color: #64748b; font-size: 12px; margin: 0; line-height: 1.5;">Please arrive 15 minutes before showtime.<br/>Enjoy the movie!<br/><br/><strong style="color: #94a3b8;">The ReelVerse Team</strong></p>
+                </div>
+            </div>
           </div>
         `;
 

@@ -2,6 +2,30 @@ import User from '../models/User.js';
 import generateToken from '../utils/generateToken.js';
 import sendEmail from '../utils/emailService.js';
 import crypto from 'crypto';
+import { OAuth2Client } from 'google-auth-library';
+
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+
+const getOtpEmailTemplate = (otp, type = 'Registration') => `
+<div style="font-family: 'Inter', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #0f172a; padding: 40px 20px; color: #f8fafc; min-height: 100vh;">
+    <div style="max-width: 600px; margin: 0 auto; background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid rgba(99, 102, 241, 0.3); border-radius: 16px; overflow: hidden; box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(99, 102, 241, 0.1);">
+        <div style="background: linear-gradient(to right, #4f46e5, #6366f1); padding: 30px; text-align: center; position: relative; overflow: hidden;">
+            <h1 style="color: #ffffff; margin: 0; font-size: 28px; font-weight: 900; letter-spacing: 2px; text-transform: uppercase; position: relative; z-index: 1;">ReelVerse Auth</h1>
+            <p style="color: rgba(255,255,255,0.8); margin: 10px 0 0 0; font-size: 14px; position: relative; z-index: 1;">Secure Account ${type}</p>
+        </div>
+        <div style="padding: 40px 30px; text-align: center;">
+            <p style="font-size: 16px; margin-bottom: 25px; color: #cbd5e1;">Your one-time password for account verification is:</p>
+            <div style="background-color: #0f172a; border: 1px solid #334155; border-radius: 12px; padding: 20px; display: inline-block; margin-bottom: 30px; box-shadow: inset 0 2px 10px rgba(0,0,0,0.5);">
+                <h2 style="margin: 0; color: #10b981; font-size: 36px; letter-spacing: 8px; font-family: monospace;">${otp}</h2>
+            </div>
+            <p style="font-size: 14px; color: #94a3b8; margin: 0;">This code will expire in <strong style="color: #f8fafc;">10 minutes</strong>. Do not share it with anyone.</p>
+        </div>
+        <div style="background-color: #0f172a; padding: 25px; text-align: center; border-top: 1px dashed rgba(255,255,255,0.1);">
+            <p style="color: #64748b; font-size: 12px; margin: 0;">If you did not request this, please ignore this email.<br/><br/><strong style="color: #94a3b8;">The ReelVerse Security Team</strong></p>
+        </div>
+    </div>
+</div>
+`;
 
 /* ======================================================
    REGISTER USER & SEND OTP
@@ -47,18 +71,19 @@ export const registerUser = async (req, res, next) => {
             });
         }
 
-        const message = `
-            <h1>ReelVerse Registration OTP</h1>
-            <p>Your OTP for account verification is:</p>
-            <h2>${otp}</h2>
-            <p>This OTP is valid for 10 minutes.</p>
-        `;
+        const message = getOtpEmailTemplate(otp, 'Registration');
 
-        await sendEmail({
-            email: user.email,
-            subject: 'ReelVerse OTP Verification',
-            message,
-        });
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'ReelVerse OTP Verification',
+                message,
+            });
+        } catch (emailError) {
+            console.error('Email sending failed:', emailError);
+            res.status(500);
+            return next(new Error('Failed to send OTP email. Please check your SMTP App Password configuration.'));
+        }
 
         res.status(201).json({
             message: 'OTP sent successfully. Please verify your email.',
@@ -104,18 +129,19 @@ export const sendVerification = async (req, res, next) => {
         user.otpExpire = otpExpire;
         await user.save({ validateBeforeSave: false });
 
-        const message = `
-            <h1>ReelVerse Registration OTP</h1>
-            <p>Your OTP for account verification is:</p>
-            <h2>${otp}</h2>
-            <p>This OTP is valid for 10 minutes.</p>
-        `;
+        const message = getOtpEmailTemplate(otp, 'Verification');
 
-        await sendEmail({
-            email: user.email,
-            subject: 'ReelVerse OTP Verification',
-            message,
-        });
+        try {
+            await sendEmail({
+                email: user.email,
+                subject: 'ReelVerse OTP Verification',
+                message,
+            });
+        } catch (emailError) {
+            console.error('Email sending failed:', emailError);
+            res.status(500);
+            return next(new Error('Failed to send OTP email. Please check your SMTP App Password configuration.'));
+        }
 
         res.status(200).json({
             message: 'Verification OTP sent successfully.',
@@ -249,4 +275,66 @@ export const logoutUser = (req, res) => {
     });
 
     res.status(200).json({ message: 'User logged out successfully' });
+};
+
+/* ======================================================
+   GOOGLE LOGIN
+====================================================== */
+export const googleLogin = async (req, res, next) => {
+    try {
+        const { credential } = req.body;
+        
+        if (!credential) {
+            res.status(400);
+            return next(new Error('No Google credential provided'));
+        }
+
+        const ticket = await client.verifyIdToken({
+            idToken: credential,
+            // audience is handled by client if GOOGLE_CLIENT_ID is provided
+        });
+        
+        const payload = ticket.getPayload();
+        if (!payload || !payload.email) {
+            res.status(400);
+            return next(new Error('Invalid Google credential payload'));
+        }
+
+        const { email, name, picture } = payload;
+
+        let user = await User.findOne({ email });
+
+        if (!user) {
+            // Register them automatically
+            const randomPassword = crypto.randomBytes(16).toString('hex');
+            user = await User.create({
+                name,
+                email,
+                password: randomPassword,
+                isVerified: true
+            });
+        }
+
+        // If not verified but logging in via Google, automatically verify
+        if (!user.isVerified) {
+            user.isVerified = true;
+            await user.save({ validateBeforeSave: false });
+        }
+
+        generateToken(res, user._id);
+
+        res.status(200).json({
+            _id: user._id,
+            name: user.name,
+            email: user.email,
+            role: user.role,
+            picture,
+            message: 'Logged in with Google successfully'
+        });
+
+    } catch (error) {
+        console.error('Google Auth Error:', error);
+        res.status(401);
+        next(new Error('Google Authentication Failed'));
+    }
 };
