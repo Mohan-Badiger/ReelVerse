@@ -16,10 +16,10 @@ const updatePastBookingsStatus = async (bookings) => {
             
             if (showDateTime && currentTime > showDateTime) {
                 booking.status = 'completed';
-                await booking.save();
+                await Booking.updateOne({ _id: booking._id }, { $set: { status: 'completed' } });
             } else if (!booking.status) {
                 booking.status = 'upcoming';
-                await booking.save();
+                await Booking.updateOne({ _id: booking._id }, { $set: { status: 'upcoming' } });
             }
         }
     }
@@ -147,9 +147,9 @@ export const cancelBooking = async (req, res, next) => {
         }
 
         // Cancel the booking
+        await Booking.updateOne({ _id: booking._id }, { $set: { paymentStatus: 'Cancelled', status: 'cancelled' } });
         booking.paymentStatus = 'Cancelled';
         booking.status = 'cancelled';
-        await booking.save();
 
         // Release the seats in the show
         const show = booking.show;
@@ -161,7 +161,8 @@ export const cancelBooking = async (req, res, next) => {
         });
 
         // Save the updated show via its own model, since populate doesn't always allow deep array saves easily without explicit model fetching in some setups, but we populated it so we can save it.
-        await show.save();
+        const ShowModel = (await import('../models/Show.js')).default;
+        await ShowModel.updateOne({ _id: show._id }, { $set: { seats: show.seats } });
 
         // Optionally: Trigger refund API via Razorpay here. For this implementation we skip actual Razorpay API refund calling and just mark it cancelled locally.
 
