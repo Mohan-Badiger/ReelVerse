@@ -141,14 +141,16 @@ export const verifyPayment = async (req, res, next) => {
         }
 
         // Update Seat Status
-        show.seats.forEach((seat) => {
+        const updatedSeats = show.seats.map((seat) => {
             if (seats.includes(seat.seatId)) {
                 seat.isBooked = true;
                 seat.bookedBy = req.user._id;
             }
+            return seat;
         });
 
-        await show.save();
+        await Show.updateOne({ _id: show._id }, { $set: { seats: updatedSeats } });
+        show.seats = updatedSeats;
 
         // Generate QR Code data
         const qrData = JSON.stringify({
