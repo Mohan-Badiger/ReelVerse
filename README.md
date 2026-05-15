@@ -1,4 +1,4 @@
-# ReelVerse - Modern MERN Stack Movie Booking Application App.
+# ReelVerse - Modern MERN Stack Movie Booking Application.
 
 A production-ready Movie Booking Website inspired by Netflix and BookMyShow, featuring a premium dark theme, glassmorphism UI, advanced Framer Motion animations, comprehensive authentication (OTP, JWT), and a multi-entity relational booking logic with Stripe.
 
