@@ -2,7 +2,7 @@
 
 A production-ready Movie Booking Website inspired by Netflix and BookMyShow, featuring a premium dark theme, glassmorphism UI, advanced Framer Motion animations, comprehensive authentication (OTP, JWT), and a multi-entity relational booking logic with Stripe.
 
-live demo coming soon
+we are live in soon
 
 ## Features
 - **Frontend**: React (Vite), Tailwind CSS, Framer Motion, Redux Toolkit, React Router, and Axios.
