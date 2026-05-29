@@ -58,7 +58,7 @@ const Home = () => {
 
     if (isLoading) {
         return (
-            <div className="pt-20 max-w-[1400px] mx-auto px-6">
+            <div className="pt-20 max-w-350 mx-auto px-6">
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
                     {[1, 2, 3, 4].map((n) => (
                         <SkeletonCard key={n} />
@@ -88,7 +88,7 @@ const Home = () => {
 
             {/* HERO SECTION */}
             {heroMovie && (
-                <section className="relative min-h-[85vh] lg:h-[90vh] flex flex-col justify-end pb-24 overflow-hidden">
+                <section className="relative min-h-[85vh] lg:h-[90vh] flex flex-col justify-end pb-24 overflow-hidden bg-base-950">
 
                     <AnimatePresence mode="wait">
                         <m.div
@@ -97,7 +97,7 @@ const Home = () => {
                             animate={{ opacity: 1, scale: 1 }}
                             exit={{ opacity: 0 }}
                             transition={{ duration: 0.9 }}
-                            className="absolute inset-0 z-0"
+                            className="absolute top-0 right-0 w-full lg:w-[75%] h-full z-0"
                         >
                             <img
                                 src={getOptimizedUrl(heroMovie.backdropUrl || heroMovie.posterUrl)}
@@ -105,22 +105,22 @@ const Home = () => {
                                 fetchPriority="high"
                                 width="1920"
                                 height="1080"
-                                className="w-full h-full object-cover opacity-50"
+                                className="w-full h-full object-cover opacity-80"
                             />
 
-                            <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/80 to-transparent" />
-                            <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/50 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/20 to-transparent" />
+                            <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/30 to-transparent" />
                         </m.div>
                     </AnimatePresence>
 
                     {/* Animated glow */}
                     <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-                        <div className="absolute w-[600px] h-[600px] bg-primary-600/20 blur-[200px] top-[-200px] left-[-200px]" />
-                        <div className="absolute w-[500px] h-[500px] bg-accent-600/10 blur-[200px] bottom-[-200px] right-[-200px]" />
+                        <div className="absolute w-150 h-150 bg-primary-600/20 blur-[200px] -top-50 -left-50" />
+                        <div className="absolute w-125 h-125 bg-accent-600/10 blur-[200px] -bottom-50 -right-50" />
                     </div>
 
                     {/* Hero Content */}
-                    <div className="relative z-10 w-full max-w-[1400px] mx-auto px-6">
+                    <div className="relative z-10 w-full max-w-350 mx-auto px-6">
 
                         <m.div
                             key={`content-${heroMovie._id}`}
@@ -213,7 +213,7 @@ const Home = () => {
             )}
 
             {/* NOW SHOWING */}
-            <section className="max-w-[1400px] mx-auto px-6 py-28">
+            <section className="max-w-350 mx-auto px-6 py-28">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-8 rounded-full bg-primary-500"></div>
@@ -254,7 +254,7 @@ const Home = () => {
             </section>
 
             {/* UPCOMING */}
-            <section className="max-w-[1400px] mx-auto px-6 pb-32">
+            <section className="max-w-350 mx-auto px-6 pb-32">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-8 rounded-full bg-accent-500"></div>
