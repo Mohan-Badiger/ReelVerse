@@ -203,7 +203,7 @@ const MovieDetails = () => {
     const backdropUrl = getOptimizedUrl(movie.backdropUrl || movie.posterUrl);
 
     return (
-        <main className="max-w-[1200px] mx-auto px-6 py-12 fade-in">
+        <main className="max-w-300 mx-auto px-6 py-12 fade-in">
             <Helmet>
                 <title>{`${movie.title} | ReelVerse - Book Tickets Now`}</title>
                 <meta name="description" content={`Book tickets for ${movie.title}. Directed by ${movie.director}. ${movie.description.substring(0, 150)}...`} />
@@ -234,10 +234,10 @@ const MovieDetails = () => {
                         alt={movie.title}
                         width="320"
                         height="480"
-                        className="w-full md:w-80 h-auto rounded-sm shadow-sm object-cover border border-base-800"
+                        className="w-full md:w-80 h-auto rounded-xl shadow-md object-cover border border-base-800"
                     />
                     {movie.isUpcoming && (
-                        <div className="absolute top-4 left-4 bg-primary-600 px-3 py-1 rounded-sm text-xs font-black text-white border border-primary-500 uppercase tracking-tighter shadow-lg shadow-black/50">
+                        <div className="absolute top-4 left-4 bg-primary-600 px-3 py-1 rounded-xl text-xs font-black text-white border border-primary-500 uppercase tracking-tighter shadow-lg shadow-black/50">
                             Coming Soon
                         </div>
                     )}
@@ -246,7 +246,7 @@ const MovieDetails = () => {
                 <div className="z-10 flex-1 flex flex-col justify-center">
                     <div className="flex flex-wrap gap-2 mb-4">
                         {movie.genre && Array.isArray(movie.genre) && movie.genre.map((g, i) => (
-                            <span key={i} className="px-3 py-1 bg-white/5 backdrop-blur-md rounded-sm text-xs font-semibold tracking-wider text-primary-400 border border-base-800 uppercase">
+                            <span key={i} className="px-3 py-1 bg-white/5 backdrop-blur-md rounded-xl text-xs font-semibold tracking-wider text-primary-400 border border-base-800 uppercase">
                                 {g}
                             </span>
                         ))}
@@ -255,7 +255,7 @@ const MovieDetails = () => {
                     <h1 className="text-4xl md:text-5xl font-black text-white mb-4 leading-tight tracking-tight">{movie.title}</h1>
                     <div className="flex items-center gap-5 mb-8 flex-wrap">
                         {movie.isUpcoming ? (
-                            <div className="bg-primary-600 px-4 py-1.5 rounded-sm text-sm font-black text-white border border-primary-500 uppercase tracking-wider shadow-sm">
+                            <div className="bg-primary-600 px-4 py-1.5 rounded-xl text-sm font-black text-white border border-primary-500 uppercase tracking-wider shadow-sm">
                                 Coming Soon
                             </div>
                         ) : (
@@ -271,7 +271,7 @@ const MovieDetails = () => {
                         {movie.trailerUrl && (
                             <button
                                 onClick={() => setShowTrailer(true)}
-                                className="group flex items-center gap-2 bg-primary-600/20 hover:bg-primary-500/40 text-primary-100 hover:text-white px-5 py-2.5 rounded-md text-sm font-bold border border-primary-500/30 hover:border-primary-400 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] transition-all duration-300 backdrop-blur-md hover:-translate-y-0.5"
+                                className="group flex items-center gap-2 bg-white/5 hover:bg-white/10 text-white px-5 py-2.5 rounded-xl text-sm font-bold border border-white/10 hover:border-white/20 transition-all duration-300 hover:shadow-[0_0_20px_rgba(255,255,255,0.1)] hover:-translate-y-0.5 active:scale-97 backdrop-blur-md"
                             >
                                 <Play size={16} fill="currentColor" className="transition-transform duration-300 group-hover:scale-110" />
                                 Watch Trailer
@@ -280,7 +280,7 @@ const MovieDetails = () => {
                         
                         <button
                             onClick={toggleWatchlist}
-                            className={`flex items-center justify-center p-2.5 rounded-md border transition-all duration-300 active:scale-90 ${isWatchlisted ? 'bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-white/5 border-base-800 text-slate-300 hover:text-white hover:border-white/30 backdrop-blur-md'}`}
+                            className={`flex items-center justify-center p-2.5 rounded-xl border transition-all duration-300 hover:-translate-y-0.5 active:scale-95 ${isWatchlisted ? 'bg-red-500/10 border-red-500/30 text-red-500 hover:bg-red-500/20' : 'bg-white/5 border-white/10 text-slate-300 hover:text-white hover:border-white/20 backdrop-blur-md'}`}
                             title={isWatchlisted ? "Remove from Watchlist" : "Add to Watchlist"}
                         >
                             <Heart size={22} fill={isWatchlisted ? 'currentColor' : 'none'} className={isWatchlisted ? 'animate-pulse' : ''} />
@@ -319,7 +319,7 @@ const MovieDetails = () => {
                             {movie.trailerUrl && (
                                 <button
                                     onClick={() => setShowTrailer(true)}
-                                    className="group px-8 py-3 bg-white text-base-950 font-black rounded-sm flex items-center justify-center gap-2 hover:bg-primary-50 hover:text-primary-600 hover:shadow-[0_0_25px_rgba(255,255,255,0.3)] transition-all duration-300 uppercase tracking-wider text-sm hover:-translate-y-0.5"
+                                    className="group px-8 py-3 bg-white hover:bg-slate-100 text-black font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 hover:shadow-[0_0_25px_rgba(255,255,255,0.2)] uppercase tracking-wider text-sm hover:-translate-y-0.5 active:scale-97"
                                 >
                                     <Play size={18} fill="currentColor" className="transition-transform duration-300 group-hover:scale-110" />
                                     Watch Trailer
@@ -328,7 +328,7 @@ const MovieDetails = () => {
                             <button
                                 onClick={handleRemindMe}
                                 disabled={isReminding}
-                                className={`px-8 py-3 font-black rounded-sm flex items-center justify-center gap-2 transition-all border uppercase tracking-wider text-sm ${hasReminder ? 'bg-primary-600/20 text-primary-400 border-primary-500/30 hover:bg-primary-600/30' : 'bg-base-800 text-white hover:bg-base-700 border-base-700'}`}
+                                className={`px-8 py-3 font-bold rounded-xl flex items-center justify-center gap-2 transition-all duration-300 border uppercase tracking-wider text-sm hover:-translate-y-0.5 active:scale-97 ${hasReminder ? 'bg-primary-600/10 text-primary-400 border-primary-500/20 hover:bg-primary-600/20' : 'bg-white/5 text-white hover:bg-white/10 border-white/10'}`}
                             >
                                 <Bell size={18} fill={hasReminder ? 'currentColor' : 'none'} className={isReminding ? 'animate-pulse' : ''} />
                                 {isReminding ? 'Please wait...' : hasReminder ? 'Remove Reminder' : 'Remind Me'}
@@ -358,9 +358,9 @@ const MovieDetails = () => {
                                     <button
                                         key={date}
                                         onClick={() => setSelectedDate(date)}
-                                        className={`flex flex-col items-center min-w-[100px] px-6 py-4 rounded-sm transition-all border ${selectedDate === date
-                                            ? 'bg-primary-600 text-white border-primary-500 shadow-sm shadow-primary-500/20'
-                                            : 'bg-base-800 text-slate-400 hover:text-white border-base-800 hover:border-base-800'
+                                        className={`flex flex-col items-center min-w-25 px-6 py-4 rounded-xl transition-all duration-300 border ${selectedDate === date
+                                            ? 'bg-linear-to-r from-primary-600 to-accent-500 text-white border-transparent shadow-md shadow-primary-500/20 hover:-translate-y-0.5'
+                                            : 'bg-base-800/50 text-slate-400 hover:text-white border-white/5 hover:border-white/10 backdrop-blur-md hover:-translate-y-0.5'
                                             }`}
                                     >
                                         <span className="text-xs font-semibold uppercase tracking-wider">{date.split(' ')[0]}</span>
@@ -395,7 +395,7 @@ const MovieDetails = () => {
                                                 <button
                                                     key={show._id}
                                                     onClick={() => navigate(`/checkout/${show._id}`)}
-                                                    className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-base-950 border border-base-800 hover:border-white rounded-sm transition-all font-bold flex flex-col items-center min-w-[120px]"
+                                                    className="px-6 py-3 bg-white/5 hover:bg-white text-white hover:text-black border border-white/10 hover:border-white rounded-xl transition-all duration-300 font-bold flex flex-col items-center min-w-30 hover:-translate-y-0.5 active:scale-97 hover:shadow-[0_0_15px_rgba(255,255,255,0.1)]"
                                                 >
                                                     <span className="text-lg">{show.time}</span>
                                                     <span className="text-xs font-medium opacity-70">₹{show.ticketPrice}</span>
@@ -519,7 +519,7 @@ const MovieDetails = () => {
                                             type="button"
                                             onClick={handleEnhanceReview}
                                             disabled={isEnhancing || !comment.trim()}
-                                            className="absolute bottom-3 right-3 bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 hover:text-white px-3 py-1.5 rounded-sm text-xs font-bold border border-indigo-500/30 transition-colors flex items-center gap-1.5 disabled:opacity-50"
+                                            className="absolute bottom-3 right-3 bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 hover:text-white px-3.5 py-1.5 rounded-xl text-xs font-bold border border-indigo-500/20 transition-all duration-200 flex items-center gap-1.5 disabled:opacity-50 active:scale-95 hover:-translate-y-0.5"
                                         >
                                             <Sparkles size={14} />
                                             {isEnhancing ? 'Enhancing...' : 'Enhance with AI'}
@@ -529,7 +529,7 @@ const MovieDetails = () => {
                                     <button
                                         type="submit"
                                         disabled={isSubmittingReview}
-                                        className="w-full bg-primary-500 hover:bg-primary-600 text-white font-bold py-3 rounded-sm transition-colors disabled:opacity-50"
+                                        className="box-button-primary w-full py-3 text-sm"
                                     >
                                         {isSubmittingReview ? 'Submitting...' : 'Submit Review'}
                                     </button>

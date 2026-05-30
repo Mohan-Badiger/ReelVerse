@@ -72,8 +72,8 @@ const Navbar = () => {
                     transition={{ type: "spring", stiffness: 200, damping: 25 }}
                     className={`w-full flex items-center justify-between px-6 sm:px-8 transition-[background-color,backdrop-filter,border-radius,box-shadow,height,max-width] duration-500 ease-out ${
                         scrolled 
-                            ? 'max-w-[1200px] bg-base-950/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] rounded-full h-16' 
-                            : 'max-w-[1400px] bg-transparent h-20 rounded-none'
+                            ? 'max-w-300 bg-base-950/90 backdrop-blur-2xl shadow-[0_10px_40px_rgba(0,0,0,0.6)] rounded-full h-16' 
+                            : 'max-w-350 bg-transparent h-20 rounded-none'
                     }`}
                 >
 
@@ -131,7 +131,7 @@ const Navbar = () => {
                         ) : (
                             <button
                                 onClick={() => setModalState({ type: 'login', email: '' })}
-                                className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white transition-all duration-300 bg-primary-600 rounded-full overflow-hidden hover:bg-primary-500 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] active:scale-95"
+                                className="group relative inline-flex items-center justify-center px-6 py-2.5 text-sm font-bold text-white transition-all duration-300 bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 rounded-full overflow-hidden hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 active:scale-97"
                             >
                                 <span className="absolute inset-0 w-full h-full -mt-1 rounded-lg opacity-30 bg-linear-to-b from-transparent via-transparent to-black"></span>
                                 <span className="relative">Sign In</span>
@@ -228,7 +228,7 @@ const Navbar = () => {
                                     >
                                         <button
                                             onClick={() => { setIsMenuOpen(false); setModalState({ type: 'login', email: '' }); }}
-                                            className="w-full py-4 text-center text-white font-bold text-lg bg-primary-600 rounded-xl hover:bg-primary-500 transition-colors"
+                                            className="w-full py-4 text-center text-white font-bold text-lg bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 rounded-xl transition-all duration-300 hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 active:scale-97"
                                         >
                                             Sign In
                                         </button>

@@ -164,7 +164,7 @@ const MyBookingsPage = () => {
                     <p className="text-xl text-gray-400 mb-4">You haven't booked any movies yet.</p>
                     <Link
                         to="/movies"
-                        className="bg-primary-500 text-white px-6 py-2 rounded-md hover:bg-primary-600 transition-colors"
+                        className="box-button-primary inline-block"
                     >
                         Browse Movies
                     </Link>
@@ -179,7 +179,7 @@ const MyBookingsPage = () => {
                         >
                             Upcoming
                             {activeTab === 'upcoming' && (
-                                <span className="absolute bottom-[-11px] left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
+                                <span className="absolute -bottom-2.75 left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
                             )}
                         </button>
                         <button
@@ -188,7 +188,7 @@ const MyBookingsPage = () => {
                         >
                             Completed
                             {activeTab === 'completed' && (
-                                <span className="absolute bottom-[-11px] left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
+                                <span className="absolute -bottom-2.75 left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
                             )}
                         </button>
                         <button
@@ -197,7 +197,7 @@ const MyBookingsPage = () => {
                         >
                             Cancelled
                             {activeTab === 'cancelled' && (
-                                <span className="absolute bottom-[-11px] left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
+                                <span className="absolute -bottom-2.75 left-0 right-0 h-1 bg-primary-500 rounded-t-md"></span>
                             )}
                         </button>
                     </div>
@@ -214,10 +214,10 @@ const MyBookingsPage = () => {
                                 return (
                                     <div
                                         key={booking._id}
-                                        className="bg-base-900 rounded-xl overflow-hidden flex flex-col md:flex-row shadow-lg border border-base-800 min-h-[220px]"
+                                        className="bg-base-900 rounded-xl overflow-hidden flex flex-col md:flex-row shadow-lg border border-base-800 min-h-55"
                                     >
                                         {/* Movie Poster */}
-                                        <div className="w-full md:w-[180px] shrink-0">
+                                        <div className="w-full md:w-45 shrink-0">
                                             <img
                                                 src={
                                                     booking.moviePoster ||
@@ -299,7 +299,7 @@ const MyBookingsPage = () => {
                                                         <button
                                                             onClick={() => handleDownloadPDF(booking)}
                                                             disabled={downloadingId === booking._id}
-                                                            className="px-4 py-2 bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 rounded hover:bg-emerald-500/20 transition-colors flex items-center gap-2 disabled:opacity-50"
+                                                            className="px-5 py-2.5 bg-emerald-500/10 text-emerald-400 border border-emerald-500/20 rounded-xl hover:bg-emerald-500/20 transition-all duration-300 flex items-center gap-2 disabled:opacity-50 hover:-translate-y-0.5 active:scale-97 font-bold text-sm"
                                                         >
                                                             {downloadingId === booking._id ? (
                                                                 <span className="w-4 h-4 border-2 border-emerald-500/30 border-t-emerald-500 rounded-full animate-spin"></span>
@@ -313,7 +313,7 @@ const MyBookingsPage = () => {
                                                             <button
                                                                 onClick={() => handleCancelBooking(booking._id)}
                                                                 disabled={cancellingId === booking._id}
-                                                                className="px-4 py-2 border border-red-500 text-red-500 rounded hover:bg-red-500 hover:text-white transition-colors disabled:opacity-50"
+                                                                className="px-5 py-2.5 border border-red-500/30 bg-red-500/5 text-red-400 hover:text-red-300 rounded-xl hover:bg-red-500/15 hover:border-red-500/50 transition-all duration-300 flex items-center justify-center disabled:opacity-50 hover:-translate-y-0.5 active:scale-97 font-bold text-sm"
                                                             >
                                                                 {cancellingId === booking._id
                                                                     ? 'Cancelling...'
@@ -402,7 +402,7 @@ const MyBookingsPage = () => {
 
                                         {/* QR Code Section */}
                                         {booking.qrCode && booking.paymentStatus === 'Completed' && bStatus !== 'cancelled' && (
-                                            <div className="w-full md:w-[180px] bg-base-950 p-6 flex flex-col items-center justify-center border-l border-base-800">
+                                            <div className="w-full md:w-45 bg-base-950 p-6 flex flex-col items-center justify-center border-l border-base-800">
                                                 <p className="text-gray-400 text-sm mb-4 text-center">
                                                     Scan at theatre
                                                 </p>
