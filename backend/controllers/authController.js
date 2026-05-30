@@ -272,6 +272,8 @@ export const logoutUser = (req, res) => {
     res.cookie('jwt', '', {
         httpOnly: true,
         expires: new Date(0),
+        secure: process.env.NODE_ENV !== 'development',
+        sameSite: process.env.NODE_ENV !== 'development' ? 'none' : 'lax',
     });
 
     res.status(200).json({ message: 'User logged out successfully' });
