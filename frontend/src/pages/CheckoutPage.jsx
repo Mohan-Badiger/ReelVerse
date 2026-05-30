@@ -236,7 +236,7 @@ const CheckoutPage = () => {
     const finalPrice = basePrice - discountAmount;
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
+        <div className="max-w-350 mx-auto px-6 py-12 fade-in">
             {/* Payment Processing Overlay */}
             <AnimatePresence>
                 {isProcessingPayment && (
@@ -284,12 +284,12 @@ const CheckoutPage = () => {
             <div className="w-full flex justify-center mb-16">
                 <div className="flex items-center space-x-4 md:space-x-8">
                     <div className="flex items-center space-x-3 text-primary-400 font-bold">
-                        <div className="w-10 h-10 rounded-sm bg-primary-500/20 flex items-center justify-center text-lg">1</div>
+                        <div className="w-10 h-10 rounded-xl bg-primary-500/20 flex items-center justify-center text-lg">1</div>
                         <span className="hidden md:inline text-lg text-white">Select Seats</span>
                     </div>
                     <div className="w-12 md:w-24 h-px bg-white/20"></div>
                     <div className="flex items-center space-x-3 text-slate-500 font-semibold">
-                        <div className="w-10 h-10 rounded-sm bg-base-900 border border-base-800 flex items-center justify-center text-lg">2</div>
+                        <div className="w-10 h-10 rounded-xl bg-base-900 border border-base-800 flex items-center justify-center text-lg">2</div>
                         <span className="hidden md:inline text-lg">Checkout</span>
                     </div>
                 </div>
@@ -305,7 +305,7 @@ const CheckoutPage = () => {
 
                     {/* Screen Preview */}
                     <div className="w-full max-w-2xl mx-auto mb-20 relative">
-                        <div className="h-2 w-full bg-primary-500/30 rounded-sm blur-[2px] shadow-0_0_30px_theme(colors.primary.500/30%)"></div>
+                        <div className="h-2 w-full bg-primary-500/30 rounded-full blur-[2px] shadow-0_0_30px_theme(colors.primary.500/30%)"></div>
                         <div className="absolute top-2 w-full h-16 bg-linear-to-b from-primary-500/10 to-transparent flex justify-center pt-3">
                             <span className="text-white/40 text-xs tracking-[1em] uppercase font-bold">Screen</span>
                         </div>
@@ -313,7 +313,7 @@ const CheckoutPage = () => {
 
                     {/* Seats Grid */}
                     <div className="max-w-3xl mx-auto overflow-x-auto pb-8 scrollbar-hide">
-                        <div className="min-w-[500px] flex flex-col items-center gap-4">
+                        <div className="min-w-125 flex flex-col items-center gap-4">
                             {Object.keys(rowMapping).map(rowLetter => (
                                 <div key={rowLetter} className="flex justify-center items-center gap-3 md:gap-4">
                                     <span className="w-6 text-right font-bold text-slate-500 text-sm">{rowLetter}</span>
@@ -328,7 +328,7 @@ const CheckoutPage = () => {
                                                     whileTap={!seat.isBooked ? { scale: 0.9 } : {}}
                                                     key={seat.seatId}
                                                     onClick={() => toggleSeat(seat)}
-                                                    className={`w-8 h-8 md:w-10 md:h-10 rounded-sm text-xs font-bold transition-all flex items-center justify-center relative
+                                                    className={`w-8 h-8 md:w-10 md:h-10 rounded-lg text-xs font-bold transition-all flex items-center justify-center relative
                                                         ${seat.isBooked
                                                             ? 'bg-red-500/20 text-red-500 cursor-not-allowed border border-red-500/30'
                                                             : isSelected
@@ -351,15 +351,15 @@ const CheckoutPage = () => {
                     {/* Legends */}
                     <div className="flex justify-center flex-wrap mt-16 gap-6 md:gap-12">
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-green-500/10 border border-green-500/30"></div>
+                            <div className="w-8 h-8 rounded-lg bg-green-500/10 border border-green-500/30"></div>
                             <span className="text-sm font-medium text-slate-300">Available</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-blue-500 shadow-sm shadow-blue-500/40"></div>
+                            <div className="w-8 h-8 rounded-lg bg-blue-500 shadow-sm shadow-blue-500/40"></div>
                             <span className="text-sm font-medium text-slate-300">Selected</span>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <div className="w-8 h-8 rounded-sm bg-red-500/20 border border-red-500/30 flex items-center justify-center">
+                            <div className="w-8 h-8 rounded-lg bg-red-500/20 border border-red-500/30 flex items-center justify-center">
                                 <X size={16} className="text-red-500/70" />
                             </div>
                             <span className="text-sm font-medium text-slate-300">Booked</span>
@@ -410,34 +410,34 @@ const CheckoutPage = () => {
                                 {!appliedCoupon && availableCoupons.length > 0 && (
                                     <div className="mb-4 space-y-3">
                                         {availableCoupons.map((coupon, index) => (
-                                            <m.div
-                                                initial={{ opacity: 0, y: 10 }}
-                                                animate={{ opacity: 1, y: 0 }}
-                                                transition={{ delay: index * 0.1 }}
-                                                key={coupon._id}
-                                                className="relative overflow-hidden bg-linear-to-r from-base-950 to-base-900 border border-primary-500/20 rounded-lg p-4 group hover:border-primary-500/50 transition-colors"
-                                            >
-                                                <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full blur-xl -mr-10 -mt-10 group-hover:bg-primary-500/20 transition-colors"></div>
-                                                <div className="flex justify-between items-center relative z-10">
-                                                    <div>
-                                                        <div className="flex items-center gap-2 mb-1">
-                                                            <span className="bg-primary-500/20 text-primary-400 font-mono text-xs px-2 py-0.5 rounded border border-primary-500/30">
-                                                                {coupon.code}
-                                                            </span>
-                                                        </div>
-                                                        <p className="text-sm text-slate-300 font-medium">
-                                                            {coupon.description || `Save ${coupon.discountPercentage}% on your booking${coupon.minAmount ? ` (Min. ₹${coupon.minAmount})` : ''}`}
-                                                        </p>
-                                                    </div>
-                                                    <button
-                                                        onClick={() => handleApplyCoupon(coupon.code)}
-                                                        disabled={isApplyingCoupon}
-                                                        className="text-xs bg-white text-base-950 font-bold px-3 py-1.5 rounded hover:bg-slate-200 transition-colors active:scale-95 disabled:opacity-50"
+                                                    <m.div
+                                                        initial={{ opacity: 0, y: 10 }}
+                                                        animate={{ opacity: 1, y: 0 }}
+                                                        transition={{ delay: index * 0.1 }}
+                                                        key={coupon._id}
+                                                        className="relative overflow-hidden bg-linear-to-r from-base-950 to-base-900 border border-primary-500/20 rounded-xl p-4 group hover:border-primary-500/50 transition-colors"
                                                     >
-                                                        Apply
-                                                    </button>
-                                                </div>
-                                            </m.div>
+                                                        <div className="absolute top-0 right-0 w-24 h-24 bg-primary-500/10 rounded-full blur-xl -mr-10 -mt-10 group-hover:bg-primary-500/20 transition-colors"></div>
+                                                        <div className="flex justify-between items-center relative z-10">
+                                                            <div>
+                                                                <div className="flex items-center gap-2 mb-1">
+                                                                    <span className="bg-primary-500/20 text-primary-400 font-mono text-xs px-2 py-0.5 rounded border border-primary-500/30">
+                                                                        {coupon.code}
+                                                                    </span>
+                                                                </div>
+                                                                <p className="text-sm text-slate-300 font-medium">
+                                                                    {coupon.description || `Save ${coupon.discountPercentage}% on your booking${coupon.minAmount ? ` (Min. ₹${coupon.minAmount})` : ''}`}
+                                                                </p>
+                                                            </div>
+                                                            <button
+                                                                onClick={() => handleApplyCoupon(coupon.code)}
+                                                                disabled={isApplyingCoupon}
+                                                                className="text-xs bg-white text-black font-bold px-3.5 py-1.5 rounded-xl hover:bg-slate-100 transition-all duration-300 hover:-translate-y-0.5 active:scale-97 disabled:opacity-50"
+                                                            >
+                                                                Apply
+                                                            </button>
+                                                        </div>
+                                                    </m.div>
                                         ))}
                                     </div>
                                 )}
@@ -449,12 +449,12 @@ const CheckoutPage = () => {
                                             placeholder="Have a custom code?"
                                             value={couponInput}
                                             onChange={(e) => setCouponInput(e.target.value)}
-                                            className="w-full bg-base-950 border border-base-800 rounded-lg px-4 py-2.5 text-white outline-none focus:border-primary-500/50 uppercase text-sm transition-colors"
+                                            className="w-full bg-base-950 border border-base-800 rounded-xl px-4 py-2.5 text-white outline-none focus:border-primary-500/50 uppercase text-sm transition-colors"
                                         />
                                         <button
                                             onClick={() => handleApplyCoupon(couponInput)}
                                             disabled={isApplyingCoupon || !couponInput.trim()}
-                                            className="absolute right-1 top-1 bottom-1 bg-base-800 text-slate-300 px-4 rounded-md text-sm font-bold hover:bg-base-700 hover:text-white disabled:opacity-0 transition-all shrink-0"
+                                            className="absolute right-1 top-1 bottom-1 bg-base-800 text-slate-300 px-4 rounded-lg text-sm font-bold hover:bg-base-700 hover:text-white disabled:opacity-0 transition-all shrink-0"
                                         >
                                             {isApplyingCoupon ? '...' : 'Apply'}
                                         </button>
@@ -463,7 +463,7 @@ const CheckoutPage = () => {
                                     <m.div
                                         initial={{ opacity: 0, scale: 0.95 }}
                                         animate={{ opacity: 1, scale: 1 }}
-                                        className="flex justify-between items-center bg-linear-to-r from-green-500/10 to-emerald-500/5 border border-green-500/30 p-4 rounded-lg shadow-[0_0_15px_rgba(34,197,94,0.1)]"
+                                        className="flex justify-between items-center bg-linear-to-r from-green-500/10 to-emerald-500/5 border border-green-500/30 p-4 rounded-xl shadow-[0_0_15px_rgba(34,197,94,0.1)]"
                                     >
                                         <div>
                                             <span className="text-green-400 font-bold flex items-center gap-2">
@@ -502,18 +502,18 @@ const CheckoutPage = () => {
                         <button
                             onClick={handleCheckout}
                             disabled={selectedSeats.length === 0 || isCheckingOut}
-                            className="w-full bg-white hover:bg-slate-200 text-base-950 font-black py-4 rounded-sm text-lg transition-all shadow-sm shadow-white/10 active:scale-[0.98] disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:bg-white/50"
+                            className="w-full bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white font-black py-4 rounded-xl text-lg transition-all hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] active:scale-97 disabled:opacity-50 disabled:shadow-none disabled:active:scale-100 disabled:bg-white/10 disabled:text-white/50"
                         >
                             {isCheckingOut ? 'Redirecting to checkout...' : `Pay ₹${Math.round(finalPrice)}`}
                         </button>
 
                         {!userInfo && (
-                            <p className="mt-4 text-sm text-center text-primary-400 font-medium bg-primary-500/10 py-3 rounded-sm border border-primary-500/20">
+                            <p className="mt-4 text-sm text-center text-primary-400 font-medium bg-primary-500/10 py-3 rounded-xl border border-primary-500/20">
                                 You must be logged in to checkout.
                             </p>
                         )}
 
-                        <div className="mt-8 flex items-start text-xs text-slate-500 leading-relaxed bg-base-950 p-4 rounded-sm border border-base-800">
+                        <div className="mt-8 flex items-start text-xs text-slate-500 leading-relaxed bg-base-950 p-4 rounded-xl border border-base-800">
                             <ShieldAlert size={18} className="mr-3 shrink-0 text-slate-400" />
                             <p>Tickets can be cancelled up to 2 hours before the showtime. Transactions are processed securely via Razorpay.</p>
                         </div>

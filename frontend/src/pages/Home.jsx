@@ -143,7 +143,7 @@ const Home = () => {
 
                             <m.h1
                                 variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                                className="text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-white via-slate-200 to-slate-400 mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
+                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-white via-slate-200 to-slate-400 mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
                             >
                                 {heroMovie.title}
                             </m.h1>
@@ -161,7 +161,7 @@ const Home = () => {
                             >
                                 <Link
                                     to={`/movie/${heroMovie._id}`}
-                                    className="group flex items-center justify-center gap-2 bg-primary-600 hover:bg-primary-500 text-white font-bold px-8 py-4 rounded-md transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] active:scale-95"
+                                    className="group flex items-center justify-center gap-2 bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 active:scale-97"
                                 >
                                     {heroMovie.isUpcoming ? (
                                         <>View Details</>
@@ -176,7 +176,7 @@ const Home = () => {
                                 {heroMovie.trailerUrl && (
                                     <button
                                         onClick={() => setShowTrailer(true)}
-                                        className="group flex items-center justify-center gap-2 border border-white/20 bg-white/5 backdrop-blur-md text-white font-semibold px-8 py-4 rounded-md hover:bg-white hover:text-black transition-all duration-300 active:scale-95"
+                                        className="group flex items-center justify-center gap-2 border border-white/10 bg-white/5 backdrop-blur-md text-white font-bold px-8 py-4 rounded-xl hover:bg-white/10 hover:border-white/25 transition-all duration-300 hover:-translate-y-0.5 active:scale-97"
                                     >
                                         <Play size={20} className="transition-transform duration-300 group-hover:scale-110" />
                                         Watch Trailer

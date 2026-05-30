@@ -214,7 +214,7 @@ const MovieCard = ({ movie, index = 0 }) => {
                   e.preventDefault();
                   setShowTrailer(true);
                 }}
-                className="flex items-center justify-center gap-1.5 bg-white/10 backdrop-blur-md text-white border border-white/15 text-xs font-semibold py-2 rounded-lg hover:bg-white/20 hover:border-white/25 transition-all duration-300 active:scale-95"
+                className="flex items-center justify-center gap-1.5 bg-white/5 backdrop-blur-md text-white border border-white/10 text-xs font-bold py-2.5 rounded-xl hover:bg-white/15 hover:border-white/20 transition-all duration-300 hover:-translate-y-0.5 active:scale-97"
               >
                 <Film size={13} />
                 Watch Trailer
@@ -223,7 +223,7 @@ const MovieCard = ({ movie, index = 0 }) => {
 
             <Link
               to={`/movie/${movie._id}`}
-              className="flex items-center justify-center gap-1.5 bg-white text-black text-xs font-bold py-2.5 rounded-lg hover:bg-slate-100 transition-all duration-300 active:scale-95 shadow-lg"
+              className="flex items-center justify-center gap-1.5 bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white text-xs font-bold py-2.5 rounded-xl transition-all duration-300 hover:shadow-[0_0_15px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 active:scale-97 shadow-lg"
             >
               {movie.isUpcoming ? (
                 <>View Details</>
