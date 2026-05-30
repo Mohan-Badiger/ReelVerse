@@ -162,8 +162,8 @@ const SuccessPage = () => {
                     className="relative z-10 flex flex-col items-center"
                 >
                     <div className="relative mb-8">
-                        <div className="w-16 h-16 border-4 border-base-800 rounded-sm"></div>
-                        <div className="w-16 h-16 border-4 border-emerald-500 rounded-sm border-t-transparent animate-spin absolute top-0 left-0"></div>
+                        <div className="w-16 h-16 border-4 border-base-800 rounded-xl"></div>
+                        <div className="w-16 h-16 border-4 border-emerald-500 rounded-xl border-t-transparent animate-spin absolute top-0 left-0"></div>
                         <m.div
                             animate={{ scale: [1, 1.2, 1] }}
                             transition={{ repeat: Infinity, duration: 2 }}
@@ -187,7 +187,7 @@ const SuccessPage = () => {
                 </div>
                 <h2 className="text-2xl font-bold text-white mb-2">Booking Not Found</h2>
                 <p className="text-slate-400 max-w-md mb-8">We couldn't retrieve your booking details. If you've already paid, please check your email or contact support.</p>
-                <Link to="/" className="px-8 py-3 bg-white text-black font-black rounded-sm hover:bg-slate-200 transition">Return to Home</Link>
+                <Link to="/" className="box-button-primary">Return to Home</Link>
             </div>
         );
     }
@@ -245,7 +245,7 @@ const SuccessPage = () => {
                     style={{ backgroundColor: '#09090b', color: '#ffffff', minHeight: '400px', border: '1px solid rgba(255,255,255,0.05)' }}
                 >
                     {/* LEFT SIDE: POSTER & MOVIE INFO */}
-                    <div className="w-full md:w-[350px] relative overflow-hidden">
+                    <div className="w-full md:w-87.5 relative overflow-hidden">
                         <img
                             src={booking.show.movie.posterUrl}
                             alt={booking.show.movie.title}
@@ -351,7 +351,7 @@ const SuccessPage = () => {
                 <button
                     onClick={handleDownloadPDF}
                     disabled={isDownloading}
-                    className="w-full sm:w-auto px-10 py-5 bg-white hover:bg-slate-200 text-base-950 rounded-sm font-black flex items-center justify-center text-lg transition-all shadow-xl active:scale-95 duration-200 disabled:opacity-50"
+                    className="w-full sm:w-auto px-8 py-4 bg-white hover:bg-slate-100 text-black rounded-xl font-bold flex items-center justify-center text-base transition-all hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] hover:-translate-y-0.5 active:scale-97 disabled:opacity-50"
                 >
                     {isDownloading ? (
                         <Loader2 className="w-6 h-6 animate-spin mr-3" />
@@ -363,14 +363,14 @@ const SuccessPage = () => {
                 <button
                     onClick={handleShareTicket}
                     disabled={isDownloading}
-                    className="w-full sm:w-auto px-10 py-5 bg-primary-600 hover:bg-primary-500 text-white rounded-sm font-black flex items-center justify-center text-lg transition-all shadow-xl active:scale-95 duration-200 disabled:opacity-50"
+                    className="w-full sm:w-auto px-8 py-4 bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white rounded-xl font-bold flex items-center justify-center text-base transition-all hover:shadow-[0_0_20px_rgba(99,102,241,0.4)] hover:-translate-y-0.5 active:scale-97 disabled:opacity-50"
                 >
                     <Share2 size={22} className="mr-3" />
                     Share Story
                 </button>
                 <Link
                     to="/profile"
-                    className="w-full sm:w-auto px-10 py-5 bg-base-900 border border-base-800 hover:bg-base-800 text-white rounded-sm font-black flex items-center justify-center text-lg transition-all active:scale-95 duration-200"
+                    className="w-full sm:w-auto px-8 py-4 bg-white/5 border border-white/10 hover:bg-white/10 text-white rounded-xl font-bold flex items-center justify-center text-base transition-all hover:-translate-y-0.5 active:scale-97"
                 >
                     My Dashboard <ArrowRight size={22} className="ml-3 text-slate-500" />
                 </Link>

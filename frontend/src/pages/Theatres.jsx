@@ -45,14 +45,14 @@ const Theatres = () => {
 
     if (isLoading) {
         return (
-            <div className="max-w-[1400px] mx-auto px-6 py-12">
+            <div className="max-w-350 mx-auto px-6 py-12">
                 <div className="mb-10 text-center">
                     <div className="h-12 w-64 bg-base-900 rounded-sm mx-auto mb-4 animate-pulse"></div>
                     <div className="h-4 w-96 bg-base-900 rounded-sm mx-auto animate-pulse"></div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3, 4, 5, 6].map(i => (
-                        <div key={i} className="box-panel h-[320px] bg-base-900/50 border border-base-800 animate-pulse">
+                        <div key={i} className="box-panel h-80 bg-base-900/50 border border-base-800 animate-pulse">
                             <div className="p-8">
                                 <div className="flex justify-between mb-6">
                                     <div className="h-8 w-40 bg-base-800 rounded-sm"></div>
@@ -79,7 +79,7 @@ const Theatres = () => {
     }
 
     return (
-        <div className="max-w-[1400px] mx-auto px-6 py-12 fade-in">
+        <div className="max-w-350 mx-auto px-6 py-12 fade-in">
             <m.div initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }} className="mb-10 text-center">
                 <h1 className="text-4xl md:text-5xl font-black text-white mb-4 tracking-tight">Our Theatres</h1>
                 <p className="text-slate-400 max-w-2xl mx-auto text-lg">Experience movies like never before in our state-of-the-art cinemas across the country.</p>
@@ -111,7 +111,7 @@ const Theatres = () => {
                                         <h2 className="text-2xl font-bold text-white group-hover:text-primary-400 transition-colors">
                                             {theatre.name}
                                         </h2>
-                                        <div className="bg-base-950 p-2.5 rounded-sm border border-base-800 shadow-sm group-hover:border-primary-500/30 transition-colors">
+                                        <div className="bg-base-950 p-2.5 rounded-xl border border-base-800 shadow-sm group-hover:border-primary-500/30 transition-colors">
                                             <MapPin className="text-primary-500" size={20} />
                                         </div>
                                     </div>
@@ -121,12 +121,12 @@ const Theatres = () => {
                                     </p>
 
                                     <div className="flex flex-wrap gap-2 mb-8">
-                                        <div className="px-3 py-1.5 bg-base-950 rounded-sm border border-base-800 flex items-center text-xs font-bold text-slate-300 uppercase tracking-tighter">
+                                        <div className="px-3 py-1.5 bg-base-950 rounded-xl border border-base-800 flex items-center text-xs font-bold text-slate-300 uppercase tracking-tighter">
                                             <MonitorPlay size={14} className="mr-2 text-primary-500" />
                                             {theatre.screens} Screens
                                         </div>
                                         {theatre.facilities?.map((f, i) => (
-                                            <div key={i} className="px-3 py-1.5 bg-base-950 rounded-sm border border-base-800 flex items-center text-xs font-bold text-slate-400 uppercase tracking-tighter">
+                                            <div key={i} className="px-3 py-1.5 bg-base-950 rounded-xl border border-base-800 flex items-center text-xs font-bold text-slate-400 uppercase tracking-tighter">
                                                 {f}
                                             </div>
                                         ))}
@@ -141,7 +141,7 @@ const Theatres = () => {
                                         {availableMovies.length > 0 ? (
                                             <div className="flex flex-wrap gap-2">
                                                 {availableMovies.slice(0, 3).map(movie => (
-                                                    <span key={movie._id} className="text-[11px] font-bold bg-white/5 text-slate-300 px-2 py-1 rounded-sm border border-base-800/50">
+                                                    <span key={movie._id} className="text-[11px] font-bold bg-white/5 text-slate-300 px-2 py-1 rounded-md border border-base-800/50">
                                                         {movie.title}
                                                     </span>
                                                 ))}

@@ -32,9 +32,9 @@ const Watchlist = () => {
     }, [userInfo]);
 
     return (
-        <div className="max-w-[1200px] mx-auto px-6 py-12">
+        <div className="max-w-300 mx-auto px-6 py-12">
             <div className="flex items-center gap-3 mb-8 pb-4 border-b border-base-800">
-                <div className="w-12 h-12 rounded-sm bg-primary-500/10 flex items-center justify-center text-primary-500">
+                <div className="w-12 h-12 rounded-xl bg-primary-500/10 flex items-center justify-center text-primary-500">
                     <Heart size={24} fill="currentColor" />
                 </div>
                 <div>
@@ -72,7 +72,7 @@ const Watchlist = () => {
                     </p>
                     <Link
                         to="/movies"
-                        className="bg-primary-600 hover:bg-primary-500 text-white px-8 py-3 rounded-sm font-bold flex items-center gap-2 transition-all"
+                        className="box-button-primary flex items-center gap-2 px-8 py-3"
                     >
                         Browse Movies
                         <ArrowRight size={18} />

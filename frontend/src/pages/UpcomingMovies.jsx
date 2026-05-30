@@ -34,10 +34,10 @@ const UpcomingMovies = () => {
       {/* Page Header */}
       <div className="relative overflow-hidden border-b border-base-800/50">
         <div className="absolute inset-0 bg-linear-to-br from-accent-500/8 via-transparent to-primary-600/5"></div>
-        <div className="absolute top-0 right-1/4 w-[500px] h-[300px] bg-accent-500/5 blur-[120px] rounded-full"></div>
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[200px] bg-primary-500/5 blur-[100px] rounded-full"></div>
+        <div className="absolute top-0 right-1/4 w-125 h-75 bg-accent-500/5 blur-[120px] rounded-full"></div>
+        <div className="absolute bottom-0 left-1/4 w-100 h-50 bg-primary-500/5 blur-[100px] rounded-full"></div>
 
-        <div className="relative max-w-[1400px] mx-auto px-6 pt-16 pb-10">
+        <div className="relative max-w-350 mx-auto px-6 pt-16 pb-10">
           <m.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -79,7 +79,7 @@ const UpcomingMovies = () => {
       </div>
 
       {/* Content */}
-      <div className="max-w-[1400px] mx-auto px-6 py-10">
+      <div className="max-w-350 mx-auto px-6 py-10">
         {isLoading ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6">
             {Array(10)
@@ -109,7 +109,7 @@ const UpcomingMovies = () => {
             {searchTerm && (
               <button
                 onClick={() => setSearchTerm('')}
-                className="bg-accent-500 hover:bg-accent-500/80 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-all"
+                className="box-button-primary text-sm font-semibold"
               >
                 Clear Search
               </button>

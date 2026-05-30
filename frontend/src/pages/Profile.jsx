@@ -99,7 +99,7 @@ const Profile = () => {
                     {/* Profile Card */}
                     <div className="box-panel p-6 flex flex-col items-center text-center">
 
-                        <div className="w-24 h-24 mb-4 rounded-sm bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-3xl font-bold text-primary-400">
+                        <div className="w-24 h-24 mb-4 rounded-2xl bg-primary-500/10 border border-primary-500/30 flex items-center justify-center text-3xl font-bold text-primary-400">
                             {userInfo?.name?.charAt(0).toUpperCase()}
                         </div>
 
@@ -113,7 +113,7 @@ const Profile = () => {
 
                         <button
                             onClick={() => setActiveTab('bookings')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-medium transition
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition
                                 ${activeTab === 'bookings'
                                     ? 'bg-primary-500/10 text-primary-400'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white'}
@@ -125,7 +125,7 @@ const Profile = () => {
 
                         <button
                             onClick={() => setActiveTab('settings')}
-                            className={`flex items-center gap-3 px-4 py-3 rounded-sm text-sm font-medium transition
+                            className={`flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium transition
                                 ${activeTab === 'settings'
                                     ? 'bg-primary-500/10 text-primary-400'
                                     : 'text-slate-400 hover:bg-white/5 hover:text-white'}
@@ -170,7 +170,7 @@ const Profile = () => {
 
                                     <div className="box-panel p-16 flex flex-col items-center text-center">
 
-                                        <div className="w-20 h-20 bg-white/5 rounded-sm flex items-center justify-center mb-6">
+                                        <div className="w-20 h-20 bg-white/5 rounded-xl flex items-center justify-center mb-6">
                                             <Ticket size={36} className="text-slate-500" />
                                         </div>
 
@@ -184,7 +184,7 @@ const Profile = () => {
 
                                         <button
                                             onClick={() => navigate('/movies')}
-                                            className="px-6 py-3 bg-white text-black font-semibold rounded-sm hover:bg-slate-200 transition"
+                                            className="box-button-secondary"
                                         >
                                             Browse Movies
                                         </button>
@@ -274,7 +274,7 @@ const Profile = () => {
                                                                     Booking ID
                                                                 </p>
 
-                                                                <p className="text-xs font-mono bg-white/5 px-2 py-1 rounded-sm text-slate-300">
+                                                                <p className="text-xs font-mono bg-white/5 px-2 py-1 rounded-md text-slate-300">
                                                                     {booking._id.slice(-8).toUpperCase()}
                                                                 </p>
                                                             </div>
@@ -288,7 +288,7 @@ const Profile = () => {
 
                                                         <button 
                                                             onClick={() => navigate(`/booking/success?bookingId=${booking._id}`)}
-                                                            className="flex items-center gap-2 px-4 py-2 bg-primary-600/20 hover:bg-primary-600/30 text-primary-400 text-sm font-semibold rounded-sm transition border border-primary-500/20 active:scale-95"
+                                                            className="box-button-secondary flex items-center gap-2 py-2 px-4 text-sm"
                                                         >
                                                             <Ticket size={16} />
                                                             View & Download Ticket
@@ -392,7 +392,7 @@ const Profile = () => {
                                     <button
                                         type="submit"
                                         disabled={isLoading}
-                                        className="px-6 py-3 bg-primary-600 hover:bg-primary-500 text-white font-semibold rounded-sm transition disabled:opacity-50"
+                                        className="box-button-primary"
                                     >
                                         {isLoading ? 'Saving Changes...' : 'Save Changes'}
                                     </button>

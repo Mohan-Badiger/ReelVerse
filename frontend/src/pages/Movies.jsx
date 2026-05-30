@@ -71,9 +71,9 @@ const Movies = () => {
             {/* Page Header with gradient background */}
             <div className="relative overflow-hidden border-b border-base-800/50">
                 <div className="absolute inset-0 bg-linear-to-br from-primary-600/8 via-transparent to-accent-500/5"></div>
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-primary-500/5 blur-[120px] rounded-full"></div>
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-150 h-75 bg-primary-500/5 blur-[120px] rounded-full"></div>
 
-                <div className="relative max-w-[1400px] mx-auto px-6 pt-16 pb-10">
+                <div className="relative max-w-350 mx-auto px-6 pt-16 pb-10">
                     <m.div
                         initial={{ opacity: 0, y: -20 }}
                         animate={{ opacity: 1, y: 0 }}
@@ -174,7 +174,7 @@ const Movies = () => {
             </div>
 
             {/* Movie Grid */}
-            <div className="max-w-[1400px] mx-auto px-6 py-10">
+            <div className="max-w-350 mx-auto px-6 py-10">
                 {isLoading ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6">
                         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) => (
@@ -198,7 +198,7 @@ const Movies = () => {
                                 </p>
                                 <button
                                     onClick={clearFilters}
-                                    className="bg-primary-600 hover:bg-primary-500 text-white px-6 py-2.5 rounded-lg font-semibold text-sm transition-all"
+                                    className="box-button-primary"
                                 >
                                     Clear Filters
                                 </button>
