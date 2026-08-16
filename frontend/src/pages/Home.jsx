@@ -89,6 +89,17 @@ const Home = () => {
         return new Date(dateString).getFullYear();
     };
 
+    const scrollSlider = (sliderId, direction) => {
+        const slider = document.getElementById(sliderId);
+        if (!slider) return;
+        const scrollAmount = slider.clientWidth * 0.75;
+        if (direction === "left") {
+            slider.scrollLeft -= scrollAmount;
+        } else {
+            slider.scrollLeft += scrollAmount;
+        }
+    };
+
     if (isLoading) {
         return (
             <div className="pt-20 max-w-350 mx-auto px-6">
@@ -321,7 +332,7 @@ const Home = () => {
             )}
 
             {/* NOW SHOWING */}
-            <section className="max-w-350 mx-auto px-6 py-28">
+            <section className="max-w-350 mx-auto px-6 py-28 relative group/row-now">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-8 rounded-full bg-primary-500"></div>
@@ -337,32 +348,41 @@ const Home = () => {
                     </Link>
                 </div>
 
-                <m.div
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                    variants={{
-                        hidden: { opacity: 0 },
-                        show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-                    }}
-                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
-                >
-                    {movies.slice(0, 5).map((movie, i) => (
-                        <m.div
-                            key={movie._id}
-                            variants={{
-                                hidden: { opacity: 0, y: 40 },
-                                show: { opacity: 1, y: 0 },
-                            }}
-                        >
-                            <MovieCard movie={movie} index={i} />
-                        </m.div>
-                    ))}
-                </m.div>
+                <div className="relative">
+                    <div
+                        id="now-showing-slider"
+                        className="flex gap-5 md:gap-6 overflow-x-auto py-4 px-1 scrollbar-none scroll-smooth"
+                    >
+                        {movies.map((movie, i) => (
+                            <div
+                                key={movie._id}
+                                className="w-35 sm:w-42.5 md:w-50 shrink-0"
+                            >
+                                <MovieCard movie={movie} index={i} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Scroll Buttons */}
+                    <button
+                        onClick={() => scrollSlider('now-showing-slider', 'left')}
+                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-25 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/85 border border-white/10 text-white opacity-0 group-hover/row-now:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
+                        aria-label="Scroll Left"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <button
+                        onClick={() => scrollSlider('now-showing-slider', 'right')}
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-25 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/85 border border-white/10 text-white opacity-0 group-hover/row-now:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
+                        aria-label="Scroll Right"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
             </section>
 
             {/* UPCOMING */}
-            <section className="max-w-350 mx-auto px-6 pb-32">
+            <section className="max-w-350 mx-auto px-6 pb-32 relative group/row-upcoming">
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-10 gap-4">
                     <div className="flex items-center gap-3">
                         <div className="w-1.5 h-8 rounded-full bg-accent-500"></div>
@@ -378,28 +398,37 @@ const Home = () => {
                     </Link>
                 </div>
 
-                <m.div
-                    initial="hidden"
-                    whileInView="show"
-                    viewport={{ once: true }}
-                    variants={{
-                        hidden: { opacity: 0 },
-                        show: { opacity: 1, transition: { staggerChildren: 0.08 } },
-                    }}
-                    className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 md:gap-6"
-                >
-                    {upcomingMovies.slice(0, 5).map((movie, i) => (
-                        <m.div
-                            key={movie._id}
-                            variants={{
-                                hidden: { opacity: 0, y: 40 },
-                                show: { opacity: 1, y: 0 },
-                            }}
-                        >
-                            <MovieCard movie={movie} index={i} />
-                        </m.div>
-                    ))}
-                </m.div>
+                <div className="relative">
+                    <div
+                        id="upcoming-slider"
+                        className="flex gap-5 md:gap-6 overflow-x-auto py-4 px-1 scrollbar-none scroll-smooth"
+                    >
+                        {upcomingMovies.map((movie, i) => (
+                            <div
+                                key={movie._id}
+                                className="w-35 sm:w-42.5 md:w-50 shrink-0"
+                            >
+                                <MovieCard movie={movie} index={i} />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Scroll Buttons */}
+                    <button
+                        onClick={() => scrollSlider('upcoming-slider', 'left')}
+                        className="absolute -left-3 top-1/2 -translate-y-1/2 z-25 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/85 border border-white/10 text-white opacity-0 group-hover/row-upcoming:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
+                        aria-label="Scroll Left"
+                    >
+                        <ChevronLeft size={20} />
+                    </button>
+                    <button
+                        onClick={() => scrollSlider('upcoming-slider', 'right')}
+                        className="absolute -right-3 top-1/2 -translate-y-1/2 z-25 w-10 h-10 flex items-center justify-center rounded-full bg-black/60 hover:bg-black/85 border border-white/10 text-white opacity-0 group-hover/row-upcoming:opacity-100 transition-all duration-300 hover:scale-105 active:scale-95 cursor-pointer shadow-lg"
+                        aria-label="Scroll Right"
+                    >
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
             </section>
 
             {/* FOOTER */}
