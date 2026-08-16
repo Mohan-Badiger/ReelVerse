@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
 import { m, AnimatePresence } from "framer-motion";
 import Play from "lucide-react/dist/esm/icons/play";
+import ChevronLeft from "lucide-react/dist/esm/icons/chevron-left";
+import ChevronRight from "lucide-react/dist/esm/icons/chevron-right";
 import { Link } from "react-router-dom";
 import api from "../utils/axios";
 import { Helmet } from "react-helmet-async";
@@ -16,6 +18,7 @@ const Home = () => {
     const [initialHeroMovie, setInitialHeroMovie] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [showTrailer, setShowTrailer] = useState(false);
+    const [isHovered, setIsHovered] = useState(false);
 
     useEffect(() => {
         const fetchMovies = async () => {
@@ -43,7 +46,7 @@ const Home = () => {
     }, []);
 
     useEffect(() => {
-        if (!movies.length || showTrailer) return;
+        if (!movies.length || showTrailer || isHovered) return;
 
         const interval = setInterval(() => {
             setHeroMovie((current) => {
@@ -54,7 +57,37 @@ const Home = () => {
         }, 6000);
 
         return () => clearInterval(interval);
-    }, [movies, showTrailer]);
+    }, [movies, showTrailer, isHovered, heroMovie]);
+
+    const handleNextSlide = () => {
+        if (!movies.length) return;
+        setHeroMovie((current) => {
+            const index = movies.findIndex((m) => m._id === current?._id);
+            const next = (index + 1) % Math.min(5, movies.length);
+            return movies[next];
+        });
+    };
+
+    const handlePrevSlide = () => {
+        if (!movies.length) return;
+        setHeroMovie((current) => {
+            const index = movies.findIndex((m) => m._id === current?._id);
+            const prev = (index - 1 + Math.min(5, movies.length)) % Math.min(5, movies.length);
+            return movies[prev];
+        });
+    };
+
+    const formatDuration = (minutes) => {
+        if (!minutes) return "";
+        const hrs = Math.floor(minutes / 60);
+        const mins = minutes % 60;
+        return hrs > 0 ? `${hrs}h ${mins}m` : `${mins}m`;
+    };
+
+    const getReleaseYear = (dateString) => {
+        if (!dateString) return "";
+        return new Date(dateString).getFullYear();
+    };
 
     if (isLoading) {
         return (
@@ -88,116 +121,192 @@ const Home = () => {
 
             {/* HERO SECTION */}
             {heroMovie && (
-                <section className="relative min-h-[85vh] lg:h-[90vh] flex flex-col justify-end pb-24 overflow-hidden bg-base-950">
-
+                <section
+                    className="relative w-full h-[70vh] md:h-[75vh] lg:h-[85vh] min-h-125 lg:min-h-150 overflow-hidden bg-[#0c111b] group/hero"
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                >
+                    {/* Background Backdrop Image with Ken Burns Zoom Effect */}
                     <AnimatePresence mode="wait">
                         <m.div
                             key={heroMovie._id}
-                            initial={{ opacity: 0, scale: 1.05 }}
-                            animate={{ opacity: 1, scale: 1 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
                             exit={{ opacity: 0 }}
-                            transition={{ duration: 0.9 }}
-                            className="absolute top-0 right-0 w-full lg:w-[75%] h-full z-0"
+                            transition={{ duration: 0.8, ease: "easeInOut" }}
+                            className="absolute top-0 right-0 w-full lg:w-[70%] h-full z-0 overflow-hidden"
                         >
-                            <img
+                            <m.img
                                 src={getOptimizedUrl(heroMovie.backdropUrl || heroMovie.posterUrl)}
                                 alt={heroMovie.title}
                                 fetchPriority="high"
-                                width="1920"
-                                height="1080"
-                                className="w-full h-full object-cover opacity-80"
+                                initial={{ scale: 1.08 }}
+                                animate={{ scale: 1.02 }}
+                                transition={{ duration: 6, ease: "linear" }}
+                                className="w-full h-full object-cover object-top opacity-70 lg:opacity-85"
                             />
 
-                            <div className="absolute inset-0 bg-linear-to-t from-base-950 via-base-950/20 to-transparent" />
-                            <div className="absolute inset-0 bg-linear-to-r from-base-950 via-base-950/30 to-transparent" />
+                            {/* Gradients to blend image with backgrounds */}
+                            {/* Horizontal blend for desktop */}
+                            <div className="hidden lg:block absolute inset-y-0 left-0 w-1/3 bg-linear-to-r from-[#0c111b] via-[#0c111b]/85 to-transparent z-1" />
+                            <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-linear-to-r from-[#0c111b] via-[#0c111b]/40 to-transparent z-1" />
+                            
+                            {/* Vertical blend for mobile / standard */}
+                            <div className="absolute inset-0 bg-linear-to-t from-[#0c111b] via-[#0c111b]/20 to-[#0c111b]/30 z-1" />
+                            <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-base-950 via-base-950/90 to-transparent z-1" />
                         </m.div>
                     </AnimatePresence>
 
-                    {/* Animated glow */}
-                    <div className="absolute top-0 left-0 w-full h-full pointer-events-none z-0">
-                        <div className="absolute w-150 h-150 bg-primary-600/20 blur-[200px] -top-50 -left-50" />
-                        <div className="absolute w-125 h-125 bg-accent-600/10 blur-[200px] -bottom-50 -right-50" />
-                    </div>
+                    {/* Gradient overlay behind text for high contrast on all devices */}
+                    <div className="absolute inset-0 bg-linear-to-r from-[#0c111b] via-[#0c111b]/95 md:via-[#0c111b]/80 lg:via-[#0c111b]/60 to-transparent z-10 pointer-events-none" />
 
-                    {/* Hero Content */}
-                    <div className="relative z-10 w-full max-w-350 mx-auto px-6">
-
-                        <m.div
-                            key={`content-${heroMovie._id}`}
-                            initial="hidden"
-                            animate="visible"
-                            variants={{
-                                hidden: { opacity: 0 },
-                                visible: {
-                                    opacity: 1,
-                                    transition: { staggerChildren: 0.15 }
-                                }
-                            }}
-                            className="max-w-3xl"
-                        >
-                            <m.div variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}>
-                                <span className="inline-block px-3 py-1 mb-6 border border-primary-500/30 bg-primary-500/10 text-primary-400 uppercase tracking-widest text-xs font-bold rounded-sm backdrop-blur-md">
-                                    Now Showing
-                                </span>
-                            </m.div>
-
-                            <m.h1
-                                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                                className="text-4xl sm:text-5xl md:text-7xl lg:text-8xl font-black text-transparent bg-clip-text bg-linear-to-r from-white via-slate-200 to-slate-400 mb-6 leading-[1.1] tracking-tight drop-shadow-sm"
-                            >
-                                {heroMovie.title}
-                            </m.h1>
-
-                            <m.p
-                                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                                className="text-slate-300 text-base md:text-xl mb-10 line-clamp-3 leading-relaxed max-w-2xl font-light"
-                            >
-                                {heroMovie.description}
-                            </m.p>
-
+                    {/* Left Info Panel */}
+                    <div className="absolute left-0 top-0 h-full w-full lg:w-[50%] flex flex-col justify-center px-6 sm:px-12 lg:pl-16 xl:pl-24 z-20 pt-16">
+                        <AnimatePresence mode="wait">
                             <m.div
-                                variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0 } }}
-                                className="flex flex-wrap gap-4"
+                                key={`content-${heroMovie._id}`}
+                                initial={{ opacity: 0, y: 15 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                exit={{ opacity: 0, y: -15 }}
+                                transition={{ duration: 0.4 }}
+                                className="max-w-2xl"
                             >
-                                <Link
-                                    to={`/movie/${heroMovie._id}`}
-                                    className="group flex items-center justify-center gap-2 bg-linear-to-r from-primary-600 to-accent-500 hover:from-primary-500 hover:to-accent-600 text-white font-bold px-8 py-4 rounded-xl transition-all duration-300 shadow-[0_0_20px_rgba(99,102,241,0.3)] hover:shadow-[0_0_30px_rgba(99,102,241,0.5)] hover:-translate-y-0.5 active:scale-97"
-                                >
-                                    {heroMovie.isUpcoming ? (
-                                        <>View Details</>
-                                    ) : (
-                                        <>
-                                            <Play size={20} fill="currentColor" className="transition-transform duration-300 group-hover:scale-110" />
-                                            Book Tickets
-                                        </>
+                                {/* Metadata badges */}
+                                <div className="flex flex-wrap items-center gap-2.5 mb-5 text-xs md:text-sm text-slate-300 font-medium">
+                                    <span className="bg-primary-600/20 text-primary-300 border border-primary-500/30 px-2 py-0.5 rounded-md font-bold text-xs uppercase tracking-wider">
+                                        {heroMovie.isUpcoming ? "Upcoming" : "Now Showing"}
+                                    </span>
+                                    {heroMovie.releaseDate && (
+                                        <span className="text-slate-400 font-semibold">
+                                            {getReleaseYear(heroMovie.releaseDate)}
+                                        </span>
                                     )}
-                                </Link>
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    {heroMovie.duration && (
+                                        <span className="text-slate-400 font-semibold">
+                                            {formatDuration(heroMovie.duration)}
+                                        </span>
+                                    )}
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    {heroMovie.language && (
+                                        <span className="text-slate-400 font-semibold">
+                                            {heroMovie.language}
+                                        </span>
+                                    )}
+                                    <span className="w-1 h-1 rounded-full bg-slate-500" />
+                                    <span className="border border-white/20 text-white/80 px-1.5 py-0.5 rounded text-[10px] md:text-xs font-bold bg-white/5">
+                                        U/A 16+
+                                    </span>
+                                </div>
 
-                                {heroMovie.trailerUrl && (
-                                    <button
-                                        onClick={() => setShowTrailer(true)}
-                                        className="group flex items-center justify-center gap-2 border border-white/10 bg-white/5 backdrop-blur-md text-white font-bold px-8 py-4 rounded-xl hover:bg-white/10 hover:border-white/25 transition-all duration-300 hover:-translate-y-0.5 active:scale-97"
-                                    >
-                                        <Play size={20} className="transition-transform duration-300 group-hover:scale-110" />
-                                        Watch Trailer
-                                    </button>
+                                {/* Movie Title */}
+                                <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-[1.1] mb-4 tracking-tight drop-shadow-md">
+                                    {heroMovie.title}
+                                </h1>
+
+                                {/* Movie Genre */}
+                                {heroMovie.genre && heroMovie.genre.length > 0 && (
+                                    <div className="text-xs md:text-sm text-primary-400 font-semibold mb-4 tracking-wide uppercase">
+                                        {heroMovie.genre.join("  |  ")}
+                                    </div>
                                 )}
+
+                                {/* Description */}
+                                <p className="text-slate-300 text-sm md:text-base lg:text-lg mb-8 line-clamp-3 md:line-clamp-4 leading-relaxed max-w-lg font-light">
+                                    {heroMovie.description}
+                                </p>
+
+                                {/* Action Buttons */}
+                                <div className="flex flex-wrap gap-4">
+                                    <Link
+                                        to={`/movie/${heroMovie._id}`}
+                                        className="flex items-center justify-center gap-2 bg-white hover:bg-white/90 active:scale-95 text-[#0c111b] font-bold px-7 py-3.5 rounded-lg transition-all duration-200 shadow-lg"
+                                    >
+                                        {heroMovie.isUpcoming ? (
+                                            <>View Details</>
+                                        ) : (
+                                            <>
+                                                <Play size={18} fill="currentColor" />
+                                                Book Tickets
+                                            </>
+                                        )}
+                                    </Link>
+
+                                    {heroMovie.trailerUrl && (
+                                        <button
+                                            onClick={() => setShowTrailer(true)}
+                                            className="flex items-center justify-center gap-2 border border-white/20 bg-white/10 hover:bg-white/20 active:scale-95 text-white font-semibold px-6 py-3.5 rounded-lg transition-all duration-200"
+                                        >
+                                            <Play size={18} />
+                                            Watch Trailer
+                                        </button>
+                                    )}
+                                </div>
                             </m.div>
-                        </m.div>
+                        </AnimatePresence>
                     </div>
 
-                    {/* Premium Progress Indicators */}
-                    <div className="absolute bottom-8 left-6 md:left-auto md:right-12 flex gap-2 z-20">
-                        {movies.slice(0, 5).map((m) => (
-                            <button
-                                key={m._id}
-                                onClick={() => setHeroMovie(m)}
-                                className={`h-1.5 rounded-full transition-all duration-500 overflow-hidden relative ${heroMovie._id === m._id
-                                        ? "w-16 bg-primary-500 shadow-[0_0_10px_rgba(99,102,241,0.8)]"
-                                        : "w-6 bg-white/20 hover:bg-white/40"
+                    {/* Navigation Chevrons */}
+                    <button
+                        onClick={handlePrevSlide}
+                        className="absolute left-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-[#0c111b]/60 hover:bg-[#0c111b]/90 border border-white/10 text-white hover:scale-105 active:scale-95 transition-all opacity-0 group-hover/hero:opacity-100 duration-300 pointer-events-auto cursor-pointer"
+                        aria-label="Previous Slide"
+                    >
+                        <ChevronLeft size={24} />
+                    </button>
+                    <button
+                        onClick={handleNextSlide}
+                        className="absolute right-4 top-1/2 -translate-y-1/2 z-30 w-12 h-12 flex items-center justify-center rounded-full bg-[#0c111b]/60 hover:bg-[#0c111b]/90 border border-white/10 text-white hover:scale-105 active:scale-95 transition-all opacity-0 group-hover/hero:opacity-100 duration-300 pointer-events-auto cursor-pointer"
+                        aria-label="Next Slide"
+                    >
+                        <ChevronRight size={24} />
+                    </button>
+
+                    {/* Bottom Preview Cards Carousel */}
+                    <div className="absolute bottom-6 right-6 md:right-12 z-30 flex items-center gap-4 max-w-[90%] sm:max-w-2xl md:max-w-3xl overflow-x-auto py-2 px-1 scrollbar-none">
+                        {movies.slice(0, 5).map((m) => {
+                            const isActive = heroMovie._id === m._id;
+                            return (
+                                <button
+                                    key={m._id}
+                                    onClick={() => setHeroMovie(m)}
+                                    className={`relative shrink-0 w-24 sm:w-36 h-14 sm:h-20 rounded-lg overflow-hidden transition-all duration-300 text-left border-2 focus:outline-none ${
+                                        isActive
+                                            ? "border-primary-500 scale-105 shadow-[0_0_15px_rgba(99,102,241,0.5)] z-10"
+                                            : "border-transparent opacity-60 hover:opacity-100 hover:scale-102"
                                     }`}
-                            />
-                        ))}
+                                >
+                                    {/* Thumbnail Image */}
+                                    <img
+                                        src={getOptimizedUrl(m.backdropUrl || m.posterUrl, "400")}
+                                        alt={m.title}
+                                        className="w-full h-full object-cover"
+                                    />
+                                    
+                                    {/* Thumbnail Dark Overlay */}
+                                    <div className={`absolute inset-0 transition-opacity duration-300 ${
+                                        isActive ? "bg-black/20" : "bg-black/40 hover:bg-black/25"
+                                    }`} />
+
+                                    {/* Small Movie Title inside thumbnail */}
+                                    <div className="absolute bottom-1.5 left-2 right-2 text-[9px] sm:text-[11px] font-bold text-white truncate drop-shadow-md">
+                                        {m.title}
+                                    </div>
+
+                                    {/* Dynamic Loading Progress Bar at the bottom of the active thumbnail card */}
+                                    {isActive && !showTrailer && (
+                                        <div className="absolute bottom-0 left-0 w-full h-0.75 bg-white/20">
+                                            <div
+                                                key={`progress-${m._id}`}
+                                                className={`h-full bg-primary-500 shadow-[0_0_8px_#6366f1] animate-autoplay-progress ${
+                                                    isHovered ? "paused" : ""
+                                                }`}
+                                            />
+                                        </div>
+                                    )}
+                                </button>
+                            );
+                        })}
                     </div>
                 </section>
             )}
