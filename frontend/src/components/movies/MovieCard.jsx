@@ -89,7 +89,7 @@ const MovieCard = ({ movie, index = 0 }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.04, duration: 0.35 }}
-          className="group relative w-full aspect-2/3 rounded-xl overflow-hidden bg-base-900 border border-white/5 hover:border-primary-500/40 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1.5 shadow-md hover:shadow-[0_12px_24px_rgba(0,0,0,0.8),_0_0_15px_rgba(99,102,241,0.25)] cursor-pointer"
+          className="group relative w-full aspect-2/3 rounded-xl overflow-hidden bg-base-900 border border-white/5 hover:border-primary-500/40 transition-all duration-300 ease-out hover:scale-105 hover:-translate-y-1.5 shadow-md hover:shadow-[0_12px_24px_rgba(0,0,0,0.8),0_0_15px_rgba(99,102,241,0.25)] cursor-pointer"
         >
           {/* Poster */}
           <img
