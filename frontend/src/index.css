@@ -96,3 +96,29 @@
     transform: translateY(0);
   }
 }
+
+/* ================= AUTOPLAY PROGRESS & UTILITIES ================= */
+@keyframes autoplayProgress {
+  from {
+    width: 0%;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.animate-autoplay-progress {
+  animation: autoplayProgress 6s linear forwards;
+}
+
+.paused {
+  animation-play-state: paused !important;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+.scrollbar-none {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
