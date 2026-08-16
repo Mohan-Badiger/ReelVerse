@@ -148,18 +148,16 @@ const Home = () => {
                             />
 
                             {/* Gradients to blend image with backgrounds */}
-                            {/* Horizontal blend for desktop */}
-                            <div className="hidden lg:block absolute inset-y-0 left-0 w-1/3 bg-linear-to-r from-[#0c111b] via-[#0c111b]/85 to-transparent z-1" />
-                            <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-linear-to-r from-[#0c111b] via-[#0c111b]/40 to-transparent z-1" />
+                            {/* Horizontal blend for desktop — narrowed to cover only 25% of left side */}
+                            <div className="hidden lg:block absolute inset-y-0 left-0 w-1/4 bg-linear-to-r from-[#0c111b] via-[#0c111b]/80 to-transparent z-1" />
                             
-                            {/* Vertical blend for mobile / standard */}
-                            <div className="absolute inset-0 bg-linear-to-t from-[#0c111b]/40 via-transparent to-transparent z-1" />
-                            <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-base-950 via-base-950/90 to-transparent z-1" />
+                            {/* Vertical blend for mobile / standard — shortened to bottom region */}
+                            <div className="absolute inset-x-0 bottom-0 h-28 bg-linear-to-t from-base-950 to-transparent z-1" />
                         </m.div>
                     </AnimatePresence>
 
-                    {/* Gradient overlay behind text for high contrast on all devices */}
-                    <div className="absolute inset-y-0 left-0 w-full lg:w-[55%] bg-linear-to-r from-[#0c111b] via-[#0c111b]/90 md:via-[#0c111b]/70 to-transparent z-10 pointer-events-none" />
+                    {/* Gradient overlay behind text — narrowed to only cover the left 42% */}
+                    <div className="absolute inset-y-0 left-0 w-full lg:w-[42%] bg-linear-to-r from-[#0c111b] via-[#0c111b]/80 to-transparent z-10 pointer-events-none" />
 
                     {/* Left Info Panel */}
                     <div className="absolute left-0 top-0 h-full w-full lg:w-[50%] flex flex-col justify-center px-6 sm:px-12 lg:pl-16 xl:pl-24 z-20 pt-16">
