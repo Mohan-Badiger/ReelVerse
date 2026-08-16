@@ -104,7 +104,8 @@ const Home = () => {
     const getOptimizedUrl = (url, width = '1920') => {
         if (!url) return '';
         if (url.includes('cloudinary')) {
-            return url.replace('/upload/', `/upload/f_auto,q_auto,w_${width}/`);
+            // Use q_auto:best for maximum premium quality and visual fidelity
+            return url.replace('/upload/', `/upload/f_auto,q_auto:best,w_${width}/`);
         }
         return url;
     };
@@ -143,7 +144,7 @@ const Home = () => {
                                 initial={{ scale: 1.08 }}
                                 animate={{ scale: 1.02 }}
                                 transition={{ duration: 6, ease: "linear" }}
-                                className="w-full h-full object-cover object-top opacity-70 lg:opacity-85"
+                                className="w-full h-full object-cover object-top opacity-95 lg:opacity-100"
                             />
 
                             {/* Gradients to blend image with backgrounds */}
@@ -152,13 +153,13 @@ const Home = () => {
                             <div className="hidden lg:block absolute inset-y-0 left-0 w-1/2 bg-linear-to-r from-[#0c111b] via-[#0c111b]/40 to-transparent z-1" />
                             
                             {/* Vertical blend for mobile / standard */}
-                            <div className="absolute inset-0 bg-linear-to-t from-[#0c111b] via-[#0c111b]/20 to-[#0c111b]/30 z-1" />
+                            <div className="absolute inset-0 bg-linear-to-t from-[#0c111b]/40 via-transparent to-transparent z-1" />
                             <div className="absolute inset-x-0 bottom-0 h-40 bg-linear-to-t from-base-950 via-base-950/90 to-transparent z-1" />
                         </m.div>
                     </AnimatePresence>
 
                     {/* Gradient overlay behind text for high contrast on all devices */}
-                    <div className="absolute inset-0 bg-linear-to-r from-[#0c111b] via-[#0c111b]/95 md:via-[#0c111b]/80 lg:via-[#0c111b]/60 to-transparent z-10 pointer-events-none" />
+                    <div className="absolute inset-y-0 left-0 w-full lg:w-[55%] bg-linear-to-r from-[#0c111b] via-[#0c111b]/90 md:via-[#0c111b]/70 to-transparent z-10 pointer-events-none" />
 
                     {/* Left Info Panel */}
                     <div className="absolute left-0 top-0 h-full w-full lg:w-[50%] flex flex-col justify-center px-6 sm:px-12 lg:pl-16 xl:pl-24 z-20 pt-16">
@@ -263,7 +264,7 @@ const Home = () => {
                     </button>
 
                     {/* Bottom Preview Cards Carousel */}
-                    <div className="absolute bottom-6 right-6 md:right-12 z-30 flex items-center gap-4 max-w-[90%] sm:max-w-2xl md:max-w-3xl overflow-x-auto py-2 px-1 scrollbar-none">
+                    <div className="absolute bottom-6 right-6 md:right-12 z-30 flex items-center gap-4 max-w-[95%] sm:max-w-2xl md:max-w-4xl lg:max-w-5xl xl:max-w-6xl overflow-x-auto py-2 px-1 scrollbar-none">
                         {movies.slice(0, 5).map((m) => {
                             const isActive = heroMovie._id === m._id;
                             return (
